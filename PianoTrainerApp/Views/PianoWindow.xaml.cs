@@ -2,7 +2,6 @@
 using PianoTrainerApp.ViewModels;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -23,6 +22,8 @@ namespace PianoTrainerApp.Views
     public partial class PianoWindow : Window
     {
         private PianoViewModel pianoVM;
+        private double pixelsPerSecond = 100; // масштаб падения
+
 
         public PianoWindow(Song song)
         {
@@ -51,46 +52,74 @@ namespace PianoTrainerApp.Views
         {
             NotesCanvas.Children.Clear();
 
-            foreach (var note in pianoVM.FallingNotes)
+            // допуск для группировки нот с одинаковым стартом
+            var epsilon = 0.001;
+
+            // фильтруем ноты, которые потенциально видимы на экране
+            var visibleNotes = pianoVM.FallingNotes
+                .Where(n => pianoVM.CurrentTime <= n.StartTime + n.Duration + 5)
+                .ToList();
+
+            // группируем ноты по стартовому времени
+            var grouped = visibleNotes
+                .GroupBy(n => Math.Round(n.StartTime / epsilon) * epsilon)
+                .OrderBy(g => g.Key);
+
+            foreach (var group in grouped)
             {
-                double noteWidth = 30;
-                double noteHeight = 20;
+                double groupStart = group.Key; // стартовое время группы
 
-                // Прямоугольник
-                var rect = new System.Windows.Shapes.Rectangle
+                foreach (var note in group)
                 {
-                    Width = noteWidth,
-                    Height = noteHeight,
-                    Fill = Brushes.DeepSkyBlue,
-                    RadiusX = 6,
-                    RadiusY = 6,
-                    Stroke = Brushes.Black,
-                    StrokeThickness = 0.8
-                };
+                    double delta = pianoVM.CurrentTime - groupStart; // относительно группы
 
-                // Подпись по центру
-                var text = new TextBlock
-                {
-                    Text = note.NoteName,
-                    Foreground = Brushes.White,
-                    FontSize = 10,
-                    FontWeight = FontWeights.Bold,
-                    Width = noteWidth,
-                    Height = noteHeight,
-                    TextAlignment = TextAlignment.Center,
-                    VerticalAlignment = VerticalAlignment.Center
-                };
+                    // если нота ещё не должна появляться, пропускаем
+                    if (delta < 0)
+                        continue;
 
-                // Центрируем по X и Y
-                Canvas.SetLeft(rect, note.X);
-                Canvas.SetTop(rect, note.Y);
+                    double noteWidth = 30;
+                    double noteHeight = note.Duration * pixelsPerSecond;
 
-                Canvas.SetLeft(text, note.X);
-                Canvas.SetTop(text, note.Y + (noteHeight - text.FontSize) / 4);
+                    // плавное падение сверху: верхняя граница ноты стартует за экраном
+                    double y = delta * pixelsPerSecond - noteHeight;
 
-                NotesCanvas.Children.Add(rect);
-                NotesCanvas.Children.Add(text);
+                    // если нота ещё полностью вне экрана — пропускаем
+                    if (y + noteHeight < 0)
+                        continue;
+
+                    var rect = new System.Windows.Shapes.Rectangle
+                    {
+                        Width = noteWidth,
+                        Height = noteHeight,
+                        Fill = Brushes.DeepSkyBlue,
+                        RadiusX = 6,
+                        RadiusY = 6,
+                        Stroke = Brushes.Black,
+                        StrokeThickness = 0.8
+                    };
+
+                    Canvas.SetLeft(rect, note.X);
+                    Canvas.SetTop(rect, y);
+                    NotesCanvas.Children.Add(rect);
+
+                    var text = new TextBlock
+                    {
+                        Text = note.NoteName,
+                        Foreground = Brushes.White,
+                        FontSize = 10,
+                        FontWeight = FontWeights.Bold,
+                        Width = noteWidth,
+                        Height = noteHeight,
+                        TextAlignment = TextAlignment.Center,
+                        VerticalAlignment = VerticalAlignment.Center
+                    };
+
+                    Canvas.SetLeft(text, note.X);
+                    Canvas.SetTop(text, y + (noteHeight - text.FontSize) / 4);
+                    NotesCanvas.Children.Add(text);
+                }
             }
         }
     }
 }
+

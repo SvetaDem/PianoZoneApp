@@ -14,17 +14,17 @@ namespace PianoTrainerApp.ViewModels
     {
         public ObservableCollection<PianoKey> WhiteKeys { get; set; }
         public ObservableCollection<PianoKey> BlackKeys { get; set; }
-        public ObservableCollection<NoteVisual> FallingNotes { get; set; }
+        public ObservableCollection<MidiNote> FallingNotes { get; set; }
 
         private DispatcherTimer animationTimer;
-        private double currentTime = 0;
         private List<MidiNote> allNotes;
-
+        private DateTime startTime;
+        public double CurrentTime => (DateTime.Now - startTime).TotalSeconds;
         public PianoViewModel()
         {
             WhiteKeys = new ObservableCollection<PianoKey>();
             BlackKeys = new ObservableCollection<PianoKey>();
-            FallingNotes = new ObservableCollection<NoteVisual>();
+            FallingNotes = new ObservableCollection<MidiNote>();
 
             GenerateKeys();
 
@@ -32,40 +32,33 @@ namespace PianoTrainerApp.ViewModels
             animationTimer.Interval = TimeSpan.FromMilliseconds(20);
             animationTimer.Tick += Animate;
         }
-
         public void StartAnimation(List<MidiNote> notes)
         {
-            allNotes = notes.OrderBy(n => n.StartTime).ToList();
-            currentTime = 0;
+
             FallingNotes.Clear();
+            startTime = DateTime.Now;
+
+            // Назначаем X позиции
+            foreach (var n in notes)
+                n.X = GetKeyX(n.NoteName);
+
+            allNotes = notes.OrderBy(n => n.StartTime).ToList();
+
+            // Добавляем все ноты сразу
+            foreach (var n in allNotes)
+                FallingNotes.Add(n);
+
             animationTimer.Start();
         }
 
+
         private void Animate(object sender, EventArgs e)
         {
-            currentTime += 0.02; // тикает каждые 20 мс
-
-            // Выпускаем новые ноты, если пора
-            var newNotes = allNotes
-                .Where(n => n.StartTime <= currentTime && n.StartTime > currentTime - 0.02)
-                .ToList();
-
-            foreach (var n in newNotes)
-            {
-                FallingNotes.Add(new NoteVisual
-                {
-                    NoteName = n.NoteName,
-                    X = GetKeyX(n.NoteName),
-                    Y = -30
-                });
-            }
-
-            // Двигаем все ноты вниз
+            // удаляем ноты, которые полностью ушли за экран
             for (int i = FallingNotes.Count - 1; i >= 0; i--)
             {
-                FallingNotes[i].Y += 3; // скорость падения
-
-                if (FallingNotes[i].Y >= 200)
+                var note = FallingNotes[i];
+                if (CurrentTime - note.StartTime > note.Duration + 5)
                     FallingNotes.RemoveAt(i);
             }
         }
@@ -73,34 +66,37 @@ namespace PianoTrainerApp.ViewModels
         private double GetKeyX(string noteName)
         {
             var whiteKey = WhiteKeys.FirstOrDefault(k => k.Note == noteName);
-            if (whiteKey != null) return whiteKey.PositionX;
-
+            if (whiteKey != null)
+                return whiteKey.PositionX;
             var blackKey = BlackKeys.FirstOrDefault(k => k.Note == noteName);
-            if (blackKey != null) return blackKey.PositionX;
-
+            if (blackKey != null)
+                return blackKey.PositionX;
             return 0;
         }
-
         private void GenerateKeys()
         {
             string[] whiteNotes = { "C", "D", "E", "F", "G", "A", "B" };
             string[] blackNotes = { "C#", "D#", "", "F#", "G#", "A#", "" };
 
             double x = 0;
+
             for (int octave = 1; octave <= 7; octave++)
             {
                 for (int i = 0; i < 7; i++)
                 {
-                    var whiteKey = new PianoKey { Note = $"{whiteNotes[i]}{octave}", IsBlack = false, PositionX = x };
-                    WhiteKeys.Add(whiteKey);
-
-                    if (!string.IsNullOrEmpty(blackNotes[i]))
+                    WhiteKeys.Add(new PianoKey
                     {
-                        var blackKey = new PianoKey { Note = $"{blackNotes[i]}{octave}", IsBlack = true, PositionX = x + 28 };
-                        BlackKeys.Add(blackKey);
-                    }
-
-                    x += 40;
+                        Note = $"{whiteNotes[i]}{octave}",
+                        IsBlack = false,
+                        PositionX = x
+                    });
+                    if (!string.IsNullOrEmpty(blackNotes[i]))
+                        BlackKeys.Add(new PianoKey
+                        {
+                            Note = $"{blackNotes[i]}{octave}",
+                            IsBlack = true,
+                            PositionX = x + 28
+                        }); x += 40;
                 }
             }
         }

@@ -12,6 +12,21 @@ namespace PianoTrainerApp.Services
 {
     internal class MidiParser
     {
+        private static readonly Dictionary<string, string> NoteMap = new Dictionary<string, string>
+        {
+            {"CSharp", "C#"},
+            {"DSharp", "D#"},
+            {"FSharp", "F#"},
+            {"GSharp", "G#"},
+            {"ASharp", "A#"},
+            {"C", "C"},
+            {"D", "D"},
+            {"E", "E"},
+            {"F", "F"},
+            {"G", "G"},
+            {"A", "A"},
+            {"B", "B"}
+        };
         public static List<MidiNote> ParseMidi(string path)
         {
             var midiFile = MidiFile.Read(path);
@@ -21,7 +36,7 @@ namespace PianoTrainerApp.Services
             return notes.Select(n => new MidiNote
             {
                 // Формируем строку вроде "C4", "D#5" и т.п.
-                NoteName = $"{n.NoteName}{n.Octave}",
+                NoteName = $"{NoteMap[n.NoteName.ToString()]}{n.Octave}",
                 StartTime = n.TimeAs<MetricTimeSpan>(tempoMap).TotalSeconds,
                 Duration = n.LengthAs<MetricTimeSpan>(tempoMap).TotalSeconds
             }).ToList();

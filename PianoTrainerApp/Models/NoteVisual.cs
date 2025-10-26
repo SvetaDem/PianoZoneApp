@@ -11,5 +11,6 @@ namespace PianoTrainerApp.Models
         public string NoteName { get; set; }
         public double X { get; set; }
         public double Y { get; set; }
+        public double Duration { get; set; } // длительность в секундах public double StartTime { get; set; } // момент появления
     }
 }
