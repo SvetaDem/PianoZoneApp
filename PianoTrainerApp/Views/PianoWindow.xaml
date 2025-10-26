@@ -3,64 +3,51 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:conv="clr-namespace:PianoTrainerApp.Converters"
         mc:Ignorable="d"
         Title="Piano" Height="500" Width="1200">
-    <Window.Resources>
-        <conv:KeyColorConverter x:Key="KeyColorConverter"/>
-    </Window.Resources>
 
-    <!-- Контейнер для всего пианино -->
-    <Grid VerticalAlignment="Bottom">
+    <Grid>
         <ScrollViewer HorizontalScrollBarVisibility="Auto">
-            <Grid>
-                <!-- Белые клавиши -->
-                <ItemsControl ItemsSource="{Binding WhiteKeys}">
-                    <ItemsControl.ItemsPanel>
-                        <ItemsPanelTemplate>
-                            <StackPanel Orientation="Horizontal"/>
-                        </ItemsPanelTemplate>
-                    </ItemsControl.ItemsPanel>
-                    <ItemsControl.ItemTemplate>
-                        <DataTemplate>
-                            <Border Width="40" Height="200"
-                                    Background="White"
-                                    BorderBrush="Black" BorderThickness="1">
-                                <TextBlock Text="{Binding Note}"
-                                           VerticalAlignment="Bottom"
-                                           HorizontalAlignment="Center"
-                                           FontSize="10"/>
-                            </Border>
-                        </DataTemplate>
-                    </ItemsControl.ItemTemplate>
-                </ItemsControl>
 
-                <!-- Чёрные клавиши поверх белых -->
-                <ItemsControl ItemsSource="{Binding BlackKeys}">
-                    <ItemsControl.ItemsPanel>
-                        <ItemsPanelTemplate>
-                            <Canvas/>
-                        </ItemsPanelTemplate>
-                    </ItemsControl.ItemsPanel>
-                    <ItemsControl.ItemTemplate>
-                        <DataTemplate>
-                            <Border Width="25" Height="120"
-                                    Background="Black"
-                                    BorderBrush="Black" BorderThickness="1">
-                                <TextBlock Text="{Binding Note}"
-                                           Foreground="White"
-                                           VerticalAlignment="Bottom"
-                                           HorizontalAlignment="Center"
-                                           FontSize="9"/>
-                            </Border>
-                        </DataTemplate>
-                    </ItemsControl.ItemTemplate>
-                    <ItemsControl.ItemContainerStyle>
-                        <Style TargetType="ContentPresenter">
-                            <Setter Property="Canvas.Left" Value="{Binding PositionX}"/>
-                        </Style>
-                    </ItemsControl.ItemContainerStyle>
-                </ItemsControl>
+            <Grid>
+                <!-- Слой нот (они падают сверху) -->
+                <Canvas x:Name="NotesCanvas" VerticalAlignment="Top" Height="300"/>
+
+                <!-- Слой клавиш (пианино внизу) -->
+                <Grid VerticalAlignment="Bottom">
+                    <ItemsControl ItemsSource="{Binding WhiteKeys}">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <StackPanel Orientation="Horizontal"/>
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Border Width="40" Height="200" Background="White" BorderBrush="Black" BorderThickness="1">
+                                    <TextBlock Text="{Binding Note}" VerticalAlignment="Bottom" HorizontalAlignment="Center" FontSize="10"/>
+                                </Border>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+
+                    <ItemsControl ItemsSource="{Binding BlackKeys}">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <Canvas/>
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Border Width="25" Height="120" Background="Black"/>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                        <ItemsControl.ItemContainerStyle>
+                            <Style TargetType="ContentPresenter">
+                                <Setter Property="Canvas.Left" Value="{Binding PositionX}"/>
+                            </Style>
+                        </ItemsControl.ItemContainerStyle>
+                    </ItemsControl>
+                </Grid>
             </Grid>
         </ScrollViewer>
     </Grid>

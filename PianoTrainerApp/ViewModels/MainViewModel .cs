@@ -46,8 +46,8 @@ namespace PianoTrainerApp.ViewModels
 
             Songs = new ObservableCollection<Song>
             {
-                new Song { Title="Twinkle Little Star", Difficulty=DifficultyLevel.Beginner, MidiPath="Assets/twinkle.mid" },
-                new Song { Title="Für Elise", Difficulty=DifficultyLevel.Intermediate, MidiPath="Assets/furelise.mid" },
+                new Song { Title="Twinkle Little Star", Difficulty=DifficultyLevel.Beginner, MidiPath="Assets/twinkle-twinkle-little-star.mid" },
+                new Song { Title="Für Elise", Difficulty=DifficultyLevel.Intermediate, MidiPath="Assets/Fur Elise.mid" },
                 new Song { Title="Moonlight Sonata", Difficulty=DifficultyLevel.Advanced, MidiPath="Assets/moonlight.mid" }
             };
 
