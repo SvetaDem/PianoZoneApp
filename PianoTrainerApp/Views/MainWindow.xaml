@@ -3,24 +3,427 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:PianoTrainerApp"
+        xmlns:local="clr-namespace:PianoTrainerApp.Views"
         mc:Ignorable="d"
-        Title="PianoZone" Height="450" Width="800">
-    <Grid Margin="10">
-        <DockPanel>
-            <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Margin="0 0 0 10">
-                <TextBlock Text="Фильтр по уровню:" VerticalAlignment="Center"/>
-                <ComboBox Width="150" Margin="10 0"
-                          ItemsSource="{Binding DifficultyLevels}"
-                          SelectedItem="{Binding SelectedDifficulty}"/>
-                <Button Content="Импортировать MIDI" Command="{Binding ImportCommand}"/>
+        Title="PianoZone" Height="650" Width="1050"
+        MinHeight="600" MinWidth="1000"
+        WindowStartupLocation="CenterScreen">
+    <Grid Cursor="">
+        <!-- Фон -->
+        <Grid.Background>
+            <ImageBrush ImageSource="/Images/main_background.png" Stretch="Fill"/>
+        </Grid.Background>
+
+        <!-- ВЕРХНЯЯ ПАНЕЛЬ -->
+        <Grid Margin="20,0" Height="60" VerticalAlignment="Top">
+
+            <!-- Заголовок -->
+            <TextBlock Text="PianoZone"
+                       VerticalAlignment="Center"
+                       Foreground="White"
+                       FontSize="24"
+                       FontWeight="Black"/>
+
+            <!-- Среднее меню -->
+            <StackPanel Orientation="Horizontal"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center">
+
+                <TextBlock Text="Home"
+                           Foreground="White"
+                           FontSize="20"
+                           Cursor="Hand"
+                           Margin="0,0,25,0"
+                           FontWeight="Medium"
+                           VerticalAlignment="Bottom"/>
+
+                <TextBlock Text="|"
+                           Foreground="#202020"
+                           FontSize="20"
+                           FontWeight="Medium"
+                           Margin="0,0,25,0"
+                           VerticalAlignment="Bottom"/>
+
+                <TextBlock Text="Learn"
+                           Foreground="#202020"
+                           FontSize="16"
+                           FontWeight="Medium"
+                           Cursor="Hand"
+                           Margin="0,0,25,0"
+                           VerticalAlignment="Bottom"/>
+
+                <TextBlock Text="|"
+                           Foreground="#202020"
+                           FontSize="20"
+                           FontWeight="Medium"
+                           Margin="0,0,25,0"
+                           VerticalAlignment="Bottom"/>
+
+                <TextBlock Text="Songs"
+                           Foreground="#202020"
+                           FontSize="16"
+                           Cursor="Hand"
+                           FontWeight="Medium"
+                           VerticalAlignment="Bottom"/>
             </StackPanel>
 
-            <ListBox ItemsSource="{Binding FilteredSongs}"
-                     DisplayMemberPath="Title"
-                     SelectedItem="{Binding SelectedSong}"
-                     Margin="0 10 0 0"
-                     MouseDoubleClick="ListBox_DoubleClick"/>
-        </DockPanel>
+        </Grid>
+
+        <!-- Иконки справа -->
+        <StackPanel Orientation="Vertical"
+            VerticalAlignment="Top"
+                    Margin="20"
+            HorizontalAlignment="Right">
+
+            <Button Width="32" Height="32" Cursor="Hand"
+            Background="Transparent" BorderThickness="0"
+            Margin="0,0,0,10">
+                <!-- Масштабирование -->
+                <Button.RenderTransform>
+                    <ScaleTransform ScaleX="1" ScaleY="1"/>
+                </Button.RenderTransform>
+
+                <!-- Ключевой момент: точка центра -->
+                <Button.RenderTransformOrigin>0.5,0.5</Button.RenderTransformOrigin>
+
+                <Button.Template>
+                    <ControlTemplate TargetType="Button">
+                        <ContentPresenter HorizontalAlignment="Center"
+                      VerticalAlignment="Center"/>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Trigger.EnterActions>
+                                    <BeginStoryboard>
+                                        <Storyboard>
+                                            <DoubleAnimation Storyboard.TargetProperty="RenderTransform.(ScaleTransform.ScaleX)"
+                                         To="1.1" Duration="0:0:0.15"/>
+                                            <DoubleAnimation Storyboard.TargetProperty="RenderTransform.(ScaleTransform.ScaleY)"
+                                         To="1.1" Duration="0:0:0.15"/>
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </Trigger.EnterActions>
+                                <Trigger.ExitActions>
+                                    <BeginStoryboard>
+                                        <Storyboard>
+                                            <DoubleAnimation Storyboard.TargetProperty="RenderTransform.(ScaleTransform.ScaleX)"
+                                         To="1" Duration="0:0:0.15"/>
+                                            <DoubleAnimation Storyboard.TargetProperty="RenderTransform.(ScaleTransform.ScaleY)"
+                                         To="1" Duration="0:0:0.15"/>
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </Trigger.ExitActions>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Button.Template>
+
+                <Image Source="/Images/profile.png"/>
+            </Button>
+
+            <Button Width="32" Height="32"
+                    Cursor="Hand"
+            Background="Transparent" BorderThickness="0">
+                <!-- Масштабирование -->
+                <Button.RenderTransform>
+                    <ScaleTransform ScaleX="1" ScaleY="1"/>
+                </Button.RenderTransform>
+
+                <!-- Ключевой момент: точка центра -->
+                <Button.RenderTransformOrigin>0.5,0.5</Button.RenderTransformOrigin>
+
+                <Button.Template>
+                    <ControlTemplate TargetType="Button">
+                        <ContentPresenter HorizontalAlignment="Center"
+                      VerticalAlignment="Center"/>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Trigger.EnterActions>
+                                    <BeginStoryboard>
+                                        <Storyboard>
+                                            <DoubleAnimation Storyboard.TargetProperty="RenderTransform.(ScaleTransform.ScaleX)"
+                                         To="1.1" Duration="0:0:0.15"/>
+                                            <DoubleAnimation Storyboard.TargetProperty="RenderTransform.(ScaleTransform.ScaleY)"
+                                         To="1.1" Duration="0:0:0.15"/>
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </Trigger.EnterActions>
+                                <Trigger.ExitActions>
+                                    <BeginStoryboard>
+                                        <Storyboard>
+                                            <DoubleAnimation Storyboard.TargetProperty="RenderTransform.(ScaleTransform.ScaleX)"
+                                         To="1" Duration="0:0:0.15"/>
+                                            <DoubleAnimation Storyboard.TargetProperty="RenderTransform.(ScaleTransform.ScaleY)"
+                                         To="1" Duration="0:0:0.15"/>
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </Trigger.ExitActions>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Button.Template>
+
+                <Image Source="/Images/settings.png"/>
+            </Button>
+        </StackPanel>
+
+        <!-- ЦЕНТРАЛЬНЫЕ КАРТОЧКИ -->
+        <StackPanel Orientation="Horizontal"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center">
+
+            <!-- Левая карточка -->
+            <Button Cursor="Hand"
+                    Background="Black"
+                    BorderBrush="White"
+                    BorderThickness="2"
+                    Margin="0,0,60,0"
+                    Width="330" Height="340">
+                <Button.Template>
+                    <ControlTemplate TargetType="Button">
+                        <Border
+                            x:Name="border"
+                            Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            CornerRadius="25"
+                            RenderTransformOrigin="0.5,0.5">
+
+                            <Border.RenderTransform>
+                                <ScaleTransform ScaleX="1" ScaleY="1"/>
+                            </Border.RenderTransform>
+                            <Border.Effect>
+                                <DropShadowEffect
+                                    Color="#f8f8f8"
+                                    BlurRadius="70"
+                                    ShadowDepth="20"
+                                    Direction="-50"
+                                    Opacity="0.5"/>
+                            </Border.Effect>
+
+                            <!-- Внутренний контейнер для текста -->
+                            <StackPanel Margin="34,38,70,15" VerticalAlignment="Top">
+                                <!-- Заголовок -->
+                                <TextBlock
+                                    Text="A beginner?"
+                                    Foreground="White"
+                                    FontSize="22"
+                                    FontWeight="ExtraBold"/>
+
+                                <!-- Подзаголовок с разной жирностью -->
+                                <TextBlock
+                                    Foreground="White"
+                                    FontSize="16"
+                                    Margin="0,30,0,40"
+                                    TextWrapping="Wrap">
+                                    <Run Text="Don't worry and move on to" FontWeight="Light"/>
+                                    <LineBreak/>
+                                    <Run Text="learning the basics" FontWeight="Medium"/>
+                                </TextBlock>
+                                <Image
+                                    Height="110"
+                                    Margin="0,10,0,0"
+                                    Source="/Images/piano.png"/>
+                            </StackPanel>
+                        </Border>
+                        <!-- Триггеры анимаций -->
+                        <ControlTemplate.Triggers>
+                            <!-- Наведение -->
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Trigger.EnterActions>
+                                    <BeginStoryboard>
+                                        <Storyboard>
+                                            <!-- Увеличение -->
+                                            <DoubleAnimation
+                                                Storyboard.TargetName="border"
+                                                Storyboard.TargetProperty="(RenderTransform).(ScaleTransform.ScaleX)"
+                                                To="1.05" Duration="0:0:0.15"/>
+                                            <DoubleAnimation
+                                                Storyboard.TargetName="border"
+                                                Storyboard.TargetProperty="(RenderTransform).(ScaleTransform.ScaleY)"
+                                                To="1.05" Duration="0:0:0.15"/>
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </Trigger.EnterActions>
+
+                                <Trigger.ExitActions>
+                                    <BeginStoryboard>
+                                        <Storyboard>
+                                            <!-- Возврат -->
+                                            <DoubleAnimation
+                                                Storyboard.TargetName="border"
+                                                Storyboard.TargetProperty="(RenderTransform).(ScaleTransform.ScaleX)"
+                                                To="1" Duration="0:0:0.15"/>
+                                            <DoubleAnimation
+                                                Storyboard.TargetName="border"
+                                                Storyboard.TargetProperty="(RenderTransform).(ScaleTransform.ScaleY)"
+                                                To="1" Duration="0:0:0.15"/>
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </Trigger.ExitActions>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Button.Template>
+                
+            </Button>
+
+
+            <!-- Правая карточка -->
+            <Button Cursor="Hand"
+        Background="White"
+        BorderBrush="Black"
+        BorderThickness="2"
+        Width="330" Height="340">
+
+                <Button.Template>
+                    <ControlTemplate TargetType="Button">
+
+                        <!-- Масштабирование всей кнопки -->
+                        <Border x:Name="border"
+                    Background="{TemplateBinding Background}"
+                    BorderBrush="{TemplateBinding BorderBrush}"
+                    BorderThickness="{TemplateBinding BorderThickness}"
+                    CornerRadius="25"
+                    RenderTransformOrigin="0.5,0.5">
+
+                            <Border.RenderTransform>
+                                <ScaleTransform ScaleX="1" ScaleY="1"/>
+                            </Border.RenderTransform>
+
+                            <Border.Effect>
+                                <DropShadowEffect
+                        Color="#f8f8f8"
+                        BlurRadius="70"
+                        ShadowDepth="20"
+                        Direction="-50"
+                        Opacity="0.5"/>
+                            </Border.Effect>
+
+                            <!-- Контент -->
+                            <StackPanel Margin="34,38,15,38" VerticalAlignment="Top">
+                                <TextBlock Text="Let's play"
+                               Foreground="Black"
+                               FontSize="22"
+                               FontWeight="ExtraBold"/>
+
+                                <TextBlock Foreground="Black"
+                               FontSize="16"
+                               Margin="0,30,0,20"
+                               TextWrapping="Wrap">
+                        <Run Foreground="#564949"
+                             Text="Go to the library and"
+                             FontWeight="Regular"/>
+                        <LineBreak/>
+                        <Run Text="choose the song you like"
+                             FontWeight="Medium"/>
+                                </TextBlock>
+
+                                <Image Source="/Images/go_on.png"
+                           Height="50"
+                           Margin="-10,0"
+                           HorizontalAlignment="Left"/>
+
+                                <Image Width="190"
+                           Margin="0,-70"
+                           HorizontalAlignment="Right"
+                           Source="/Images/piano_player.png"/>
+                            </StackPanel>
+                        </Border>
+
+                        <!-- Триггеры анимаций -->
+                        <ControlTemplate.Triggers>
+                            <!-- Наведение -->
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Trigger.EnterActions>
+                                    <BeginStoryboard>
+                                        <Storyboard>
+                                            <!-- Увеличение -->
+                                            <DoubleAnimation
+                                    Storyboard.TargetName="border"
+                                    Storyboard.TargetProperty="(RenderTransform).(ScaleTransform.ScaleX)"
+                                    To="1.05" Duration="0:0:0.15"/>
+                                            <DoubleAnimation
+                                    Storyboard.TargetName="border"
+                                    Storyboard.TargetProperty="(RenderTransform).(ScaleTransform.ScaleY)"
+                                    To="1.05" Duration="0:0:0.15"/>
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </Trigger.EnterActions>
+
+                                <Trigger.ExitActions>
+                                    <BeginStoryboard>
+                                        <Storyboard>
+                                            <!-- Возврат -->
+                                            <DoubleAnimation
+                                    Storyboard.TargetName="border"
+                                    Storyboard.TargetProperty="(RenderTransform).(ScaleTransform.ScaleX)"
+                                    To="1" Duration="0:0:0.15"/>
+                                            <DoubleAnimation
+                                    Storyboard.TargetName="border"
+                                    Storyboard.TargetProperty="(RenderTransform).(ScaleTransform.ScaleY)"
+                                    To="1" Duration="0:0:0.15"/>
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </Trigger.ExitActions>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Button.Template>
+            </Button>
+
+        </StackPanel>
+
+        <!-- КНОПКА ВЫХОД -->
+        <Button Width="32" Height="32"
+        Cursor="Hand"
+        BorderThickness="0"
+                Margin="20"
+        Background="Transparent"
+        HorizontalAlignment="Right"
+        VerticalAlignment="Bottom">
+
+            <!-- Масштабирование -->
+            <Button.RenderTransform>
+                <ScaleTransform ScaleX="1" ScaleY="1"/>
+            </Button.RenderTransform>
+
+            <!-- Ключевой момент: точка центра -->
+            <Button.RenderTransformOrigin>0.5,0.5</Button.RenderTransformOrigin>
+
+            <Button.Template>
+                <ControlTemplate TargetType="Button">
+                    <ContentPresenter HorizontalAlignment="Center"
+                              VerticalAlignment="Center"/>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Trigger.EnterActions>
+                                <BeginStoryboard>
+                                    <Storyboard>
+                                        <DoubleAnimation Storyboard.TargetProperty="RenderTransform.(ScaleTransform.ScaleX)"
+                                                 To="1.1" Duration="0:0:0.15"/>
+                                        <DoubleAnimation Storyboard.TargetProperty="RenderTransform.(ScaleTransform.ScaleY)"
+                                                 To="1.1" Duration="0:0:0.15"/>
+                                    </Storyboard>
+                                </BeginStoryboard>
+                            </Trigger.EnterActions>
+                            <Trigger.ExitActions>
+                                <BeginStoryboard>
+                                    <Storyboard>
+                                        <DoubleAnimation Storyboard.TargetProperty="RenderTransform.(ScaleTransform.ScaleX)"
+                                                 To="1" Duration="0:0:0.15"/>
+                                        <DoubleAnimation Storyboard.TargetProperty="RenderTransform.(ScaleTransform.ScaleY)"
+                                                 To="1" Duration="0:0:0.15"/>
+                                    </Storyboard>
+                                </BeginStoryboard>
+                            </Trigger.ExitActions>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Button.Template>
+
+            <Image Source="/Images/exit.png"/>
+        </Button>
+
+
     </Grid>
 </Window>

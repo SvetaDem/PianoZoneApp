@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace PianoTrainerApp.ViewModels
 {
-    public class MainViewModel
+    public class LibraryViewModel
     {
         public ObservableCollection<Song> Songs { get; set; }
         public ObservableCollection<DifficultyLevel> DifficultyLevels { get; set; }
@@ -35,7 +35,7 @@ namespace PianoTrainerApp.ViewModels
 
         public ObservableCollection<Song> FilteredSongs { get; set; }
 
-        public MainViewModel()
+        public LibraryViewModel()
         {
             DifficultyLevels = new ObservableCollection<DifficultyLevel>
             {

@@ -65,13 +65,16 @@
     <Compile Include="Models\NoteVisual.cs" />
     <Compile Include="Models\PianoKey.cs" />
     <Compile Include="Services\MidiParser.cs" />
-    <Compile Include="ViewModels\MainViewModel .cs" />
+    <Compile Include="ViewModels\LibraryViewModel .cs" />
     <Compile Include="ViewModels\PianoViewModel.cs" />
+    <Compile Include="Views\MainWindow.xaml.cs">
+      <DependentUpon>MainWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\PianoWindow.xaml.cs">
       <DependentUpon>PianoWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Models\Song.cs" />
-    <Page Include="Views\MainWindow.xaml">
+    <Page Include="Views\LibraryWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -80,10 +83,14 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Models\DifficultyLevel.cs" />
-    <Compile Include="Views\MainWindow.xaml.cs">
-      <DependentUpon>MainWindow.xaml</DependentUpon>
+    <Compile Include="Views\LibraryWindow.xaml.cs">
+      <DependentUpon>LibraryWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="Views\MainWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\PianoWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -127,6 +134,13 @@
     <Content Include="Assets\twinkle-twinkle-little-star.mid">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Resource Include="Images\go_on.png" />
+    <Resource Include="Images\piano_player.png" />
+    <Resource Include="Images\piano.png" />
+    <Resource Include="Images\exit.png" />
+    <Resource Include="Images\settings.png" />
+    <Resource Include="Images\profile.png" />
+    <Resource Include="Images\main_background.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\packages\Melanchall.DryWetMidi.8.0.2\build\Melanchall.DryWetMidi.targets" Condition="Exists('..\packages\Melanchall.DryWetMidi.8.0.2\build\Melanchall.DryWetMidi.targets')" />

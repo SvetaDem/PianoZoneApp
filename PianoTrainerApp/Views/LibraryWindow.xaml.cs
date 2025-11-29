@@ -10,19 +10,29 @@ using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using System.Windows.Navigation;
 using System.Windows.Shapes;
+using PianoTrainerApp.ViewModels;
 
 namespace PianoTrainerApp.Views
 {
     /// <summary>
     /// Логика взаимодействия для MainWindow.xaml
     /// </summary>
-    public partial class MainWindow : Window
+    public partial class LibraryWindow : Window
     {
-        public MainWindow()
+        public LibraryWindow()
         {
             InitializeComponent();
+            DataContext = new LibraryViewModel();
         }
-
+        private void ListBox_DoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            if (DataContext is LibraryViewModel vm && vm.SelectedSong != null)
+            {
+                var pianoWin = new PianoWindow(vm.SelectedSong);
+                pianoWin.Show();
+            }
+        }
     }
 }
