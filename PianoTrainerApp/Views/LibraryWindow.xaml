@@ -5,22 +5,648 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:PianoTrainerApp"
         mc:Ignorable="d"
-        Title="PianoZone" Height="450" Width="800">
-    <Grid Margin="10">
-        <DockPanel>
-            <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Margin="0 0 0 10">
-                <TextBlock Text="Фильтр по уровню:" VerticalAlignment="Center"/>
-                <ComboBox Width="150" Margin="10 0"
-                          ItemsSource="{Binding DifficultyLevels}"
-                          SelectedItem="{Binding SelectedDifficulty}"/>
-                <Button Content="Импортировать MIDI" Command="{Binding ImportCommand}"/>
+        Title="PianoZone" Height="650" Width="1050"
+        MinHeight="600" MinWidth="1000"
+        WindowStartupLocation="CenterScreen">
+    <Window.Resources>
+
+        <!-- Стиль вкладок навигации -->
+        <Style x:Key="NavTabTextStyle" TargetType="TextBlock">
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="RenderTransformOrigin" Value="0.5,0.5"/>
+            <Setter Property="Foreground" Value="#E5E5E5"/>
+            <Setter Property="RenderTransform">
+                <Setter.Value>
+                    <ScaleTransform ScaleX="1" ScaleY="1"/>
+                </Setter.Value>
+            </Setter>
+
+            <!-- Hover эффект -->
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Foreground" Value="White"/>
+                    <Setter Property="RenderTransform">
+                        <Setter.Value>
+                            <ScaleTransform ScaleX="1.1" ScaleY="1.1"/>
+                        </Setter.Value>
+                    </Setter>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+        <!-- Универсальный стиль кнопки-иконки (profile/settings/exit) -->
+        <Style x:Key="IconButtonStyle" TargetType="Button">
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="RenderTransformOrigin" Value="0.5,0.5"/>
+            <Setter Property="RenderTransform">
+                <Setter.Value>
+                    <ScaleTransform ScaleX="1" ScaleY="1"/>
+                </Setter.Value>
+            </Setter>
+
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <ContentPresenter HorizontalAlignment="Center"
+                                  VerticalAlignment="Center"/>
+
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Trigger.EnterActions>
+                                    <BeginStoryboard>
+                                        <Storyboard>
+                                            <DoubleAnimation Storyboard.TargetProperty="RenderTransform.(ScaleTransform.ScaleX)"
+                                                     To="1.1" Duration="0:0:0.15"/>
+                                            <DoubleAnimation Storyboard.TargetProperty="RenderTransform.(ScaleTransform.ScaleY)"
+                                                     To="1.1" Duration="0:0:0.15"/>
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </Trigger.EnterActions>
+
+                                <Trigger.ExitActions>
+                                    <BeginStoryboard>
+                                        <Storyboard>
+                                            <DoubleAnimation Storyboard.TargetProperty="RenderTransform.(ScaleTransform.ScaleX)"
+                                                     To="1" Duration="0:0:0.15"/>
+                                            <DoubleAnimation Storyboard.TargetProperty="RenderTransform.(ScaleTransform.ScaleY)"
+                                                     To="1" Duration="0:0:0.15"/>
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </Trigger.ExitActions>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- Стиль для Combobox -->
+       <!-- СТИЛЬ ДЛЯ ЭЛЕМЕНТОВ СПИСКА -->
+        <Style TargetType="ComboBoxItem">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Foreground" Value="Black"/>
+            <Setter Property="Padding" Value="8 4"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="SnapsToDevicePixels" Value="True"/>
+
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ComboBoxItem">
+                        <Border x:Name="Bd"
+                        Background="{TemplateBinding Background}"
+                        Padding="{TemplateBinding Padding}">
+                            <ContentPresenter />
+                        </Border>
+
+                        <ControlTemplate.Triggers>
+
+                            <!-- Наведение -->
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Bd" Property="Background" Value="#EEE"/>
+                                <!-- светло-серый -->
+                            </Trigger>
+
+                            <!-- Выбранный -->
+                            <Trigger Property="IsSelected" Value="True">
+                                <Setter TargetName="Bd" Property="Background" Value="#DDD"/>
+                                <!-- немного темнее -->
+                                <Setter Property="Foreground" Value="Black"/>
+                            </Trigger>
+
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+
+        <!-- ОСНОВНОЙ СТИЛЬ ComboBox -->
+        <Style x:Key="RoundedComboBox" TargetType="ComboBox">
+            <Setter Property="Foreground" Value="Black"/>
+            <Setter Property="Background" Value="#bfffffff"/>
+            <Setter Property="BorderBrush" Value="White"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Padding" Value="5"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ComboBox">
+                        <Grid>
+                            <!-- основной визуал -->
+                            <Border x:Name="MainBorder"
+                            CornerRadius="12"
+                            Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}">
+                                <Grid>
+                                    <!-- Placeholder: по умолчанию скрыт (Collapsed) -->
+                                    <TextBlock x:Name="Placeholder"
+                                       Text="Choose the Genre"
+                                       Margin="10,0,30,0"
+                                       Foreground="#202020"
+                                       VerticalAlignment="Center"
+                                       IsHitTestVisible="False"
+                                       Visibility="Collapsed"/>
+
+                                    <!-- Выбранный текст: по умолчанию видим -->
+                                    <ContentPresenter x:Name="ContentSite"
+                                              Margin="10,0,30,0"
+                                              VerticalAlignment="Center"
+                                              Content="{TemplateBinding SelectionBoxItem}"
+                                              Visibility="Visible"/>
+
+                                    <!-- Стрелка -->
+                                    <Path x:Name="Arrow"
+                                  Data="M 0 0 L 6 6 L 12 0"
+                                  Stroke="Black"
+                                  StrokeThickness="2"
+                                  HorizontalAlignment="Right"
+                                  VerticalAlignment="Center"
+                                  Margin="0,0,10,0"/>
+                                </Grid>
+                            </Border>
+
+                            <!-- Невидимый ToggleButton поверх всего: отвечает за открытие/закрытие -->
+                            <ToggleButton x:Name="ToggleButton"
+                                  Background="Transparent"
+                                  BorderBrush="{x:Null}"
+                                  Focusable="False"
+                                  Opacity="0" Cursor="Hand"
+                                  HorizontalAlignment="Stretch"
+                                  VerticalAlignment="Stretch"
+                                  IsChecked="{Binding IsDropDownOpen, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}"/>
+
+                            <!-- Popup -->
+                            <Popup x:Name="PART_Popup"
+                           Placement="Bottom"
+                           IsOpen="{TemplateBinding IsDropDownOpen}"
+                           StaysOpen="False"
+                           AllowsTransparency="True"
+                           PopupAnimation="Slide">
+                                <Border CornerRadius="10"
+                                Background="White"
+                                BorderBrush="#444444"
+                                BorderThickness="1"
+                                MinWidth="{Binding ActualWidth, RelativeSource={RelativeSource TemplatedParent}}">
+                                    <ScrollViewer Margin="4">
+                                        <ItemsPresenter />
+                                    </ScrollViewer>
+                                </Border>
+                            </Popup>
+                        </Grid>
+
+                        <!-- Триггеры: один триггер для SelectedItem == null -->
+                        <ControlTemplate.Triggers>
+                            <!-- Если ничего не выбрано -> показать placeholder, скрыть ContentSite -->
+                            <Trigger Property="SelectedItem" Value="{x:Null}">
+                                <Setter TargetName="Placeholder" Property="Visibility" Value="Visible"/>
+                                <Setter TargetName="ContentSite" Property="Visibility" Value="Collapsed"/>
+                            </Trigger>
+
+                            <!-- Иначе (SelectedItem != null) — поведение по умолчанию: placeholder скрыт, ContentSite видим -->
+                            <Trigger Property="IsKeyboardFocusWithin" Value="True">
+                                <Setter TargetName="MainBorder" Property="BorderBrush" Value="#888"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- Стиль элемента списка LISTBOX -->
+        <Style TargetType="ListBoxItem">
+            <Setter Property="Padding" Value="0"/>
+            <Setter Property="Margin" Value="0 0 0 10"/>
+            <!-- расстояние между элементами -->
+            <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+            <Setter Property="Background" Value="Transparent"/>
+            
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ListBoxItem">
+                        <Border x:Name="border"
+                            Background="White"
+                            Padding="10"
+                            CornerRadius="3">
+
+                            <Border.Effect>
+                                <DropShadowEffect Color="Black"
+                                              BlurRadius="20"
+                                              ShadowDepth="-50"
+                                              Direction="0"
+                                              Opacity="0.25"/>
+                            </Border.Effect>
+
+                            <!-- Основная сетка -->
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="45"/>
+                                    <!-- картинка -->
+                                    <ColumnDefinition Width="*"/>
+                                    <!-- текст -->
+                                    <ColumnDefinition Width="35"/>
+                                    <!-- сердечко -->
+                                </Grid.ColumnDefinitions>
+
+                                <!-- Картинка -->
+                                <Border Width="35" Height="35"
+                                    CornerRadius="3"
+                                    VerticalAlignment="Center"
+                                    SnapsToDevicePixels="True">
+                                    <Border.Clip>
+                                        <RectangleGeometry RadiusX="3" RadiusY="3"
+                                            Rect="0,0,35,35"/>
+                                    </Border.Clip>
+                                    <Image Source="{Binding ImagePath}"
+                                        Stretch="UniformToFill"/>
+                                </Border>
+
+                                <!-- Текстовая часть -->
+                                <StackPanel Grid.Column="1"
+                                        Margin="10 0 0 0"
+                                        VerticalAlignment="Center">
+
+                                    <!-- Название -->
+                                    <TextBlock Text="{Binding Title}"
+                                           FontSize="13"
+                                           FontWeight="Medium"
+                                           Foreground="#202020"/>
+
+                                    <!-- Композитор • Жанр -->
+                                    <TextBlock Text="{Binding MetaText}"
+                                           FontSize="11"
+                                           Foreground="#202020"/>
+                                </StackPanel>
+
+                                <!-- Сердечко -->
+                                <ToggleButton Grid.Column="2"
+                                      Width="28" Height="28"
+                                      Background="Transparent"
+                                      BorderThickness="0"
+                                      Cursor="Hand"
+                                      IsChecked="{Binding IsFavorite, Mode=TwoWay}">
+                                    <ToggleButton.Template>
+                                        <ControlTemplate TargetType="ToggleButton">
+                                            <Grid>
+                                                <!-- Векторное сердце -->
+                                                <Path x:Name="HeartPath"
+                                                      Data="M12,21.35 L10.55,20.03 C5.4,15.36 2,12.28 2,8.5 C2,5.42 4.42,3 7.5,3 
+                                                            C9.24,3 10.91,3.81 12,5.08 C13.09,3.81 14.76,3 16.5,3 
+                                                            C19.58,3 22,5.42 22,8.5 C22,12.28 18.6,15.36 13.45,20.03 
+                                                            L12,21.35 Z"
+                                                      Fill="Transparent"
+                                                      Stroke="Black"
+                                                      StrokeThickness="2"
+                                                      Stretch="Uniform"/>
+                                            </Grid>
+                                            <ControlTemplate.Triggers>
+                                                <!-- При нажатии заполняем сердце черным -->
+                                                <Trigger Property="IsChecked" Value="True">
+                                                    <Setter TargetName="HeartPath" Property="Fill" Value="Black"/>
+                                                </Trigger>
+                                                <!-- При наведении можно немного затемнять контур -->
+                                                <Trigger Property="IsMouseOver" Value="True">
+                                                    <Setter TargetName="HeartPath" Property="Stroke" Value="#555"/>
+                                                </Trigger>
+                                                <Trigger Property="IsMouseOver" Value="False">
+                                                    <Setter TargetName="HeartPath" Property="Stroke" Value="Black"/>
+                                                </Trigger>
+                                            </ControlTemplate.Triggers>
+                                        </ControlTemplate>
+                                    </ToggleButton.Template>
+                                </ToggleButton>
+
+
+                            </Grid>
+                        </Border>
+
+                        <!-- Hover-эффект -->
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="border"
+                                    Property="Background"
+                                    Value="#f2f2f2"/>
+                            </Trigger>
+
+                            <Trigger Property="IsSelected" Value="True">
+                                <Setter TargetName="border"
+                                    Property="Background"
+                                    Value="#e6e6e6"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+
+    </Window.Resources>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="60"/>
+            <RowDefinition Height="90"/>
+            <RowDefinition Height="*"/>
+            <!-- Список -->
+        </Grid.RowDefinitions>
+        
+        <!-- Фон -->
+        <Grid.Background>
+            <ImageBrush ImageSource="/Images/main_background.png" Stretch="Fill"/>
+        </Grid.Background>
+
+        <!-- ВЕРХНЯЯ ПАНЕЛЬ -->
+        <Grid Margin="20,0" Height="60" VerticalAlignment="Top">
+
+            <!-- Заголовок -->
+            <TextBlock Text="PianoZone"
+                       VerticalAlignment="Center"
+                       Foreground="White"
+                       FontSize="24"
+                       FontWeight="Black"/>
+
+            <!-- Среднее меню -->
+            <StackPanel Orientation="Horizontal"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center">
+
+                <TextBlock Text="Home"
+                           Foreground="#202020"
+                           FontSize="16"
+                           Cursor="Hand"
+                           Margin="0,0,25,0"                         
+                           MouseLeftButtonDown="Home_CLick"
+                           Style="{StaticResource NavTabTextStyle}"
+                           FontWeight="Medium"
+                           VerticalAlignment="Bottom"/>
+
+                <TextBlock Text="|"
+                           Foreground="#202020"
+                           FontSize="20"
+                           FontWeight="Medium"
+                           Margin="0,0,25,0"
+                           VerticalAlignment="Bottom"/>
+
+                <TextBlock Text="Learn"
+                           Foreground="#202020"
+                           FontSize="16"
+                           FontWeight="Medium"
+                           Cursor="Hand"
+                           MouseLeftButtonDown="ButtonBeginner_Click"
+                           Style="{StaticResource NavTabTextStyle}"
+                           Margin="0,0,25,0"
+                           VerticalAlignment="Bottom"/>
+
+                <TextBlock Text="|"
+                           Foreground="#202020"
+                           FontSize="20"
+                           FontWeight="Medium"
+                           Margin="0,0,25,0"
+                           VerticalAlignment="Bottom"/>
+
+                <TextBlock Text="Songs"
+                           Foreground="White"
+                           FontSize="20"
+                           Cursor="Hand"
+                           Style="{StaticResource NavTabTextStyle}"
+                           FontWeight="Medium"
+                           MouseLeftButtonDown="ButtonLibrary_Click"
+                           VerticalAlignment="Bottom"/>
             </StackPanel>
 
-            <ListBox ItemsSource="{Binding FilteredSongs}"
-                     DisplayMemberPath="Title"
-                     SelectedItem="{Binding SelectedSong}"
-                     Margin="0 10 0 0"
-                     MouseDoubleClick="ListBox_DoubleClick"/>
-        </DockPanel>
+        </Grid>
+
+        <!-- Иконки справа -->
+        <StackPanel Orientation="Vertical"
+            VerticalAlignment="Top"
+                    Margin="20"
+            HorizontalAlignment="Right"
+                    Grid.RowSpan="2">
+
+            <Button Width="32" Height="32" Margin="0,0,0,10"
+                    Style="{StaticResource IconButtonStyle}">
+                <Image Source="/Images/profile.png"/>
+            </Button>
+
+            <Button Width="32" Height="32"
+                    Style="{StaticResource IconButtonStyle}">
+                <Image Source="/Images/settings.png"/>
+            </Button>
+        </StackPanel>
+
+        <!-- БЛОК ФИЛЬТРОВ -->
+        <StackPanel Grid.Row="1" Orientation="Horizontal"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center" Cursor="">
+
+            <Button Width="226" Height="44"
+        Background="#252121"
+        BorderBrush="#d9d9d9"
+        BorderThickness="1"
+        Margin="0 0 25 0"
+        Cursor="Hand" Click="ImportMidi_Click"
+        Command="{Binding ImportCommand}">
+                <Button.Template>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="border"
+                    Background="{TemplateBinding Background}"
+                    BorderBrush="{TemplateBinding BorderBrush}"
+                    BorderThickness="{TemplateBinding BorderThickness}"
+                    CornerRadius="20">
+                            <TextBlock HorizontalAlignment="Center"
+                           VerticalAlignment="Center"
+                           Text="Import MIDI"
+                           FontWeight="Medium"
+                           FontSize="16"
+                           Foreground="White"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <!-- Изменение цвета при наведении -->
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="border" Property="Background" Value="#1C1A1A"/>
+                                <!-- более тёмный -->
+                            </Trigger>
+                            <!-- нажатие -->
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="border" Property="Background" Value="#141212"/>
+                                <!-- ещё темнее -->
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Button.Template>
+            </Button>
+            <Button Width="226" Height="44"
+                    Background="#d9d9d9"
+                    BorderBrush="Black"
+                    BorderThickness="1"
+                    Cursor="Hand"
+                    Click="ShowFavorites_Click">
+                <Button.Template>
+                    <ControlTemplate TargetType="{x:Type Button}">
+                        <Border x:Name="border"
+                    Background="{TemplateBinding Background}"
+                    BorderBrush="{TemplateBinding BorderBrush}"
+                    BorderThickness="{TemplateBinding BorderThickness}"
+                    CornerRadius="20"
+                    Effect="{TemplateBinding Effect}">
+
+                            <!-- Контент -->
+                            <StackPanel Orientation="Horizontal"                                        
+                            HorizontalAlignment="Right"
+                            Margin="0 0 25 0"
+                            VerticalAlignment="Center">
+                                <TextBlock VerticalAlignment="Center"
+                               Text="Your Favourites"
+                               FontWeight="Medium"
+                               FontSize="16"
+                               Foreground="Black"
+                               Margin="0 0 10 0"/>
+                                <!-- Векторное сердце -->
+                                <Path x:Name="HeartPath"
+                                      Data="M12,21.35 L10.55,20.03 C5.4,15.36 2,12.28 2,8.5 C2,5.42 4.42,3 7.5,3 
+                                            C9.24,3 10.91,3.81 12,5.08 C13.09,3.81 14.76,3 16.5,3 
+                                            C19.58,3 22,5.42 22,8.5 C22,12.28 18.6,15.36 13.45,20.03 
+                                            L12,21.35 Z"
+                                      Fill="#605C5C"
+                                      Stroke="Black"
+                                      StrokeThickness="1"
+                                      Stretch="Uniform"
+                                      Height="28" Width="28"/>
+                            </StackPanel>
+                        </Border>
+
+                        <ControlTemplate.Triggers>
+                            <!-- Наведение: затемнение -->
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="border" Property="Background" Value="#C0C0C0"/>
+                                <!-- более тёмный серый -->
+                            </Trigger>
+                            <!-- Нажатие -->
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="border" Property="Background" Value="#A0A0A0"/>
+                                <!-- ещё темнее -->
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Button.Template>
+            </Button>
+
+        </StackPanel>
+
+        <!-- СПИСОК ПЕСЕН -->
+        <Border Grid.Row="2" Background="#d9d9d9"
+                CornerRadius="15"
+                Margin="60 15 60 75">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="50"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+                <Border Grid.Row="0" Background="Black"
+                        CornerRadius="15 15 0 0"
+                        Padding="10">
+                    <!-- Верхняя панель -->
+                    <Grid Background="Black" Margin="15,0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        
+                        <!-- Фильтр по жанрам -->
+                        <ComboBox Width="360" Height="26"
+                      ItemsSource="{Binding Genres}"
+                          SelectedItem="{Binding SelectedGenre}"
+                     Style="{StaticResource RoundedComboBox}"/>
+                        <!-- Поисковая строка -->
+                        <Border Width="190" Height="26"
+                            CornerRadius="15"
+                            DockPanel.Dock="Right"
+                            VerticalAlignment="Center"
+                                HorizontalAlignment="Right"
+                            Padding="10,0"
+                            Background="#40D9D9D9"
+                                Grid.Column="1">
+
+                            <!-- Градиентная ОБВОДКА -->
+                            <Border.BorderBrush>
+                                <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                                    <GradientStop Color="#FF7D7D7D" Offset="0"/>
+                                    <!-- слева прозрачно -->
+                                    <GradientStop Color="#FFE3E3E3" Offset="1"/>
+                                    <!-- справа белое -->
+                                </LinearGradientBrush>
+                            </Border.BorderBrush>
+                            <Border.BorderThickness>1</Border.BorderThickness>
+
+                            <!-- Контент -->
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="26"/>
+                                </Grid.ColumnDefinitions>
+                                
+                                <!-- Текстовое поле -->
+                                <TextBox Grid.Column="0"
+                                     Background="Transparent"
+                                     BorderThickness="0"
+                                     Foreground="White"
+                                     FontSize="14"
+                                     Padding="2" CaretBrush="White"
+                                     VerticalContentAlignment="Center"
+                                     Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"/>
+
+                                <!-- Иконка лупы -->
+                                <Viewbox Width="16" Height="16"
+                                         VerticalAlignment="Center"
+                                         HorizontalAlignment="Center"
+                                         Grid.Column="1">
+                                    <Canvas Width="24" Height="24">
+                                        <!-- Круг лупы -->
+                                        <Ellipse Canvas.Left="2"
+                                                 Canvas.Top="2"
+                                                 Width="16"
+                                                 Height="16"
+                                                 Stroke="White"
+                                                 StrokeThickness="2"/>
+                                        <!-- Ручка лупы -->
+                                        <Line X1="15" Y1="15"
+                                              X2="22" Y2="22"
+                                              Stroke="White"
+                                              StrokeThickness="2"
+                                              StrokeStartLineCap="Round"
+                                              StrokeEndLineCap="Round"/>
+                                    </Canvas>
+                                </Viewbox>
+                            </Grid>
+
+                        </Border>
+
+                    </Grid>
+
+                </Border>
+                <!-- Список песен -->
+                <ListBox Grid.Row="1"
+                    Margin="20 10"
+                    ScrollViewer.VerticalScrollBarVisibility="Hidden"
+                    ScrollViewer.HorizontalScrollBarVisibility="Hidden"
+                    ItemsSource="{Binding FilteredSongs}"
+                    SelectedItem="{Binding SelectedSong}"
+                    MouseDoubleClick="ListBox_DoubleClick"
+                    Background="Transparent"
+                    BorderThickness="0"/>
+            </Grid>
+        </Border>
+
+        <!-- КНОПКА ВЫХОД -->
+        <Button Grid.Row="2"
+            Width="32" Height="32" Margin="20"
+            HorizontalAlignment="Right"
+            VerticalAlignment="Bottom"
+            Click="ButtonExit_Click"
+            Style="{StaticResource IconButtonStyle}">
+            <Image Source="/Images/exit.png"/>
+        </Button>
     </Grid>
 </Window>

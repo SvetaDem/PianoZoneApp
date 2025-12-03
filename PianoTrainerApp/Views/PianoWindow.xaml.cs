@@ -13,6 +13,8 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using PianoTrainerApp.Models;
+
 
 namespace PianoTrainerApp.Views
 {
@@ -91,11 +93,15 @@ namespace PianoTrainerApp.Views
                     {
                         Width = noteWidth,
                         Height = noteHeight,
-                        Fill = Brushes.DeepSkyBlue,
-                        RadiusX = 6,
-                        RadiusY = 6,
-                        Stroke = Brushes.Black,
-                        StrokeThickness = 0.8
+                        Fill = (Brush)new BrushConverter().ConvertFromString("#00E5FF"),
+
+                        // Обводка
+                        Stroke = (Brush)new BrushConverter().ConvertFromString("#76E5F2"),
+                        StrokeThickness = 1,
+
+                        // Скругление краёв
+                        RadiusX = 2,
+                        RadiusY = 2
                     };
 
                     Canvas.SetLeft(rect, note.X);

@@ -4,9 +4,11 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d"
-        Title="Piano" Height="500" Width="1200">
+        Title="PianoZone" Height="650" Width="1050"
+        MinHeight="600" MinWidth="1000"
+        WindowStartupLocation="CenterScreen">
 
-    <Grid>
+    <Grid Background="#605C5C">
         <ScrollViewer HorizontalScrollBarVisibility="Auto">
 
             <Grid>

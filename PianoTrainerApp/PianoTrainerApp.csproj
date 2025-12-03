@@ -61,6 +61,7 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Converters\KeyColorConverter.cs" />
+    <Compile Include="Models\GenreExtensions.cs" />
     <Compile Include="Models\MidiNote.cs" />
     <Compile Include="Models\NoteVisual.cs" />
     <Compile Include="Models\PianoKey.cs" />
@@ -82,7 +83,7 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Models\DifficultyLevel.cs" />
+    <Compile Include="Models\Genre.cs" />
     <Compile Include="Views\LibraryWindow.xaml.cs">
       <DependentUpon>LibraryWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
@@ -125,6 +126,8 @@
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
+    <Resource Include="Assets\covers\twinkle.jpg" />
+    <Resource Include="Assets\covers\bethoven.jpg" />
     <Content Include="Assets\moonlight.mid">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

@@ -8,7 +8,85 @@
         Title="PianoZone" Height="650" Width="1050"
         MinHeight="600" MinWidth="1000"
         WindowStartupLocation="CenterScreen">
-    <Grid Cursor="">
+
+    <Window.Resources>
+
+        <!-- Стиль вкладок навигации -->
+        <Style x:Key="NavTabTextStyle" TargetType="TextBlock">
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="RenderTransformOrigin" Value="0.5,0.5"/>
+            <Setter Property="Foreground" Value="#E5E5E5"/>
+            <Setter Property="RenderTransform">
+                <Setter.Value>
+                    <ScaleTransform ScaleX="1" ScaleY="1"/>
+                </Setter.Value>
+            </Setter>
+
+            <!-- Hover эффект -->
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Foreground" Value="White"/>
+                    <Setter Property="RenderTransform">
+                        <Setter.Value>
+                            <ScaleTransform ScaleX="1.1" ScaleY="1.1"/>
+                        </Setter.Value>
+                    </Setter>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+        <!-- Универсальный стиль кнопки-иконки (profile/settings/exit) -->
+        <Style x:Key="IconButtonStyle" TargetType="Button">
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="RenderTransformOrigin" Value="0.5,0.5"/>
+            <Setter Property="RenderTransform">
+                <Setter.Value>
+                    <ScaleTransform ScaleX="1" ScaleY="1"/>
+                </Setter.Value>
+            </Setter>
+
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <ContentPresenter HorizontalAlignment="Center"
+                                      VerticalAlignment="Center"/>
+
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Trigger.EnterActions>
+                                    <BeginStoryboard>
+                                        <Storyboard>
+                                            <DoubleAnimation Storyboard.TargetProperty="RenderTransform.(ScaleTransform.ScaleX)"
+                                                         To="1.1" Duration="0:0:0.15"/>
+                                            <DoubleAnimation Storyboard.TargetProperty="RenderTransform.(ScaleTransform.ScaleY)"
+                                                         To="1.1" Duration="0:0:0.15"/>
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </Trigger.EnterActions>
+
+                                <Trigger.ExitActions>
+                                    <BeginStoryboard>
+                                        <Storyboard>
+                                            <DoubleAnimation Storyboard.TargetProperty="RenderTransform.(ScaleTransform.ScaleX)"
+                                                         To="1" Duration="0:0:0.15"/>
+                                            <DoubleAnimation Storyboard.TargetProperty="RenderTransform.(ScaleTransform.ScaleY)"
+                                                         To="1" Duration="0:0:0.15"/>
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </Trigger.ExitActions>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+    </Window.Resources>
+
+
+    <Grid>
         <!-- Фон -->
         <Grid.Background>
             <ImageBrush ImageSource="/Images/main_background.png" Stretch="Fill"/>
@@ -34,6 +112,7 @@
                            FontSize="20"
                            Cursor="Hand"
                            Margin="0,0,25,0"
+                           Style="{StaticResource NavTabTextStyle}"
                            FontWeight="Medium"
                            VerticalAlignment="Bottom"/>
 
@@ -49,7 +128,9 @@
                            FontSize="16"
                            FontWeight="Medium"
                            Cursor="Hand"
+                           Style="{StaticResource NavTabTextStyle}"
                            Margin="0,0,25,0"
+                           MouseLeftButtonDown="ButtonBeginner_Click"
                            VerticalAlignment="Bottom"/>
 
                 <TextBlock Text="|"
@@ -63,7 +144,9 @@
                            Foreground="#202020"
                            FontSize="16"
                            Cursor="Hand"
+                           Style="{StaticResource NavTabTextStyle}"
                            FontWeight="Medium"
+                           MouseLeftButtonDown="ButtonLibrary_Click"
                            VerticalAlignment="Bottom"/>
             </StackPanel>
 
@@ -75,93 +158,13 @@
                     Margin="20"
             HorizontalAlignment="Right">
 
-            <Button Width="32" Height="32" Cursor="Hand"
-            Background="Transparent" BorderThickness="0"
-            Margin="0,0,0,10">
-                <!-- Масштабирование -->
-                <Button.RenderTransform>
-                    <ScaleTransform ScaleX="1" ScaleY="1"/>
-                </Button.RenderTransform>
-
-                <!-- Ключевой момент: точка центра -->
-                <Button.RenderTransformOrigin>0.5,0.5</Button.RenderTransformOrigin>
-
-                <Button.Template>
-                    <ControlTemplate TargetType="Button">
-                        <ContentPresenter HorizontalAlignment="Center"
-                      VerticalAlignment="Center"/>
-                        <ControlTemplate.Triggers>
-                            <Trigger Property="IsMouseOver" Value="True">
-                                <Trigger.EnterActions>
-                                    <BeginStoryboard>
-                                        <Storyboard>
-                                            <DoubleAnimation Storyboard.TargetProperty="RenderTransform.(ScaleTransform.ScaleX)"
-                                         To="1.1" Duration="0:0:0.15"/>
-                                            <DoubleAnimation Storyboard.TargetProperty="RenderTransform.(ScaleTransform.ScaleY)"
-                                         To="1.1" Duration="0:0:0.15"/>
-                                        </Storyboard>
-                                    </BeginStoryboard>
-                                </Trigger.EnterActions>
-                                <Trigger.ExitActions>
-                                    <BeginStoryboard>
-                                        <Storyboard>
-                                            <DoubleAnimation Storyboard.TargetProperty="RenderTransform.(ScaleTransform.ScaleX)"
-                                         To="1" Duration="0:0:0.15"/>
-                                            <DoubleAnimation Storyboard.TargetProperty="RenderTransform.(ScaleTransform.ScaleY)"
-                                         To="1" Duration="0:0:0.15"/>
-                                        </Storyboard>
-                                    </BeginStoryboard>
-                                </Trigger.ExitActions>
-                            </Trigger>
-                        </ControlTemplate.Triggers>
-                    </ControlTemplate>
-                </Button.Template>
-
+            <Button Width="32" Height="32" Margin="0,0,0,10"
+                    Style="{StaticResource IconButtonStyle}">
                 <Image Source="/Images/profile.png"/>
             </Button>
 
             <Button Width="32" Height="32"
-                    Cursor="Hand"
-            Background="Transparent" BorderThickness="0">
-                <!-- Масштабирование -->
-                <Button.RenderTransform>
-                    <ScaleTransform ScaleX="1" ScaleY="1"/>
-                </Button.RenderTransform>
-
-                <!-- Ключевой момент: точка центра -->
-                <Button.RenderTransformOrigin>0.5,0.5</Button.RenderTransformOrigin>
-
-                <Button.Template>
-                    <ControlTemplate TargetType="Button">
-                        <ContentPresenter HorizontalAlignment="Center"
-                      VerticalAlignment="Center"/>
-                        <ControlTemplate.Triggers>
-                            <Trigger Property="IsMouseOver" Value="True">
-                                <Trigger.EnterActions>
-                                    <BeginStoryboard>
-                                        <Storyboard>
-                                            <DoubleAnimation Storyboard.TargetProperty="RenderTransform.(ScaleTransform.ScaleX)"
-                                         To="1.1" Duration="0:0:0.15"/>
-                                            <DoubleAnimation Storyboard.TargetProperty="RenderTransform.(ScaleTransform.ScaleY)"
-                                         To="1.1" Duration="0:0:0.15"/>
-                                        </Storyboard>
-                                    </BeginStoryboard>
-                                </Trigger.EnterActions>
-                                <Trigger.ExitActions>
-                                    <BeginStoryboard>
-                                        <Storyboard>
-                                            <DoubleAnimation Storyboard.TargetProperty="RenderTransform.(ScaleTransform.ScaleX)"
-                                         To="1" Duration="0:0:0.15"/>
-                                            <DoubleAnimation Storyboard.TargetProperty="RenderTransform.(ScaleTransform.ScaleY)"
-                                         To="1" Duration="0:0:0.15"/>
-                                        </Storyboard>
-                                    </BeginStoryboard>
-                                </Trigger.ExitActions>
-                            </Trigger>
-                        </ControlTemplate.Triggers>
-                    </ControlTemplate>
-                </Button.Template>
-
+                    Style="{StaticResource IconButtonStyle}">
                 <Image Source="/Images/settings.png"/>
             </Button>
         </StackPanel>
@@ -177,7 +180,8 @@
                     BorderBrush="White"
                     BorderThickness="2"
                     Margin="0,0,60,0"
-                    Width="330" Height="340">
+                    Width="330" Height="340"
+                    Click="ButtonBeginner_Click">
                 <Button.Template>
                     <ControlTemplate TargetType="Button">
                         <Border
@@ -193,10 +197,10 @@
                             </Border.RenderTransform>
                             <Border.Effect>
                                 <DropShadowEffect
-                                    Color="#f8f8f8"
-                                    BlurRadius="70"
-                                    ShadowDepth="20"
-                                    Direction="-50"
+                                    Color="#868686"
+                                    BlurRadius="50"
+                                    ShadowDepth="0"
+                                    Direction="0"
                                     Opacity="0.5"/>
                             </Border.Effect>
 
@@ -264,16 +268,17 @@
                         </ControlTemplate.Triggers>
                     </ControlTemplate>
                 </Button.Template>
-                
             </Button>
 
 
             <!-- Правая карточка -->
-            <Button Cursor="Hand"
-        Background="White"
-        BorderBrush="Black"
-        BorderThickness="2"
-        Width="330" Height="340">
+            <Button
+                Cursor="Hand"
+                Background="White"
+                BorderBrush="Black"
+                BorderThickness="2"
+                Width="330" Height="340"
+                Click="ButtonLibrary_Click">
 
                 <Button.Template>
                     <ControlTemplate TargetType="Button">
@@ -292,10 +297,10 @@
 
                             <Border.Effect>
                                 <DropShadowEffect
-                        Color="#f8f8f8"
-                        BlurRadius="70"
-                        ShadowDepth="20"
-                        Direction="-50"
+                        Color="#868686"
+                        BlurRadius="50"
+                        ShadowDepth="0"
+                        Direction="0"
                         Opacity="0.5"/>
                             </Border.Effect>
 
@@ -374,53 +379,12 @@
         </StackPanel>
 
         <!-- КНОПКА ВЫХОД -->
-        <Button Width="32" Height="32"
-        Cursor="Hand"
-        BorderThickness="0"
-                Margin="20"
-        Background="Transparent"
-        HorizontalAlignment="Right"
-        VerticalAlignment="Bottom">
-
-            <!-- Масштабирование -->
-            <Button.RenderTransform>
-                <ScaleTransform ScaleX="1" ScaleY="1"/>
-            </Button.RenderTransform>
-
-            <!-- Ключевой момент: точка центра -->
-            <Button.RenderTransformOrigin>0.5,0.5</Button.RenderTransformOrigin>
-
-            <Button.Template>
-                <ControlTemplate TargetType="Button">
-                    <ContentPresenter HorizontalAlignment="Center"
-                              VerticalAlignment="Center"/>
-                    <ControlTemplate.Triggers>
-                        <Trigger Property="IsMouseOver" Value="True">
-                            <Trigger.EnterActions>
-                                <BeginStoryboard>
-                                    <Storyboard>
-                                        <DoubleAnimation Storyboard.TargetProperty="RenderTransform.(ScaleTransform.ScaleX)"
-                                                 To="1.1" Duration="0:0:0.15"/>
-                                        <DoubleAnimation Storyboard.TargetProperty="RenderTransform.(ScaleTransform.ScaleY)"
-                                                 To="1.1" Duration="0:0:0.15"/>
-                                    </Storyboard>
-                                </BeginStoryboard>
-                            </Trigger.EnterActions>
-                            <Trigger.ExitActions>
-                                <BeginStoryboard>
-                                    <Storyboard>
-                                        <DoubleAnimation Storyboard.TargetProperty="RenderTransform.(ScaleTransform.ScaleX)"
-                                                 To="1" Duration="0:0:0.15"/>
-                                        <DoubleAnimation Storyboard.TargetProperty="RenderTransform.(ScaleTransform.ScaleY)"
-                                                 To="1" Duration="0:0:0.15"/>
-                                    </Storyboard>
-                                </BeginStoryboard>
-                            </Trigger.ExitActions>
-                        </Trigger>
-                    </ControlTemplate.Triggers>
-                </ControlTemplate>
-            </Button.Template>
-
+        <Button
+            Width="32" Height="32" Margin="20"
+            HorizontalAlignment="Right"
+            VerticalAlignment="Bottom"
+            Click="ButtonExit_Click"
+            Style="{StaticResource IconButtonStyle}">
             <Image Source="/Images/exit.png"/>
         </Button>
 

@@ -2,25 +2,40 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
+using System.Linq; // для Cast и Select
+
+using PianoTrainerApp.Models;
 
 namespace PianoTrainerApp.ViewModels
 {
-    public class LibraryViewModel
+    public class LibraryViewModel : INotifyPropertyChanged
     {
         public ObservableCollection<Song> Songs { get; set; }
-        public ObservableCollection<DifficultyLevel> DifficultyLevels { get; set; }
+        public ObservableCollection<Song> FilteredSongs { get; set; }
 
-        private DifficultyLevel selectedDifficulty;
-        public DifficultyLevel SelectedDifficulty
+        // Список всех жанров + специальный "ничего не выбрано"
+        public ObservableCollection<string> Genres { get; set; }
+
+        private string selectedGenre;
+        public string SelectedGenre
         {
-            get => selectedDifficulty;
+            get => selectedGenre;
             set
             {
-                selectedDifficulty = value;
+                selectedGenre = value;
+                OnPropertyChanged();
+                FilterSongs();
+            }
+        }
+
+        private string searchText;
+        public string SearchText
+        {
+            get => searchText;
+            set
+            {
+                searchText = value;
                 OnPropertyChanged();
                 FilterSongs();
             }
@@ -33,39 +48,86 @@ namespace PianoTrainerApp.ViewModels
             set { selectedSong = value; OnPropertyChanged(); }
         }
 
-        public ObservableCollection<Song> FilteredSongs { get; set; }
-
         public LibraryViewModel()
         {
-            DifficultyLevels = new ObservableCollection<DifficultyLevel>
+            // Инициализация жанров
+            Genres = new ObservableCollection<string> { "Choose the Genre" };
+            var enumValues = Enum.GetValues(typeof(Genre)).Cast<Genre>();
+            var genreNames = enumValues.Select(g =>
             {
-                DifficultyLevel.Beginner,
-                DifficultyLevel.Intermediate,
-                DifficultyLevel.Advanced
-            };
+                if (g == Genre.RB) return "R&B";
+                if (g == Genre.HipHop) return "Hip hop";
+                return g.ToString();
+            }).OrderBy(x => x);
+            foreach (var g in genreNames) Genres.Add(g);
 
+            // Песни
             Songs = new ObservableCollection<Song>
             {
-                new Song { Title="Twinkle Little Star", Difficulty=DifficultyLevel.Beginner, MidiPath="Assets/twinkle-twinkle-little-star.mid" },
-                new Song { Title="Für Elise", Difficulty=DifficultyLevel.Intermediate, MidiPath="Assets/Fur Elise.mid" },
-                new Song { Title="Moonlight Sonata", Difficulty=DifficultyLevel.Advanced, MidiPath="Assets/moonlight.mid" }
+                new Song {
+                    Title = "Twinkle Little Star",
+                    Composer = "Unknown",
+                    MidiPath = "Assets/twinkle-twinkle-little-star.mid",
+                    ImagePath = "/Assets/covers/twinkle.jpg",
+                    Genres = new List<Genre>{ Genre.Classical, Genre.Folk }
+                },
+                new Song {
+                    Title = "Für Elise",
+                    Composer = "Beethoven",
+                    MidiPath = "Assets/Fur Elise.mid",
+                    ImagePath = "/Assets/covers/bethoven.jpg",
+                    Genres = new List<Genre>{ Genre.Classical, Genre.RB }
+                }
             };
 
             FilteredSongs = new ObservableCollection<Song>(Songs);
+
+            // По умолчанию
+            SelectedGenre = "Choose the Genre";
+        }
+
+        private bool showingFavorites = false;
+
+        public void ToggleFavoritesFilter()
+        {
+            showingFavorites = !showingFavorites;
+            FilterSongs();
         }
 
         private void FilterSongs()
         {
             FilteredSongs.Clear();
-            foreach (var s in Songs)
-                if (s.Difficulty == SelectedDifficulty)
-                    FilteredSongs.Add(s);
+
+            foreach (var song in Songs)
+            {
+                bool matchesGenre = SelectedGenre == "Choose the Genre" || song.Genres.Any(g =>
+                    (g == Genre.RB && SelectedGenre == "R&B") ||
+                    (g == Genre.HipHop && SelectedGenre == "Hip hop") ||
+                    g.ToString() == SelectedGenre.Replace(" ", "")
+                );
+
+                bool matchesSearch = string.IsNullOrWhiteSpace(SearchText) ||
+                                     song.Title.IndexOf(SearchText, StringComparison.OrdinalIgnoreCase) >= 0 ||
+                                     song.Composer.IndexOf(SearchText, StringComparison.OrdinalIgnoreCase) >= 0 ||
+                                     song.Genres.Any(g => (g == Genre.RB && "R&B".IndexOf(SearchText, StringComparison.OrdinalIgnoreCase) >= 0) ||
+                                                          (g == Genre.HipHop && "Hip hop".IndexOf(SearchText, StringComparison.OrdinalIgnoreCase) >= 0) ||
+                                                          g.ToString().IndexOf(SearchText, StringComparison.OrdinalIgnoreCase) >= 0
+                                                     );
+
+                bool matchesFavorites = !showingFavorites || song.IsFavorite;
+
+                if (matchesGenre && matchesSearch && matchesFavorites)
+                {
+                    FilteredSongs.Add(song);
+                }
+            }
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
-        protected void OnPropertyChanged([CallerMemberName] string name = null)
+        private void OnPropertyChanged([CallerMemberName] string name = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
         }
     }
+
 }

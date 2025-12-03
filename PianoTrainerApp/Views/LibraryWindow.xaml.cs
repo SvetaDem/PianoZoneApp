@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Microsoft.Win32;
+using PianoTrainerApp.ViewModels;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -12,7 +14,6 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
-using PianoTrainerApp.ViewModels;
 
 namespace PianoTrainerApp.Views
 {
@@ -32,6 +33,72 @@ namespace PianoTrainerApp.Views
             {
                 var pianoWin = new PianoWindow(vm.SelectedSong);
                 pianoWin.Show();
+            }
+        }
+
+        private void ButtonBeginner_Click(object sender, RoutedEventArgs e)
+        {
+            //
+        }
+
+        private void ButtonLibrary_Click(object sender, RoutedEventArgs e)
+        {
+            var libraryWindow = new LibraryWindow();
+            libraryWindow.Show();
+            this.Close();
+        }
+
+        private void Home_CLick(object sender, RoutedEventArgs e)
+        {
+            var mainWindow = new MainWindow();
+            mainWindow.Show();
+            this.Close();
+        }
+
+        private void ButtonExit_Click(object sender, RoutedEventArgs e)
+        {
+            var result = MessageBox.Show(
+                "Вы точно хотите выйти?",
+                "Подтверждение выхода",
+                MessageBoxButton.YesNo,
+                MessageBoxImage.Question
+                );
+
+            if (result == MessageBoxResult.Yes)
+            {
+                Application.Current.Shutdown();
+            }
+        }
+
+        private void ShowFavorites_Click(object sender, RoutedEventArgs e)
+        {
+            var vm = DataContext as LibraryViewModel;
+            vm?.ToggleFavoritesFilter();
+        }
+
+        private void ImportMidi_Click(object sender, RoutedEventArgs e)
+        {
+            // Создаем диалог выбора файла
+            OpenFileDialog openFileDialog = new OpenFileDialog
+            {
+                Filter = "MIDI files (*.mid;*.midi)|*.mid;*.midi",
+                Title = "Select a MIDI file"
+            };
+
+            if (openFileDialog.ShowDialog() == true)
+            {
+                string selectedPath = openFileDialog.FileName;
+
+                // Создаем объект Song для выбранного файла (можно имя файла использовать как Title)
+                var song = new PianoTrainerApp.Models.Song
+                {
+                    Title = System.IO.Path.GetFileNameWithoutExtension(selectedPath),
+                    MidiPath = selectedPath
+                };
+
+                // Открываем окно с плывущими нотами
+                var pianoWindow = new PianoWindow(song);
+                pianoWindow.Show();
             }
         }
     }

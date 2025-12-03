@@ -24,5 +24,31 @@ namespace PianoTrainerApp.Views
             InitializeComponent();
         }
 
+        private void ButtonBeginner_Click(object sender, RoutedEventArgs e)
+        {
+           //
+        }
+
+        private void ButtonLibrary_Click(object sender, RoutedEventArgs e)
+        {
+            var libraryWindow = new LibraryWindow();
+            libraryWindow.Show();
+            this.Close();
+        }
+
+        private void ButtonExit_Click(object sender, RoutedEventArgs e)
+        {
+            var result = MessageBox.Show(
+                "Вы точно хотите выйти?",
+                "Подтверждение выхода",
+                MessageBoxButton.YesNo,
+                MessageBoxImage.Question
+                );
+
+            if (result == MessageBoxResult.Yes)
+            {
+                Application.Current.Shutdown();
+            }
+        }
     }
 }
