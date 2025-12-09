@@ -25,8 +25,7 @@ namespace PianoTrainerApp.Views
     {
         private PianoViewModel pianoVM;
         private double pixelsPerSecond = 100; // масштаб падения
-        
-        //private Dictionary<string, List<MidiNote>> activeNotes = new Dictionary<string, List<MidiNote>>();
+
 
         public PianoWindow(Song song, double speedMultiplier = 1.0)
         {
@@ -58,80 +57,91 @@ namespace PianoTrainerApp.Views
         {
             NotesCanvas.Children.Clear();
 
-            foreach (var note in pianoVM.FallingNotes)
+            // допуск для группировки нот с одинаковым стартом
+            var epsilon = 0.001;
+
+            // группируем ноты по стартовому времени
+            var grouped = pianoVM.FallingNotes
+                .GroupBy(n => Math.Round(n.StartTime / epsilon) * epsilon)
+                .OrderBy(g => g.Key);
+
+            foreach (var group in grouped)
             {
-                double delta = pianoVM.CurrentTime - note.StartTime;
-
-                // если нота ещё не должна появляться, пропускаем
-                if (delta < 0)
-                    continue;
-
-                double noteWidth = 30;
-                double noteHeight = note.Duration * pixelsPerSecond * pianoVM.SpeedMultiplier;
-                
-                
-                // верхняя граница ноты
-                double y = delta * pixelsPerSecond * pianoVM.SpeedMultiplier;
-
-                // нижний край ноты
-                double noteBottom = y + noteHeight;
-
-                // верх клавиатуры = вся высота NotesCanvas минус 200px
-                double keyboardTopY = NotesCanvas.ActualHeight - 200;
-
-                // включаем подсветку клавиши при касании
-                if (!note.HasPressed && noteBottom >= keyboardTopY)
+                foreach (var note in group)
                 {
-                    pianoVM.PressKey(note.NoteName);
-                    note.HasPressed = true;
+                    double delta = pianoVM.CurrentTime - note.StartTime;
+
+                    // если нота ещё не должна появляться, пропускаем
+                    if (delta < 0)
+                        continue;
+
+                    double noteWidth = 30;
+                    double noteHeight = note.Duration * pixelsPerSecond;
+
+                    // плавное падение сверху: верхняя граница ноты стартует за экраном
+                    double y = delta * pixelsPerSecond - noteHeight;
+
+                    // ------------------------------------------------------
+                    // 🎹 1. Проверяем: нота касается клавиатуры
+                    // ------------------------------------------------------
+                    double noteBottom = y + noteHeight;
+                    double noteTop = y;
+
+                    // верх клавиатуры = вся высота NotesCanvas
+                    double keyboardTopY = NotesCanvas.RenderSize.Height;  // идимая высота элемента в текущем layout,
+                                                                          // а не его растянутая высота в ScrollViewer
+
+                    // включаем подсветку клавиши при касании
+                    if (noteBottom >= keyboardTopY)
+                    {
+                        pianoVM.PressKey(note.NoteName);
+                        note.HasPressed = true;
+                    }
+
+                    // снимаем нажатие, когда нота ушла полностью за нижний край Canvas
+                    if (note.HasPressed && noteTop > keyboardTopY)
+                    {
+                        pianoVM.ReleaseKey(note.NoteName);
+                        note.HasPressed = false;
+                    }
+
+                    var rect = new System.Windows.Shapes.Rectangle
+                    {
+                        Width = noteWidth,
+                        Height = noteHeight,
+                        Fill = (Brush)new BrushConverter().ConvertFromString("#00E5FF"),
+
+                        // Обводка
+                        Stroke = (Brush)new BrushConverter().ConvertFromString("#76E5F2"),
+                        StrokeThickness = 1,
+
+                        // Скругление краёв
+                        RadiusX = 2,
+                        RadiusY = 2
+                    };
+
+                    Canvas.SetLeft(rect, note.X);
+                    Canvas.SetTop(rect, y);
+                    NotesCanvas.Children.Add(rect);
+
+                    var text = new TextBlock
+                    {
+                        Text = note.NoteName,
+                        Foreground = Brushes.White,
+                        FontSize = 10,
+                        FontWeight = FontWeights.Bold,
+                        Width = noteWidth,
+                        Height = noteHeight,
+                        TextAlignment = TextAlignment.Center,
+                        VerticalAlignment = VerticalAlignment.Center
+                    };
+
+                    Canvas.SetLeft(text, note.X);
+                    Canvas.SetTop(text, y + (noteHeight - text.FontSize) / 4);
+                    NotesCanvas.Children.Add(text);
+
                 }
-
-                // снимаем нажатие, когда нота ушла полностью за нижний край Canvas
-                if (note.HasPressed && noteBottom > NotesCanvas.ActualHeight)
-                {
-                    pianoVM.ReleaseKey(note.NoteName);
-                    note.HasPressed = false;
-                }
-
-
-                var rect = new System.Windows.Shapes.Rectangle
-                {
-                    Width = noteWidth,
-                    Height = noteHeight,
-                    Fill = (Brush)new BrushConverter().ConvertFromString("#00E5FF"),
-
-                    // Обводка
-                    Stroke = (Brush)new BrushConverter().ConvertFromString("#76E5F2"),
-                    StrokeThickness = 1,
-
-                    // Скругление краёв
-                    RadiusX = 2,
-                    RadiusY = 2
-                };
-
-                Canvas.SetLeft(rect, note.X);
-                Canvas.SetTop(rect, y);
-                NotesCanvas.Children.Add(rect);
-
-                var text = new TextBlock
-                {
-                    Text = note.NoteName,
-                    Foreground = Brushes.White,
-                    FontSize = 10,
-                    FontWeight = FontWeights.Bold,
-                    Width = noteWidth,
-                    Height = noteHeight,
-                    TextAlignment = TextAlignment.Center,
-                    VerticalAlignment = VerticalAlignment.Center
-                };
-
-                Canvas.SetLeft(text, note.X);
-                Canvas.SetTop(text, y + (noteHeight - text.FontSize) / 4);
-                NotesCanvas.Children.Add(text);
-
-
             }
-
         }
 
     }

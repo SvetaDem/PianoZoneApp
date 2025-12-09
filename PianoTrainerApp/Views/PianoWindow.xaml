@@ -9,14 +9,27 @@
         WindowStartupLocation="CenterScreen">
 
     <Grid Background="#605C5C">
-        <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Hidden">
+
+        <ScrollViewer HorizontalScrollBarVisibility="Auto"
+                      VerticalScrollBarVisibility="Hidden">
 
             <Grid>
+
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>
+                    <!-- зона падения нот -->
+                    <RowDefinition Height="200"/>
+                    <!-- клавиатура -->
+                </Grid.RowDefinitions>
+
                 <!-- Слой нот (они падают сверху) -->
-                <Canvas x:Name="NotesCanvas" VerticalAlignment="Stretch"/>
+                <Canvas x:Name="NotesCanvas"
+                        Grid.Row="0"
+                        VerticalAlignment="Stretch"/>
 
                 <!-- Слой клавиш (пианино внизу) -->
-                <Grid VerticalAlignment="Bottom" Height="200">
+                <Grid VerticalAlignment="Stretch"
+                      Grid.Row="1">
                     <ItemsControl ItemsSource="{Binding WhiteKeys}">
                         <ItemsControl.ItemsPanel>
                             <ItemsPanelTemplate>

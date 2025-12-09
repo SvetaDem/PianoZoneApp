@@ -24,7 +24,7 @@ namespace PianoTrainerApp.ViewModels
         private DateTime startTime;
         public double CurrentTime => (DateTime.Now - startTime).TotalSeconds;
 
-       
+
         public PianoViewModel()
         {
             WhiteKeys = new ObservableCollection<PianoKey>();
@@ -35,7 +35,6 @@ namespace PianoTrainerApp.ViewModels
 
             animationTimer = new DispatcherTimer();
             animationTimer.Interval = TimeSpan.FromMilliseconds(20);
-            //animationTimer.Tick += Animate;
         }
         public void StartAnimation(List<MidiNote> notes)
         {
@@ -49,6 +48,13 @@ namespace PianoTrainerApp.ViewModels
 
             allNotes = notes.OrderBy(n => n.StartTime).ToList();
 
+            // Применяем SpeedMultiplier сразу при импорте, чтобы ноты не наслаивались
+            foreach (var n in allNotes)
+            {
+                n.StartTime /= SpeedMultiplier;
+                n.Duration /= SpeedMultiplier;
+            }
+
             // Добавляем все ноты сразу
             foreach (var n in allNotes)
                 FallingNotes.Add(n);
@@ -56,32 +62,6 @@ namespace PianoTrainerApp.ViewModels
             animationTimer.Start();
         }
 
-
-        /*private void Animate(object sender, EventArgs e)
-        {
-            // удаляем ноты, которые полностью ушли за экран
-            *//*for (int i = FallingNotes.Count - 1; i >= 0; i--)
-            {
-                var note = FallingNotes[i];
-                if (CurrentTime - note.StartTime > note.Duration + 5)
-                    FallingNotes.RemoveAt(i);
-            }*//*
-
-            for (int i = FallingNotes.Count - 1; i >= 0; i--)
-            {
-                var note = FallingNotes[i];
-
-                double deathTime = note.StartTime + note.Duration + 5;
-
-                Console.WriteLine(
-                    $"[{note.NoteName}] duration = {note.Duration}, " +
-                    $"умрёт в = {deathTime:F2}, сейчас = {CurrentTime:F2}"
-                );
-
-                if (CurrentTime > deathTime)
-                    FallingNotes.RemoveAt(i);
-            }
-        }*/
 
         private double GetKeyX(string noteName)
         {
@@ -119,7 +99,7 @@ namespace PianoTrainerApp.ViewModels
                         }); x += 40;
                 }
             }
-            
+
         }
 
         public void PressKey(string noteName)

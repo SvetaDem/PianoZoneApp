@@ -32,8 +32,6 @@ namespace PianoTrainerApp.Views
         {
             if (DataContext is LibraryViewModel vm && vm.SelectedSong != null)
             {
-                /*var pianoWin = new PianoWindow(vm.SelectedSong);
-                pianoWin.Show();*/
 
                 var tempoDialog = new TempoWindow();
                 if (tempoDialog.ShowDialog() == true)
