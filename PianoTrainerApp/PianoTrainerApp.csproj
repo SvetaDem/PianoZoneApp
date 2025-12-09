@@ -63,7 +63,6 @@
     <Compile Include="Converters\KeyColorConverter.cs" />
     <Compile Include="Models\GenreExtensions.cs" />
     <Compile Include="Models\MidiNote.cs" />
-    <Compile Include="Models\NoteVisual.cs" />
     <Compile Include="Models\PianoKey.cs" />
     <Compile Include="Services\MidiParser.cs" />
     <Compile Include="ViewModels\LibraryViewModel .cs" />
@@ -75,6 +74,9 @@
       <DependentUpon>PianoWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Models\Song.cs" />
+    <Compile Include="Views\TempoWindow.xaml.cs">
+      <DependentUpon>TempoWindow.xaml</DependentUpon>
+    </Compile>
     <Page Include="Views\LibraryWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -93,6 +95,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\PianoWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\TempoWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

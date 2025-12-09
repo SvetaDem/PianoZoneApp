@@ -9,14 +9,14 @@
         WindowStartupLocation="CenterScreen">
 
     <Grid Background="#605C5C">
-        <ScrollViewer HorizontalScrollBarVisibility="Auto">
+        <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Hidden">
 
             <Grid>
                 <!-- Слой нот (они падают сверху) -->
-                <Canvas x:Name="NotesCanvas" VerticalAlignment="Top" Height="300"/>
+                <Canvas x:Name="NotesCanvas" VerticalAlignment="Stretch"/>
 
                 <!-- Слой клавиш (пианино внизу) -->
-                <Grid VerticalAlignment="Bottom">
+                <Grid VerticalAlignment="Bottom" Height="200">
                     <ItemsControl ItemsSource="{Binding WhiteKeys}">
                         <ItemsControl.ItemsPanel>
                             <ItemsPanelTemplate>
@@ -25,7 +25,17 @@
                         </ItemsControl.ItemsPanel>
                         <ItemsControl.ItemTemplate>
                             <DataTemplate>
-                                <Border Width="40" Height="200" Background="White" BorderBrush="Black" BorderThickness="1">
+                                <Border Width="40" Height="200" BorderBrush="Black" BorderThickness="1">
+                                    <Border.Style>
+                                        <Style TargetType="Border">
+                                            <Setter Property="Background" Value="White"/>
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding IsPressed}" Value="True">
+                                                    <Setter Property="Background" Value="Orange"/>
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </Border.Style>
                                     <TextBlock Text="{Binding Note}" VerticalAlignment="Bottom" HorizontalAlignment="Center" FontSize="10"/>
                                 </Border>
                             </DataTemplate>
@@ -40,7 +50,18 @@
                         </ItemsControl.ItemsPanel>
                         <ItemsControl.ItemTemplate>
                             <DataTemplate>
-                                <Border Width="25" Height="120" Background="Black"/>
+                                <Border Width="25" Height="120" BorderBrush="Black" BorderThickness="1">
+                                    <Border.Style>
+                                        <Style TargetType="Border">
+                                            <Setter Property="Background" Value="Black"/>
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding IsPressed}" Value="True">
+                                                    <Setter Property="Background" Value="Orange"/>
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </Border.Style>
+                                </Border>
                             </DataTemplate>
                         </ItemsControl.ItemTemplate>
                         <ItemsControl.ItemContainerStyle>

@@ -16,10 +16,15 @@ namespace PianoTrainerApp.ViewModels
         public ObservableCollection<PianoKey> BlackKeys { get; set; }
         public ObservableCollection<MidiNote> FallingNotes { get; set; }
 
+        public double SpeedMultiplier { get; set; } = 1.0; // 1x по умолчанию
+
+
         private DispatcherTimer animationTimer;
         private List<MidiNote> allNotes;
         private DateTime startTime;
         public double CurrentTime => (DateTime.Now - startTime).TotalSeconds;
+
+       
         public PianoViewModel()
         {
             WhiteKeys = new ObservableCollection<PianoKey>();
@@ -30,7 +35,7 @@ namespace PianoTrainerApp.ViewModels
 
             animationTimer = new DispatcherTimer();
             animationTimer.Interval = TimeSpan.FromMilliseconds(20);
-            animationTimer.Tick += Animate;
+            //animationTimer.Tick += Animate;
         }
         public void StartAnimation(List<MidiNote> notes)
         {
@@ -38,7 +43,7 @@ namespace PianoTrainerApp.ViewModels
             FallingNotes.Clear();
             startTime = DateTime.Now;
 
-            // Назначаем X позиции
+            // Назначаем с X позиции
             foreach (var n in notes)
                 n.X = GetKeyX(n.NoteName);
 
@@ -52,16 +57,31 @@ namespace PianoTrainerApp.ViewModels
         }
 
 
-        private void Animate(object sender, EventArgs e)
+        /*private void Animate(object sender, EventArgs e)
         {
             // удаляем ноты, которые полностью ушли за экран
-            for (int i = FallingNotes.Count - 1; i >= 0; i--)
+            *//*for (int i = FallingNotes.Count - 1; i >= 0; i--)
             {
                 var note = FallingNotes[i];
                 if (CurrentTime - note.StartTime > note.Duration + 5)
                     FallingNotes.RemoveAt(i);
+            }*//*
+
+            for (int i = FallingNotes.Count - 1; i >= 0; i--)
+            {
+                var note = FallingNotes[i];
+
+                double deathTime = note.StartTime + note.Duration + 5;
+
+                Console.WriteLine(
+                    $"[{note.NoteName}] duration = {note.Duration}, " +
+                    $"умрёт в = {deathTime:F2}, сейчас = {CurrentTime:F2}"
+                );
+
+                if (CurrentTime > deathTime)
+                    FallingNotes.RemoveAt(i);
             }
-        }
+        }*/
 
         private double GetKeyX(string noteName)
         {
@@ -99,6 +119,20 @@ namespace PianoTrainerApp.ViewModels
                         }); x += 40;
                 }
             }
+            
         }
+
+        public void PressKey(string noteName)
+        {
+            var key = WhiteKeys.Concat(BlackKeys).FirstOrDefault(k => k.Note == noteName);
+            if (key != null) key.IsPressed = true;
+        }
+
+        public void ReleaseKey(string noteName)
+        {
+            var key = WhiteKeys.Concat(BlackKeys).FirstOrDefault(k => k.Note == noteName);
+            if (key != null) key.IsPressed = false;
+        }
+
     }
 }
