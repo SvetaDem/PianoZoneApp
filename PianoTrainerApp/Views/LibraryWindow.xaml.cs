@@ -32,15 +32,12 @@ namespace PianoTrainerApp.Views
         {
             if (DataContext is LibraryViewModel vm && vm.SelectedSong != null)
             {
-
                 var tempoDialog = new TempoWindow();
                 if (tempoDialog.ShowDialog() == true)
                 {
                     var pianoWindow = new PianoWindow(vm.SelectedSong, tempoDialog.SelectedMultiplier);
                     pianoWindow.Show();
                 }
-
-
             }
         }
 
@@ -105,8 +102,12 @@ namespace PianoTrainerApp.Views
                 };
 
                 // Открываем окно с плывущими нотами
-                var pianoWindow = new PianoWindow(song);
-                pianoWindow.Show();
+                var tempoDialog = new TempoWindow();
+                if (tempoDialog.ShowDialog() == true)
+                {
+                    var pianoWindow = new PianoWindow(song, tempoDialog.SelectedMultiplier);
+                    pianoWindow.Show();
+                }
             }
         }
     }
