@@ -89,12 +89,16 @@ namespace PianoTrainerApp.Views
                     if (delta < 0)
                         continue;
 
-                    double noteWidth = 30;
+                    //double noteWidth = 30;
+                    //double noteHeight = note.Duration * pixelsPerSecond;
+
+                    // Определяем ширину ноты: чёрная (с #) уже, белая — шире
+                    double noteWidth = note.NoteName.Contains("#") ? 25 : 40;
                     double noteHeight = note.Duration * pixelsPerSecond;
 
                     // плавное падение сверху: верхняя граница ноты стартует за экраном
                     //double y = delta * pixelsPerSecond - noteHeight;
-                   
+
                     // Чтобы не было нажатия на клавиши изначально
                     double startOffset = 100; // пиксели сверху, нота появляется за экраном
 
