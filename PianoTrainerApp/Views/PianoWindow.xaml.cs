@@ -68,6 +68,9 @@ namespace PianoTrainerApp.Views
         {
             NotesCanvas.Children.Clear();
 
+            // Сначала - отрисовка вертикальных линий (октав)
+            DrawOctaveLines();
+
             // допуск для группировки нот с одинаковым стартом
             var epsilon = 0.001;
 
@@ -160,6 +163,44 @@ namespace PianoTrainerApp.Views
                 }
             }
         }
+
+        // Вертикальные линии - октавы
+        private void DrawOctaveLines()
+        {
+            // Удаляем старые линии
+            for (int i = NotesCanvas.Children.Count - 1; i >= 0; i--)
+            {
+                if (NotesCanvas.Children[i] is System.Windows.Shapes.Line line && line.Tag?.ToString() == "OctaveLine")
+                {
+                    NotesCanvas.Children.RemoveAt(i);
+                }
+            }
+
+            double canvasHeight = NotesCanvas.ActualHeight; // Берём реальную видимую высоту
+
+            if (canvasHeight <= 0) return; // Canvas ещё не отрисован, отложим
+
+            foreach (var key in pianoVM.WhiteKeys)
+            {
+                if (key.Note.StartsWith("C")) // линии на ноте C
+                {
+                    var line = new System.Windows.Shapes.Line
+                    {
+                        X1 = key.PositionX,
+                        Y1 = 0,
+                        X2 = key.PositionX,
+                        Y2 = canvasHeight,
+                        Stroke = Brushes.Gray,
+                        StrokeThickness = 1,
+                        StrokeDashArray = new DoubleCollection { 4, 4 },
+                        Tag = "OctaveLine"
+                    };
+                    NotesCanvas.Children.Add(line);
+                }
+            }
+        }
+
+
     }
 }
 
