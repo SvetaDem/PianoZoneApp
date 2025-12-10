@@ -11,7 +11,8 @@
     <Grid Background="#605C5C">
 
         <ScrollViewer HorizontalScrollBarVisibility="Auto"
-                      VerticalScrollBarVisibility="Hidden">
+                      VerticalScrollBarVisibility="Hidden"
+                      x:Name="NotesScrollViewer">
 
             <Grid>
 

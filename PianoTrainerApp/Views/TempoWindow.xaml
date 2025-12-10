@@ -32,7 +32,7 @@
                     Click="ButtonOk_Click"
                     Cursor="Hand"
                     Background="#252121"
-                    BorderBrush="Black"
+                    BorderBrush="#444444"
                     BorderThickness="1">
             <Button.Template>
                 <ControlTemplate TargetType="Button">
@@ -48,15 +48,13 @@
                Foreground="White"/>
                     </Border>
                     <ControlTemplate.Triggers>
-                        <!-- Изменение цвета при наведении -->
+                        <!-- наведение -->
                         <Trigger Property="IsMouseOver" Value="True">
-                            <Setter TargetName="border" Property="Background" Value="#1C1A1A"/>
-                            <!-- более тёмный -->
-                        </Trigger>
+                                <Setter TargetName="border" Property="Background" Value="#3a3a3a"/>
+                            </Trigger>
                         <!-- нажатие -->
                         <Trigger Property="IsPressed" Value="True">
-                            <Setter TargetName="border" Property="Background" Value="#141212"/>
-                            <!-- ещё темнее -->
+                                <Setter TargetName="border" Property="Background" Value="#1f1f1f"/>
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
@@ -64,10 +62,10 @@
         </Button>
         <Button Width="80" Height="30"
         HorizontalAlignment="Center"
-        Click="ButtonOk_Click"
+        Click="ButtonCancel_Click"
         Cursor="Hand"
-        Background="#cfcfcf"
-        BorderBrush="#1f1f1f"
+        Background="#e0e0e0"
+        BorderBrush="#888888"
         BorderThickness="1">
             <Button.Template>
                 <ControlTemplate TargetType="Button">
@@ -85,12 +83,12 @@ CornerRadius="15">
                     <ControlTemplate.Triggers>
                         <!-- Изменение цвета при наведении -->
                         <Trigger Property="IsMouseOver" Value="True">
-                            <Setter TargetName="border" Property="Background" Value="#1C1A1A"/>
+                                <Setter TargetName="border" Property="Background" Value="#d0d0d0"/>
                             <!-- более тёмный -->
                         </Trigger>
                         <!-- нажатие -->
                         <Trigger Property="IsPressed" Value="True">
-                            <Setter TargetName="border" Property="Background" Value="#141212"/>
+                                <Setter TargetName="border" Property="Background" Value="#b0b0b0"/>
                             <!-- ещё темнее -->
                         </Trigger>
                     </ControlTemplate.Triggers>
