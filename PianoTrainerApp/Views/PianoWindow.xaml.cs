@@ -43,6 +43,17 @@ namespace PianoTrainerApp.Views
                     midiPath = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, midiPath);
 
                 var notes = MidiParser.ParseMidi(midiPath);
+                // -------------------------
+                // НОРМАЛИЗАЦИЯ ВРЕМЕНИ (starttime делаем у всех 0, и, соотвественно изменяем время у нот) (т.к. в midi - либо сразу начинается мелодия, либо нет)
+                // -------------------------
+                double minStart = notes.Min(n => n.StartTime);
+
+                if (Math.Abs(minStart) > 0.0001) // если первая нота НЕ 0
+                {
+                    foreach (var n in notes)
+                        n.StartTime -= minStart;
+                }
+
                 pianoVM.StartAnimation(notes);
 
                 CompositionTarget.Rendering += UpdateNotes;
@@ -79,16 +90,22 @@ namespace PianoTrainerApp.Views
                     double noteHeight = note.Duration * pixelsPerSecond;
 
                     // плавное падение сверху: верхняя граница ноты стартует за экраном
-                    double y = delta * pixelsPerSecond - noteHeight;
+                    //double y = delta * pixelsPerSecond - noteHeight;
+                   
+                    // Чтобы не было нажатия на клавиши изначально
+                    double startOffset = 100; // пиксели сверху, нота появляется за экраном
+
+                    double y = delta * pixelsPerSecond - noteHeight - startOffset;
+
 
                     // ------------------------------------------------------
-                    // 🎹 1. Проверяем: нота касается клавиатуры
+                    // Проверка: нота касается клавиатуры
                     // ------------------------------------------------------
                     double noteBottom = y + noteHeight;
                     double noteTop = y;
 
                     // верх клавиатуры = вся высота NotesCanvas
-                    double keyboardTopY = NotesCanvas.RenderSize.Height;  // идимая высота элемента в текущем layout,
+                    double keyboardTopY = NotesCanvas.RenderSize.Height;  // видимая высота элемента в текущем layout,
                                                                           // а не его растянутая высота в ScrollViewer
 
                     // включаем подсветку клавиши при касании
@@ -143,7 +160,6 @@ namespace PianoTrainerApp.Views
                 }
             }
         }
-
     }
 }
 
