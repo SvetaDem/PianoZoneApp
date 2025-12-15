@@ -30,6 +30,7 @@ namespace PianoTrainerApp.Views
 
         private bool isPaused = false;
         private DateTime pauseStartTime;
+        private bool pauseHandled = false;
 
         private static readonly string[] NoteNames =
         {
@@ -115,6 +116,9 @@ namespace PianoTrainerApp.Views
             {
                 foreach (var note in group)
                 {
+                    if (note.HasCompleted)
+                        continue; // уже сыграна нота — пропускаем полностью
+
                     double delta = pianoVM.CurrentTime - note.StartTime;
 
                     // если нота ещё не должна появляться, пропускаем
@@ -147,31 +151,33 @@ namespace PianoTrainerApp.Views
                     double keyboardTopY = NotesCanvas.RenderSize.Height;  // видимая высота элемента в текущем layout,
                                                                           // а не его растянутая высота в ScrollViewer
 
-                    // включаем подсветку клавиши при касании
-                    if (noteBottom >= keyboardTopY)
+                    // касание клавиатуры
+                    if (!note.HasPressed && noteBottom >= keyboardTopY)
                     {
-                        /*pianoVM.PressKey(note.NoteName);
-                        note.HasPressed = true;*/
-
-                        // все ноты группы, что касаются клавиатуры
-                        var notesTouchingKeyboard = group.Where(n => !n.HasPressed && (delta * pixelsPerSecond - noteHeight - startOffset + noteHeight) >= keyboardTopY).ToList();
-
-                        if (!isPaused && notesTouchingKeyboard.Any())
+                        if (!isPaused)
                         {
-                            isPaused = true;
-                            pauseStartTime = DateTime.Now; // запоминаем время начала паузы
-                            pianoVM.WaitingChord = notesTouchingKeyboard;
+                            // текущие ноты на клавиатуре
+                            var notesTouchingKeyboard = group
+                                .Where(n => !n.HasPressed && !n.HasCompleted && (delta * pixelsPerSecond - noteHeight - startOffset + noteHeight) >= keyboardTopY)
+                                .ToList();
 
-                            foreach (var n in notesTouchingKeyboard)
+                            if (notesTouchingKeyboard.Any())
                             {
-                                pianoVM.PressKey(n.NoteName);
-                                n.HasPressed = true;
+                                isPaused = true;
+                                pauseHandled = false;
+                                pauseStartTime = DateTime.Now;
+                                pianoVM.WaitingChord = notesTouchingKeyboard;
+
+                                foreach (var n in notesTouchingKeyboard)
+                                {
+                                    pianoVM.PressKey(n.NoteName);
+                                    n.HasPressed = true;
+                                }
                             }
                         }
-
                     }
 
-                    // снимаем нажатие, когда нота ушла полностью за нижний край Canvas
+                    // снимаем нажатие, если нота ушла
                     if (note.HasPressed && noteTop > keyboardTopY)
                     {
                         pianoVM.ReleaseKey(note.NoteName);
@@ -255,41 +261,43 @@ namespace PianoTrainerApp.Views
         }
 
         // Метод получения нот с микрофона
-private void OnNotesDetected(List<string> notes)
-{
-    Dispatcher.Invoke(() =>
-    {
-        if (pianoVM.WaitingChord.Count == 0) return;
-
-        bool allPlayed = true;
-        foreach (var n in pianoVM.WaitingChord)
+        private void OnNotesDetected(List<string> notes)
         {
-            var key = pianoVM.WhiteKeys.Concat(pianoVM.BlackKeys)
-                        .FirstOrDefault(k => k.Note == n.NoteName);
-            if (key != null)
+            Dispatcher.Invoke(() =>
             {
-                bool isPlayed = notes.Contains(n.NoteName);
-                key.IsCorrectlyPlayed = isPlayed;
-                if (!isPlayed) allPlayed = false;
-            }
+                // красим ТОЛЬКО текущие клавиши
+                foreach (var key in pianoVM.WhiteKeys.Concat(pianoVM.BlackKeys))
+                    key.IsCorrectlyPlayed = null;
+
+                foreach (var n in pianoVM.WaitingChord)
+                {
+                    var key = pianoVM.WhiteKeys.Concat(pianoVM.BlackKeys)
+                                .FirstOrDefault(k => k.Note == n.NoteName);
+                    if (key != null)
+                        key.IsCorrectlyPlayed = notes.Contains(n.NoteName);
+                }
+
+                // снимаем сыгранные ноты
+                foreach (var n in pianoVM.WaitingChord
+                             .Where(n => notes.Contains(n.NoteName))
+                             .ToList())
+                {
+                    n.HasCompleted = true;
+                    n.HasPressed = false;
+                    pianoVM.ReleaseKey(n.NoteName);
+                    pianoVM.WaitingChord.Remove(n);
+                }
+
+                // 🔥 КЛЮЧЕВОЕ ИЗМЕНЕНИЕ
+                if (!pianoVM.WaitingChord.Any() && isPaused && !pauseHandled)
+                {
+                    pauseHandled = true; // ❗ срабатывает ТОЛЬКО ОДИН РАЗ
+                    TimeSpan pauseDuration = DateTime.Now - pauseStartTime;
+                    pianoVM.AdjustStartTimeForPause(pauseDuration);
+                    isPaused = false;
+                }
+            });
         }
-
-        if (allPlayed)
-        {
-            foreach (var n in pianoVM.WaitingChord)
-            {
-                pianoVM.ReleaseKey(n.NoteName);
-                n.HasPressed = false;
-            }
-
-            TimeSpan pauseDuration = DateTime.Now - pauseStartTime;
-            pianoVM.AdjustStartTimeForPause(pauseDuration);
-
-            pianoVM.WaitingChord.Clear();
-            isPaused = false;
-        }
-    });
-}
 
 
 

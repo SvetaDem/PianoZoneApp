@@ -13,5 +13,6 @@ namespace PianoTrainerApp.Models
         public double Duration { get; set; }   // Длительность (сек)
         public double X { get; set; } // позиция по X (будет назначена при старте)
         public bool HasPressed { get; set; } = false;
+        public bool HasCompleted { get; set; } = false;
     }
 }
