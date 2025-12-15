@@ -26,6 +26,29 @@ namespace PianoTrainerApp.Views
         private PianoViewModel pianoVM;
         private double pixelsPerSecond = 100; // масштаб падения
 
+        private PitchDetector detector;
+
+        private bool isPaused = false;
+        private DateTime pauseStartTime;
+
+        private static readonly string[] NoteNames =
+        {
+            "C", "C#", "D", "D#", "E", "F",
+            "F#", "G", "G#", "A", "A#", "B"
+        };
+
+        // --- Перевод частоты → название ноты + отклонение в центах ---
+        /*static string FrequencyToNote(double freq, out double cents)
+        {
+            double A4 = 440.0;
+            double noteNumber = 69 + 12 * Math.Log(freq / A4, 2); // MIDI float
+            int nearest = (int)Math.Round(noteNumber);
+            cents = (noteNumber - nearest) * 100;
+
+            int noteIndex = (nearest + 120) % 12;
+            int octave = (nearest / 12) - 1;
+            return $"{NoteNames[noteIndex]}{octave}";
+        }*/
 
         public PianoWindow(Song song, double speedMultiplier = 1.0)
         {
@@ -57,6 +80,11 @@ namespace PianoTrainerApp.Views
                 pianoVM.StartAnimation(notes);
 
                 CompositionTarget.Rendering += UpdateNotes;
+
+                // Подключаем микрофон для подсветки клавиш
+                detector = new PitchDetector();
+                detector.OnNotesDetected += OnNotesDetected;
+                detector.Start();
             }
             catch (Exception ex)
             {
@@ -66,6 +94,10 @@ namespace PianoTrainerApp.Views
 
         private void UpdateNotes(object sender, EventArgs e)
         {
+            // Останавливаем падение нот
+            if (isPaused)
+                return;
+
             NotesCanvas.Children.Clear();
 
             // Сначала - отрисовка вертикальных линий (октав)
@@ -118,8 +150,25 @@ namespace PianoTrainerApp.Views
                     // включаем подсветку клавиши при касании
                     if (noteBottom >= keyboardTopY)
                     {
-                        pianoVM.PressKey(note.NoteName);
-                        note.HasPressed = true;
+                        /*pianoVM.PressKey(note.NoteName);
+                        note.HasPressed = true;*/
+
+                        // все ноты группы, что касаются клавиатуры
+                        var notesTouchingKeyboard = group.Where(n => !n.HasPressed && (delta * pixelsPerSecond - noteHeight - startOffset + noteHeight) >= keyboardTopY).ToList();
+
+                        if (!isPaused && notesTouchingKeyboard.Any())
+                        {
+                            isPaused = true;
+                            pauseStartTime = DateTime.Now; // запоминаем время начала паузы
+                            pianoVM.WaitingChord = notesTouchingKeyboard;
+
+                            foreach (var n in notesTouchingKeyboard)
+                            {
+                                pianoVM.PressKey(n.NoteName);
+                                n.HasPressed = true;
+                            }
+                        }
+
                     }
 
                     // снимаем нажатие, когда нота ушла полностью за нижний край Canvas
@@ -164,6 +213,7 @@ namespace PianoTrainerApp.Views
                     Canvas.SetTop(text, y + (noteHeight - text.FontSize) / 4);
                     NotesCanvas.Children.Add(text);
 
+
                 }
             }
         }
@@ -204,6 +254,61 @@ namespace PianoTrainerApp.Views
             }
         }
 
+        // Метод получения нот с микрофона
+private void OnNotesDetected(List<string> notes)
+{
+    Dispatcher.Invoke(() =>
+    {
+        if (pianoVM.WaitingChord.Count == 0) return;
+
+        bool allPlayed = true;
+        foreach (var n in pianoVM.WaitingChord)
+        {
+            var key = pianoVM.WhiteKeys.Concat(pianoVM.BlackKeys)
+                        .FirstOrDefault(k => k.Note == n.NoteName);
+            if (key != null)
+            {
+                bool isPlayed = notes.Contains(n.NoteName);
+                key.IsCorrectlyPlayed = isPlayed;
+                if (!isPlayed) allPlayed = false;
+            }
+        }
+
+        if (allPlayed)
+        {
+            foreach (var n in pianoVM.WaitingChord)
+            {
+                pianoVM.ReleaseKey(n.NoteName);
+                n.HasPressed = false;
+            }
+
+            TimeSpan pauseDuration = DateTime.Now - pauseStartTime;
+            pianoVM.AdjustStartTimeForPause(pauseDuration);
+
+            pianoVM.WaitingChord.Clear();
+            isPaused = false;
+        }
+    });
+}
+
+
+
+        protected override void OnClosing(System.ComponentModel.CancelEventArgs e)
+        {
+            base.OnClosing(e);
+            detector.Stop();
+        }
+
+
+
+        /*public static int MidiNoteNumber(string note)
+        {
+            string[] names = { "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B" };
+            string namePart = note.Substring(0, note.Length - 1);
+            int octave = int.Parse(note.Substring(note.Length - 1, 1));
+            int index = Array.IndexOf(names, namePart);
+            return index + (octave + 1) * 12;
+        }*/
 
     }
 }

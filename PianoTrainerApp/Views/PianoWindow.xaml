@@ -44,8 +44,17 @@
                                         <Style TargetType="Border">
                                             <Setter Property="Background" Value="White"/>
                                             <Style.Triggers>
+                                                <!-- подсветка при нажатии -->
                                                 <DataTrigger Binding="{Binding IsPressed}" Value="True">
                                                     <Setter Property="Background" Value="Orange"/>
+                                                </DataTrigger>
+                                                <!-- правильная нота -->
+                                                <DataTrigger Binding="{Binding IsCorrectlyPlayed}" Value="True">
+                                                    <Setter Property="Background" Value="LightGreen"/>
+                                                </DataTrigger>
+                                                <!-- неправильная нота -->
+                                                <DataTrigger Binding="{Binding IsCorrectlyPlayed}" Value="False">
+                                                    <Setter Property="Background" Value="Red"/>
                                                 </DataTrigger>
                                             </Style.Triggers>
                                         </Style>
@@ -69,8 +78,17 @@
                                         <Style TargetType="Border">
                                             <Setter Property="Background" Value="Black"/>
                                             <Style.Triggers>
+                                                <!-- подсветка при нажатии -->
                                                 <DataTrigger Binding="{Binding IsPressed}" Value="True">
                                                     <Setter Property="Background" Value="Orange"/>
+                                                </DataTrigger>
+                                                <!-- правильная нота -->
+                                                <DataTrigger Binding="{Binding IsCorrectlyPlayed}" Value="True">
+                                                    <Setter Property="Background" Value="LightGreen"/>
+                                                </DataTrigger>
+                                                <!-- неправильная нота -->
+                                                <DataTrigger Binding="{Binding IsCorrectlyPlayed}" Value="False">
+                                                    <Setter Property="Background" Value="Red"/>
                                                 </DataTrigger>
                                             </Style.Triggers>
                                         </Style>

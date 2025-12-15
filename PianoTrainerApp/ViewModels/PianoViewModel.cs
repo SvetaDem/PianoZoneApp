@@ -18,12 +18,12 @@ namespace PianoTrainerApp.ViewModels
 
         public double SpeedMultiplier { get; set; } = 1.0; // 1x по умолчанию
 
+        public List<MidiNote> WaitingChord { get; set; } = new List<MidiNote>();
 
         private DispatcherTimer animationTimer;
         private List<MidiNote> allNotes;
         private DateTime startTime;
         public double CurrentTime => (DateTime.Now - startTime).TotalSeconds;
-
 
         public PianoViewModel()
         {
@@ -36,6 +36,7 @@ namespace PianoTrainerApp.ViewModels
             animationTimer = new DispatcherTimer();
             animationTimer.Interval = TimeSpan.FromMilliseconds(20);
         }
+
         public void StartAnimation(List<MidiNote> notes)
         {
 
@@ -102,17 +103,46 @@ namespace PianoTrainerApp.ViewModels
 
         }
 
+        // ------------------------------
+        //  Подсветка по падению нот
+        // ------------------------------
         public void PressKey(string noteName)
         {
-            var key = WhiteKeys.Concat(BlackKeys).FirstOrDefault(k => k.Note == noteName);
+            var key = FindKey(noteName);
             if (key != null) key.IsPressed = true;
         }
 
         public void ReleaseKey(string noteName)
         {
-            var key = WhiteKeys.Concat(BlackKeys).FirstOrDefault(k => k.Note == noteName);
+            var key = FindKey(noteName);
             if (key != null) key.IsPressed = false;
         }
 
+        // Подсветка по микрофону (зелёный/красный)
+        public void HighlightChord(List<string> detectedNotes)
+        {
+            foreach (var key in WhiteKeys.Concat(BlackKeys))
+            {
+                if (WaitingChord.Any(n => n.NoteName == key.Note))
+                    key.IsCorrectlyPlayed = detectedNotes.Contains(key.Note);
+                else
+                    key.IsCorrectlyPlayed = null;
+            }
+        }
+
+
+        // ------------------------------
+        //  Найти клавишу по названию ноты
+        // ------------------------------
+        private PianoKey FindKey(string note)
+        {
+            return WhiteKeys.Concat(BlackKeys)
+                            .FirstOrDefault(k => k.Note == note);
+        }
+
+        public void AdjustStartTimeForPause(TimeSpan pauseDuration)
+        {
+            startTime = startTime.Add(pauseDuration);
+        }
     }
 }

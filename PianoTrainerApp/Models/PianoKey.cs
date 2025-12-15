@@ -9,27 +9,25 @@ namespace PianoTrainerApp.Models
 {
     public class PianoKey : INotifyPropertyChanged
     {
-        private bool isPressed;
         public string Note { get; set; }
         public bool IsBlack { get; set; }  // Черная/Белая клавиша
         public double PositionX { get; set; } // Для чёрных клавиш
+        private bool isPressed;
         public bool IsPressed
         {
             get => isPressed;
-            set
-            {
-                if (isPressed != value)
-                {
-                    isPressed = value;
-                    OnPropertyChanged(nameof(IsPressed));
-                }
-            }
+            set { isPressed = value; OnPropertyChanged(nameof(IsPressed)); }
+        }
+
+        private bool? isCorrect;
+        public bool? IsCorrectlyPlayed
+        {
+            get => isCorrect;
+            set { isCorrect = value; OnPropertyChanged(nameof(IsCorrectlyPlayed)); }
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
-        protected void OnPropertyChanged(string propName)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propName));
-        }
+        private void OnPropertyChanged(string name)
+            => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
     }
 }
