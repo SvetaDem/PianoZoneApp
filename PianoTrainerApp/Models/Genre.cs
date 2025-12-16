@@ -26,6 +26,7 @@ namespace PianoTrainerApp.Models
         Blues,
         Funk,
         [Description("Hip hop")]
-        HipHop
+        HipHop,
+        Soundtrack
     }
 }

@@ -66,7 +66,7 @@ namespace PianoTrainerApp.ViewModels
             {
                 new Song {
                     Title = "Twinkle Little Star",
-                    Composer = "Unknown",
+                    Composer = "Wolfgang Amadeus Mozart",
                     MidiPath = "Assets/twinkle-twinkle-little-star.mid",
                     ImagePath = "/Assets/covers/twinkle.jpg",
                     Genres = new List<Genre>{ Genre.Classical, Genre.Folk }
@@ -75,8 +75,64 @@ namespace PianoTrainerApp.ViewModels
                     Title = "Für Elise",
                     Composer = "Beethoven",
                     MidiPath = "Assets/Fur Elise.mid",
-                    ImagePath = "/Assets/covers/bethoven.jpg",
+                    ImagePath = "/Assets/covers/beethoven.jpg",
                     Genres = new List<Genre>{ Genre.Classical, Genre.RB }
+                },
+                new Song {
+                    Title = "Moonlight Sonata (Piano Sonata No. 14)",
+                    Composer = "Beethoven",
+                    MidiPath = "Assets/moonlight.mid",
+                    ImagePath = "/Assets/covers/beethoven.jpg",
+                    Genres = new List<Genre>{ Genre.Classical }
+                },
+                new Song {
+                    Title = "Bear lullaby - Umka",
+                    Composer = "Yuri Yakovlev",
+                    MidiPath = "Assets/Umka, the lullaby.mid",
+                    ImagePath = "/Assets/covers/umka.jpg",
+                    Genres = new List<Genre>{ Genre.Classical, Genre.Soundtrack }
+                },
+                new Song {
+                    Title = "My heart will go on",
+                    Composer = "James Horner",
+                    MidiPath = "Assets/Celine Dion - My Heart Will Go On - Titanic Theme - EASY.mid",
+                    ImagePath = "/Assets/covers/titanic.jpg",
+                    Genres = new List<Genre>{ Genre.Pop, Genre.Soundtrack }
+                },
+                new Song {
+                    Title = "In The Name Of Love",
+                    Composer = "Martin Garrix",
+                    MidiPath = "Assets/Martin Garrix - In The Name Of Love.mid",
+                    ImagePath = "/Assets/covers/In_the_name_of_love.jpg",
+                    Genres = new List<Genre>{ Genre.Pop, Genre.Electronic}
+                },
+                new Song {
+                    Title = "Pirates Of The Caribbean",
+                    Composer = "Hans Zimmer",
+                    MidiPath = "Assets/Pirates Of The Caribbean - He's a Pirate - EASY.mid",
+                    ImagePath = "/Assets/covers/pirates_caribbean.jpg",
+                    Genres = new List<Genre>{ Genre.Soundtrack }
+                },
+                new Song {
+                    Title = "Requiem for a Dream - Main Theme",
+                    Composer = "Clint Mansell",
+                    MidiPath = "Assets/Requiem for a Dream - Main Theme - EASY.mid",
+                    ImagePath = "/Assets/covers/requiem_for_a_dream.jpg",
+                    Genres = new List<Genre>{ Genre.Soundtrack, Genre.Electronic }
+                },
+                new Song {
+                    Title = "The Sound Of Silence",
+                    Composer = "Paul Simon",
+                    MidiPath = "Assets/The Sound Of Silence - EASY.mid",
+                    ImagePath = "/Assets/covers/sounds_of_Silence.jpg",
+                    Genres = new List<Genre>{ Genre.Folk, Genre.Rock }
+                },
+                new Song {
+                    Title = "River Flows in you",
+                    Composer = "Yurima",
+                    MidiPath = "Assets/Yurima - River Flows in you - EASY.mid",
+                    ImagePath = "/Assets/covers/river_flows_in_you.jpg",
+                    Genres = new List<Genre>{ Genre.Classical }
                 }
             };
 

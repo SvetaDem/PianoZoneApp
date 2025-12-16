@@ -38,18 +38,8 @@ namespace PianoTrainerApp.Views
             "F#", "G", "G#", "A", "A#", "B"
         };
 
-        // --- Перевод частоты → название ноты + отклонение в центах ---
-        /*static string FrequencyToNote(double freq, out double cents)
-        {
-            double A4 = 440.0;
-            double noteNumber = 69 + 12 * Math.Log(freq / A4, 2); // MIDI float
-            int nearest = (int)Math.Round(noteNumber);
-            cents = (noteNumber - nearest) * 100;
+        public bool IsInitialized { get; private set; }
 
-            int noteIndex = (nearest + 120) % 12;
-            int octave = (nearest / 12) - 1;
-            return $"{NoteNames[noteIndex]}{octave}";
-        }*/
 
         public PianoWindow(Song song, double speedMultiplier = 1.0)
         {
@@ -86,10 +76,13 @@ namespace PianoTrainerApp.Views
                 detector = new PitchDetector();
                 detector.OnNotesDetected += OnNotesDetected;
                 detector.Start();
+
+                IsInitialized = true;
             }
             catch (Exception ex)
             {
                 MessageBox.Show($"Ошибка: {ex.Message}");
+                IsInitialized = false;
             }
         }
 
@@ -304,7 +297,7 @@ namespace PianoTrainerApp.Views
         protected override void OnClosing(System.ComponentModel.CancelEventArgs e)
         {
             base.OnClosing(e);
-            detector.Stop();
+            detector?.Stop();
         }
 
 

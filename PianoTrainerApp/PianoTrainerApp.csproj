@@ -169,8 +169,36 @@
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
+    <Content Include="Assets\Celine Dion - My Heart Will Go On - Titanic Theme - EASY.mid">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Resource Include="Assets\covers\umka.jpg" />
+    <Resource Include="Assets\covers\titanic.jpg" />
+    <Resource Include="Assets\covers\In_the_name_of_love.jpg" />
+    <Resource Include="Assets\covers\pirates_caribbean.jpg" />
+    <Resource Include="Assets\covers\requiem_for_a_dream.jpg" />
+    <Resource Include="Assets\covers\sounds_of_Silence.jpg" />
+    <Resource Include="Assets\covers\river_flows_in_you.jpg" />
+    <Content Include="Assets\Martin Garrix - In The Name Of Love.mid">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\Pirates Of The Caribbean - He%27s a Pirate - EASY.mid">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\Requiem for a Dream - Main Theme - EASY.mid">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\The Sound Of Silence - EASY.mid">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\Umka, the lullaby.mid">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\Yurima - River Flows in you - EASY.mid">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Resource Include="Assets\covers\twinkle.jpg" />
-    <Resource Include="Assets\covers\bethoven.jpg" />
+    <Resource Include="Assets\covers\beethoven.jpg" />
     <Content Include="Assets\moonlight.mid">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

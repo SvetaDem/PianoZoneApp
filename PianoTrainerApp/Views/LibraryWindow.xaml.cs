@@ -36,10 +36,30 @@ namespace PianoTrainerApp.Views
                 if (tempoDialog.ShowDialog() == true)
                 {
                     var pianoWindow = new PianoWindow(vm.SelectedSong, tempoDialog.SelectedMultiplier);
-                    pianoWindow.Show();
+                    if (pianoWindow.IsInitialized)
+                    {
+                        // Скрытие окна библиотеки
+                        this.Hide();
+
+                        // Когда пианино закроется — возврат библиотеки
+                        pianoWindow.Closed += PianoWindow_Closed;
+
+                        pianoWindow.Show();
+                    }
+                    else
+                    {
+                        pianoWindow.Close();
+                    }
                 }
             }
         }
+
+        private void PianoWindow_Closed(object sender, EventArgs e)
+        {
+            this.Show();
+            this.Activate();
+        }
+
 
         private void ButtonBeginner_Click(object sender, RoutedEventArgs e)
         {
