@@ -40,6 +40,10 @@ namespace PianoTrainerApp.Views
 
         public bool IsInitialized { get; private set; }
 
+        private DateTime? waitingChordStartTime = null;
+        private readonly TimeSpan chordTimeout = TimeSpan.FromSeconds(10);
+
+        private bool finishHandled = false;
 
         public PianoWindow(Song song, double speedMultiplier = 1.0)
         {
@@ -212,7 +216,12 @@ namespace PianoTrainerApp.Views
                     Canvas.SetTop(text, y + (noteHeight - text.FontSize) / 4);
                     NotesCanvas.Children.Add(text);
 
-
+                }
+                // Проверка заверешния нот
+                if (!finishHandled && pianoVM.IsSongFinished)
+                {
+                    finishHandled = true;
+                    OnSongFinished();
                 }
             }
         }
@@ -258,6 +267,22 @@ namespace PianoTrainerApp.Views
         {
             Dispatcher.Invoke(() =>
             {
+                // если ждём аккорд — фиксируем старт
+                if (pianoVM.WaitingChord.Any() && waitingChordStartTime == null)
+                {
+                    waitingChordStartTime = DateTime.Now;
+                }
+
+                // ПРОВЕРКА ТАЙМАУТА
+                if (pianoVM.WaitingChord.Any()
+                    && waitingChordStartTime != null
+                    && DateTime.Now - waitingChordStartTime >= chordTimeout)
+                {
+                    // ❌ таймаут — считаем аккорд пропущенным
+                    SkipWaitingChord();
+                    return;
+                }
+
                 // красим ТОЛЬКО текущие клавиши
                 foreach (var key in pianoVM.WhiteKeys.Concat(pianoVM.BlackKeys))
                     key.IsCorrectlyPlayed = null;
@@ -281,17 +306,76 @@ namespace PianoTrainerApp.Views
                     pianoVM.WaitingChord.Remove(n);
                 }
 
-                // 🔥 КЛЮЧЕВОЕ ИЗМЕНЕНИЕ
+                // без этого не работает :)
                 if (!pianoVM.WaitingChord.Any() && isPaused && !pauseHandled)
                 {
-                    pauseHandled = true; // ❗ срабатывает ТОЛЬКО ОДИН РАЗ
+                    pauseHandled = true; // срабатывает ТОЛЬКО ОДИН РАЗ
+                    
                     TimeSpan pauseDuration = DateTime.Now - pauseStartTime;
                     pianoVM.AdjustStartTimeForPause(pauseDuration);
+                    
                     isPaused = false;
+                    waitingChordStartTime = null; // сброс
                 }
             });
         }
 
+        private void SkipWaitingChord()
+        {
+            // считаем ноты пропущенными
+            foreach (var n in pianoVM.WaitingChord)
+            {
+                n.HasCompleted = true;
+                n.HasPressed = false;
+                pianoVM.ReleaseKey(n.NoteName);
+            }
+
+            pianoVM.WaitingChord.Clear();
+
+            if (isPaused && !pauseHandled)
+            {
+                pauseHandled = true;
+                TimeSpan pauseDuration = DateTime.Now - pauseStartTime;
+                pianoVM.AdjustStartTimeForPause(pauseDuration);
+                isPaused = false;
+            }
+
+            waitingChordStartTime = null;
+        }
+
+        private void OnSongFinished()
+        {
+            // остановка всего
+            detector?.Stop();
+            CompositionTarget.Rendering -= UpdateNotes;
+
+            Dispatcher.Invoke(() =>
+            {
+                var resultWindow = new SongFinishedWindow();
+                resultWindow.Owner = this;
+
+                if (resultWindow.ShowDialog() == true)
+                {
+                    // Повторить
+                    RestartSong();
+                }
+                else
+                {
+                    // Вернуться в библиотеку
+                    this.Close();
+                }
+            });
+        }
+
+        private void RestartSong()
+        {
+            finishHandled = false;
+            pianoVM.Reset();
+            pianoVM.StartAnimation(pianoVM.OriginalNotes);
+
+            detector?.Start();
+            CompositionTarget.Rendering += UpdateNotes;
+        }
 
 
         protected override void OnClosing(System.ComponentModel.CancelEventArgs e)
@@ -299,17 +383,6 @@ namespace PianoTrainerApp.Views
             base.OnClosing(e);
             detector?.Stop();
         }
-
-
-
-        /*public static int MidiNoteNumber(string note)
-        {
-            string[] names = { "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B" };
-            string namePart = note.Substring(0, note.Length - 1);
-            int octave = int.Parse(note.Substring(note.Length - 1, 1));
-            int index = Array.IndexOf(names, namePart);
-            return index + (octave + 1) * 12;
-        }*/
 
     }
 }

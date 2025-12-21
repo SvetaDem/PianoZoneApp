@@ -33,29 +33,45 @@ namespace PianoTrainerApp.Views
             if (DataContext is LibraryViewModel vm && vm.SelectedSong != null)
             {
                 var tempoDialog = new TempoWindow();
-                if (tempoDialog.ShowDialog() == true)
+                if (tempoDialog.ShowDialog() != true)
+                    return;
+                var pianoWindow = new PianoWindow(vm.SelectedSong, tempoDialog.SelectedMultiplier);
+                if (!pianoWindow.IsInitialized)
                 {
-                    var pianoWindow = new PianoWindow(vm.SelectedSong, tempoDialog.SelectedMultiplier);
-                    if (pianoWindow.IsInitialized)
-                    {
-                        // Скрытие окна библиотеки
-                        this.Hide();
-
-                        // Когда пианино закроется — возврат библиотеки
-                        pianoWindow.Closed += PianoWindow_Closed;
-
-                        pianoWindow.Show();
-                    }
-                    else
-                    {
-                        pianoWindow.Close();
-                    }
+                    pianoWindow.Close();
+                    return;
                 }
+
+                // копируем размеры и позиции
+                pianoWindow.Width = this.Width;
+                pianoWindow.Height = this.Height;
+                pianoWindow.WindowState = this.WindowState;
+                pianoWindow.Left = this.Left;
+                pianoWindow.Top = this.Top;
+
+                // Скрытие окна библиотеки
+                this.Hide();
+
+                // Когда пианино закроется — возврат библиотеки
+                pianoWindow.Closed += PianoWindow_Closed;
+                pianoWindow.Show();
             }
+
         }
 
         private void PianoWindow_Closed(object sender, EventArgs e)
         {
+            var pianoWindow = sender as Window;
+            if (pianoWindow == null)
+                return;
+
+            // копируем размер пианино - библиотеке
+            this.Width = pianoWindow.Width;
+            this.Height = pianoWindow.Height;
+            this.Left = pianoWindow.Left;
+            this.Top = pianoWindow.Top;
+            this.WindowState = pianoWindow.WindowState;
+
             this.Show();
             this.Activate();
         }
@@ -69,6 +85,14 @@ namespace PianoTrainerApp.Views
         private void ButtonLibrary_Click(object sender, RoutedEventArgs e)
         {
             var libraryWindow = new LibraryWindow();
+
+            // копируем размеры и позиции
+            libraryWindow.Width = this.Width;
+            libraryWindow.Height = this.Height;
+            libraryWindow.WindowState = this.WindowState;
+            libraryWindow.Left = this.Left;
+            libraryWindow.Top = this.Top;
+
             libraryWindow.Show();
             this.Close();
         }
@@ -76,6 +100,14 @@ namespace PianoTrainerApp.Views
         private void Home_CLick(object sender, RoutedEventArgs e)
         {
             var mainWindow = new MainWindow();
+
+            // копируем размеры и позиции
+            mainWindow.Width = this.Width;
+            mainWindow.Height = this.Height;
+            mainWindow.WindowState = this.WindowState;
+            mainWindow.Left = this.Left;
+            mainWindow.Top = this.Top;
+
             mainWindow.Show();
             this.Close();
         }
@@ -126,6 +158,14 @@ namespace PianoTrainerApp.Views
                 if (tempoDialog.ShowDialog() == true)
                 {
                     var pianoWindow = new PianoWindow(song, tempoDialog.SelectedMultiplier);
+
+                    // копируем размеры и позиции
+                    pianoWindow.Width = this.Width;
+                    pianoWindow.Height = this.Height;
+                    pianoWindow.WindowState = this.WindowState;
+                    pianoWindow.Left = this.Left;
+                    pianoWindow.Top = this.Top;
+
                     pianoWindow.Show();
                 }
             }

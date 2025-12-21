@@ -32,6 +32,14 @@ namespace PianoTrainerApp.Views
         private void ButtonLibrary_Click(object sender, RoutedEventArgs e)
         {
             var libraryWindow = new LibraryWindow();
+
+            // копируем размеры и позиции
+            libraryWindow.Width = this.Width;
+            libraryWindow.Height = this.Height;
+            libraryWindow.WindowState = this.WindowState;
+            libraryWindow.Left = this.Left;
+            libraryWindow.Top = this.Top;
+
             libraryWindow.Show();
             this.Close();
         }

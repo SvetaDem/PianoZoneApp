@@ -65,6 +65,20 @@ namespace PianoTrainerApp.ViewModels
             Songs = new ObservableCollection<Song>
             {
                 new Song {
+                    Title = "Test 1 (HZ)",
+                    Composer = "Wolfgang Amadeus Mozart",
+                    MidiPath = "Assets/hz.mid",
+                    ImagePath = "/Assets/covers/twinkle.jpg",
+                    Genres = new List<Genre>{ Genre.Classical, Genre.Folk }
+                },
+                new Song {
+                    Title = "Test 2 (Titanic)",
+                    Composer = "Wolfgang Amadeus Mozart",
+                    MidiPath = "Assets/titicaca.mid",
+                    ImagePath = "/Assets/covers/twinkle.jpg",
+                    Genres = new List<Genre>{ Genre.Classical, Genre.Folk }
+                },
+                new Song {
                     Title = "Twinkle Little Star",
                     Composer = "Wolfgang Amadeus Mozart",
                     MidiPath = "Assets/twinkle-twinkle-little-star.mid",

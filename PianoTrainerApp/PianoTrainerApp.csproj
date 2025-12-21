@@ -111,6 +111,9 @@
       <DependentUpon>PianoWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Models\Song.cs" />
+    <Compile Include="Views\SongFinishedWindow.xaml.cs">
+      <DependentUpon>SongFinishedWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\TempoWindow.xaml.cs">
       <DependentUpon>TempoWindow.xaml</DependentUpon>
     </Compile>
@@ -132,6 +135,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\PianoWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\SongFinishedWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -172,6 +179,7 @@
     <Content Include="Assets\Celine Dion - My Heart Will Go On - Titanic Theme - EASY.mid">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Resource Include="Images\repeat.png" />
     <Resource Include="Assets\covers\umka.jpg" />
     <Resource Include="Assets\covers\titanic.jpg" />
     <Resource Include="Assets\covers\In_the_name_of_love.jpg" />
@@ -179,6 +187,9 @@
     <Resource Include="Assets\covers\requiem_for_a_dream.jpg" />
     <Resource Include="Assets\covers\sounds_of_Silence.jpg" />
     <Resource Include="Assets\covers\river_flows_in_you.jpg" />
+    <Content Include="Assets\hz.mid">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="Assets\Martin Garrix - In The Name Of Love.mid">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -189,6 +200,12 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Assets\The Sound Of Silence - EASY.mid">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\titicaca.mid">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\tit_hz.mid">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Assets\Umka, the lullaby.mid">

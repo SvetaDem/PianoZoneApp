@@ -16,6 +16,8 @@ namespace PianoTrainerApp.ViewModels
         public ObservableCollection<PianoKey> BlackKeys { get; set; }
         public ObservableCollection<MidiNote> FallingNotes { get; set; }
 
+        public List<MidiNote> OriginalNotes { get; private set; }
+
         public double SpeedMultiplier { get; set; } = 1.0; // 1x по умолчанию
 
         public List<MidiNote> WaitingChord { get; set; } = new List<MidiNote>();
@@ -24,6 +26,8 @@ namespace PianoTrainerApp.ViewModels
         private List<MidiNote> allNotes;
         private DateTime startTime;
         public double CurrentTime => (DateTime.Now - startTime).TotalSeconds;
+
+        public bool IsSongFinished => !FallingNotes.Any(n => !n.HasCompleted) && !WaitingChord.Any();
 
         public PianoViewModel()
         {
@@ -39,6 +43,14 @@ namespace PianoTrainerApp.ViewModels
 
         public void StartAnimation(List<MidiNote> notes)
         {
+            // Сохраняем оригинальные ноты для перезапуска
+            OriginalNotes = notes.Select(n => new MidiNote
+            {
+                NoteName = n.NoteName,
+                StartTime = n.StartTime,
+                Duration = n.Duration,
+                X = n.X
+            }).ToList();
 
             FallingNotes.Clear();
             startTime = DateTime.Now;
@@ -144,5 +156,18 @@ namespace PianoTrainerApp.ViewModels
         {
             startTime = startTime.Add(pauseDuration);
         }
+
+        public void Reset()
+        {
+            startTime = DateTime.Now;  // сброс времени
+            WaitingChord.Clear();
+
+            foreach (var note in FallingNotes)
+            {
+                note.HasCompleted = false;
+                note.HasPressed = false;
+            }
+        }
+
     }
 }
