@@ -4,7 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d"
-        Title="PianoZone" Height="650" Width="1050"
+        Title="Планета Ре-минор" Height="650" Width="1050"
         MinHeight="600" MinWidth="1000"
         WindowStartupLocation="CenterScreen">
 

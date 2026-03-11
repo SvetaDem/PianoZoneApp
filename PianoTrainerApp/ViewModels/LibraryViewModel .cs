@@ -51,7 +51,7 @@ namespace PianoTrainerApp.ViewModels
         public LibraryViewModel()
         {
             // Инициализация жанров
-            Genres = new ObservableCollection<string> { "Choose the Genre" };
+            Genres = new ObservableCollection<string> { "Выберите жанр" };
             var enumValues = Enum.GetValues(typeof(Genre)).Cast<Genre>();
             var genreNames = enumValues.Select(g =>
             {

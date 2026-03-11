@@ -88,7 +88,7 @@
                     BorderBrush="{TemplateBinding BorderBrush}"
                     BorderThickness="{TemplateBinding BorderThickness}"
                     CornerRadius="16">
-                            <TextBlock Text="Back to library"
+                            <TextBlock Text="В библиотеку"
                            HorizontalAlignment="Center"
                            VerticalAlignment="Center"
                            Foreground="#202020"

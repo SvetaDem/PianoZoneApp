@@ -26,7 +26,7 @@
 
         <StackPanel Orientation="Horizontal"
                     HorizontalAlignment="Center">
-            <Button Content="OK" Width="80"
+            <Button Content="Ок" Width="80"
                     Height="30" Margin="0 0 10 0"
                     HorizontalAlignment="Center"
                     Click="ButtonOk_Click"
@@ -43,7 +43,7 @@
         CornerRadius="15">
                         <TextBlock HorizontalAlignment="Center"
                VerticalAlignment="Center"
-               Text="OK"
+               Text="Ок"
                FontWeight="Medium"
                Foreground="White"/>
                     </Border>
@@ -76,7 +76,7 @@ BorderThickness="{TemplateBinding BorderThickness}"
 CornerRadius="15">
                         <TextBlock HorizontalAlignment="Center"
        VerticalAlignment="Center"
-       Text="Cancel"
+       Text="Отмена"
        FontWeight="Medium"
        Foreground="#202020"/>
                     </Border>

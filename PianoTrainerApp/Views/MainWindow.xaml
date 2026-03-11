@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:PianoTrainerApp.Views"
         mc:Ignorable="d"
-        Title="PianoZone" Height="650" Width="1050"
+        Title="Планета Ре-минор" Height="650" Width="1050"
         MinHeight="600" MinWidth="1000"
         WindowStartupLocation="CenterScreen">
 
@@ -96,7 +96,7 @@
         <Grid Margin="20,0" Height="60" VerticalAlignment="Top">
 
             <!-- Заголовок -->
-            <TextBlock Text="PianoZone"
+            <TextBlock Text="Планета Ре-минор"
                        VerticalAlignment="Center"
                        Foreground="White"
                        FontSize="24"
@@ -107,7 +107,7 @@
                         HorizontalAlignment="Center"
                         VerticalAlignment="Center">
 
-                <TextBlock Text="Home"
+                <TextBlock Text="Главная"
                            Foreground="White"
                            FontSize="20"
                            Cursor="Hand"
@@ -123,7 +123,7 @@
                            Margin="0,0,25,0"
                            VerticalAlignment="Bottom"/>
 
-                <TextBlock Text="Learn"
+                <TextBlock Text="Обучение"
                            Foreground="#202020"
                            FontSize="16"
                            FontWeight="Medium"
@@ -140,7 +140,7 @@
                            Margin="0,0,25,0"
                            VerticalAlignment="Bottom"/>
 
-                <TextBlock Text="Songs"
+                <TextBlock Text="Музыка"
                            Foreground="#202020"
                            FontSize="16"
                            Cursor="Hand"
@@ -208,7 +208,7 @@
                             <StackPanel Margin="34,38,70,15" VerticalAlignment="Top">
                                 <!-- Заголовок -->
                                 <TextBlock
-                                    Text="A beginner?"
+                                    Text="Новичок?"
                                     Foreground="White"
                                     FontSize="22"
                                     FontWeight="ExtraBold"/>
@@ -219,9 +219,9 @@
                                     FontSize="16"
                                     Margin="0,30,0,40"
                                     TextWrapping="Wrap">
-                                    <Run Text="Don't worry and move on to" FontWeight="Light"/>
+                                    <Run Text="Не волнуйся и переходи" FontWeight="Light"/>
                                     <LineBreak/>
-                                    <Run Text="learning the basics" FontWeight="Medium"/>
+                                    <Run Text="к изучению основ" FontWeight="Medium"/>
                                 </TextBlock>
                                 <Image
                                     Height="110"
@@ -306,7 +306,7 @@
 
                             <!-- Контент -->
                             <StackPanel Margin="34,38,15,38" VerticalAlignment="Top">
-                                <TextBlock Text="Let's play"
+                                <TextBlock Text="Давай играть!"
                                Foreground="Black"
                                FontSize="22"
                                FontWeight="ExtraBold"/>
@@ -316,10 +316,10 @@
                                Margin="0,30,0,20"
                                TextWrapping="Wrap">
                         <Run Foreground="#564949"
-                             Text="Go to the library and"
+                             Text="Переходи в библиотеку и"
                              FontWeight="Regular"/>
                         <LineBreak/>
-                        <Run Text="choose the song you like"
+                        <Run Text="выбирай песню по душе"
                              FontWeight="Medium"/>
                                 </TextBlock>
 

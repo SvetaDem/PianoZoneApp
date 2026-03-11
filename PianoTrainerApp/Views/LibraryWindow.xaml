@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:PianoTrainerApp"
         mc:Ignorable="d"
-        Title="PianoZone" Height="650" Width="1050"
+        Title="Планета Ре-минор" Height="650" Width="1050"
         MinHeight="600" MinWidth="1000"
         WindowStartupLocation="CenterScreen">
     <Window.Resources>
@@ -142,7 +142,7 @@
                                 <Grid>
                                     <!-- Placeholder: по умолчанию скрыт (Collapsed) -->
                                     <TextBlock x:Name="Placeholder"
-                                       Text="Choose the Genre"
+                                       Text="Выберите жанр"
                                        Margin="10,0,30,0"
                                        Foreground="#202020"
                                        VerticalAlignment="Center"
@@ -362,7 +362,7 @@
         <Grid Margin="20,0" Height="60" VerticalAlignment="Top">
 
             <!-- Заголовок -->
-            <TextBlock Text="PianoZone"
+            <TextBlock Text="Планета Ре-минор"
                        VerticalAlignment="Center"
                        Foreground="White"
                        FontSize="24"
@@ -373,7 +373,7 @@
                         HorizontalAlignment="Center"
                         VerticalAlignment="Center">
 
-                <TextBlock Text="Home"
+                <TextBlock Text="Главная"
                            Foreground="#202020"
                            FontSize="16"
                            Cursor="Hand"
@@ -390,7 +390,7 @@
                            Margin="0,0,25,0"
                            VerticalAlignment="Bottom"/>
 
-                <TextBlock Text="Learn"
+                <TextBlock Text="Обучение"
                            Foreground="#202020"
                            FontSize="16"
                            FontWeight="Medium"
@@ -407,7 +407,7 @@
                            Margin="0,0,25,0"
                            VerticalAlignment="Bottom"/>
 
-                <TextBlock Text="Songs"
+                <TextBlock Text="Музыка"
                            Foreground="White"
                            FontSize="20"
                            Cursor="Hand"
@@ -458,7 +458,7 @@
                     CornerRadius="20">
                             <TextBlock HorizontalAlignment="Center"
                            VerticalAlignment="Center"
-                           Text="Import MIDI"
+                           Text="Импорт MIDI"
                            FontWeight="Medium"
                            FontSize="16"
                            Foreground="White"/>
@@ -499,7 +499,7 @@
                             Margin="0 0 25 0"
                             VerticalAlignment="Center">
                                 <TextBlock VerticalAlignment="Center"
-                               Text="Your Favourites"
+                               Text="Твои любимые"
                                FontWeight="Medium"
                                FontSize="16"
                                Foreground="Black"
