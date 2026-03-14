@@ -142,7 +142,7 @@
                                 <Grid>
                                     <!-- Placeholder: по умолчанию скрыт (Collapsed) -->
                                     <TextBlock x:Name="Placeholder"
-                                       Text="Выберите жанр"
+                                       Text="Все жанры"
                                        Margin="10,0,30,0"
                                        Foreground="#202020"
                                        VerticalAlignment="Center"

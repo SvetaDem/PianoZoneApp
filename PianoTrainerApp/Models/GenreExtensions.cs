@@ -10,18 +10,18 @@ namespace PianoTrainerApp.Models
 {
     public static class GenreExtensions
     {
-        public static string ToDisplayString(this Genre genre)
-        {
-            var field = genre.GetType().GetField(genre.ToString());
-            var attr = field.GetCustomAttribute<DescriptionAttribute>();
+        //public static string ToDisplayString(this Genre genre)
+        //{
+        //    var field = genre.GetType().GetField(genre.ToString());
+        //    var attr = field.GetCustomAttribute<DescriptionAttribute>();
 
-            return attr?.Description ?? SplitCamelCase(genre.ToString());
-        }
+        //    return attr?.Description ?? SplitCamelCase(genre.ToString());
+        //}
 
-        private static string SplitCamelCase(string input)
-        {
-            return System.Text.RegularExpressions.Regex
-                .Replace(input, "(\\B[A-Z])", " $1");
-        }
+        //private static string SplitCamelCase(string input)
+        //{
+        //    return System.Text.RegularExpressions.Regex
+        //        .Replace(input, "(\\B[A-Z])", " $1");
+        //}
     }
 }
