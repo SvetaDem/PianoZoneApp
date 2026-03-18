@@ -183,8 +183,8 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Converters\KeyColorConverter.cs" />
-    <Compile Include="Models\GenreExtensions.cs" />
     <Compile Include="Models\MidiNote.cs" />
+    <Compile Include="Models\PasswordHelper.cs" />
     <Compile Include="Models\PianoKey.cs" />
     <Compile Include="Models\ReMinorContext.cs" />
     <Compile Include="Models\SongUser.cs" />

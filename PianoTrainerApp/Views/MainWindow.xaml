@@ -83,6 +83,45 @@
             </Setter>
         </Style>
 
+        <Style x:Key="RoundedTextBox" TargetType="TextBox">
+            <Setter Property="Foreground" Value="#1e1e1e"/>
+            <Setter Property="Height" Value="42"/>
+            <Setter Property="Margin" Value="0,0,0,15"/>
+            <Setter Property="FontSize" Value="13"/>
+            <Setter Property="FontWeight" Value="Medium"/>
+            <Setter Property="Background" Value="#8F8F8F"/>
+            <Setter Property="BorderBrush" Value="White"/>
+            <Setter Property="BorderThickness" Value="2"/>
+            <Setter Property="Padding" Value="10,0"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="TextBox">
+                        <Border CornerRadius="20"
+                        Background="{TemplateBinding Background}"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        BorderThickness="{TemplateBinding BorderThickness}">
+
+                            <!-- ВАЖНО: тут живёт текст -->
+                            <ScrollViewer x:Name="PART_ContentHost"
+                                  Margin="{TemplateBinding Padding}"/>
+                        </Border>
+
+                        <ControlTemplate.Triggers>
+
+                            <!-- Фокус -->
+                            <Trigger Property="IsKeyboardFocused" Value="True">
+                                <Setter Property="BorderBrush" Value="#6A9FFF"/>
+                                <Setter Property="Background" Value="#A5A5A5"/>
+                            </Trigger>
+
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
     </Window.Resources>
 
 
@@ -159,12 +198,14 @@
             HorizontalAlignment="Right">
 
             <Button Width="32" Height="32" Margin="0,0,0,10"
-                    Style="{StaticResource IconButtonStyle}">
+                    Style="{StaticResource IconButtonStyle}"
+                    Click="ProfileButton_Click">
                 <Image Source="/Images/profile.png"/>
             </Button>
 
             <Button Width="32" Height="32"
-                    Style="{StaticResource IconButtonStyle}">
+                    Style="{StaticResource IconButtonStyle}"
+                    >
                 <Image Source="/Images/settings.png"/>
             </Button>
         </StackPanel>
@@ -377,6 +418,269 @@
             </Button>
 
         </StackPanel>
+
+        <!-- Затемнение фона -->
+        <Border x:Name="Overlay"
+        Background="#66000000"
+        Visibility="Collapsed"
+        Panel.ZIndex="9"
+        MouseDown="Overlay_MouseDown"/>
+
+        <!-- ВЫЕЗЖАЮЩАЯ ПАНЕЛЬ ПРОФИЛЯ -->
+        <Grid x:Name="ProfilePanel"
+      Width="350"
+      HorizontalAlignment="Right"
+      Background="#1E1E1E"
+      Panel.ZIndex="10">
+
+            <Grid.RenderTransform>
+                <TranslateTransform x:Name="ProfilePanelTransform" X="350"/>
+            </Grid.RenderTransform>
+
+
+            <!-- Контент -->
+            <Grid>
+
+                <!-- ЭКРАН АВТОРИЗАЦИИ -->
+                <StackPanel x:Name="AuthPanel"
+                    Margin="25"
+                            Visibility="Visible"
+                    VerticalAlignment="Center" Cursor="">
+
+                    <TextBlock Text="Авторизация"
+                               Foreground="White"
+                               FontSize="22"
+                               FontWeight="Bold"
+                               TextAlignment="Center"
+                               Margin="0,0,0,20"/>
+
+                    <TextBox x:Name="AuthUsernameTextBox"
+                             Style="{StaticResource RoundedTextBox}"
+                             Tag="Логин"
+                             Loaded="TextBox_Loaded"
+                             GotFocus="TextBox_GotFocus"
+                             LostFocus="TextBox_LostFocus"/>
+                    <Grid>
+                        <!-- TextBox с placeholder -->
+                        <TextBox x:Name="AuthPasswordBox"
+                 Style="{StaticResource RoundedTextBox}"
+                 Tag="Пароль"
+                 FontSize="13"
+                 FontWeight="Medium"
+                 Padding="10,0,35,0"
+                 VerticalContentAlignment="Center"
+                 TextChanged="PasswordBox_TextChanged"
+                 GotFocus="PasswordBox_GotFocus"
+                 LostFocus="PasswordBox_LostFocus"
+                 Loaded="PasswordBox_Loaded"/>
+
+                            <!-- Placeholder -->
+                            <TextBlock x:Name="PasswordPlaceholder"
+                   Text="Пароль"
+                   Foreground="#555555"
+                   FontSize="13"
+                   FontWeight="Medium"
+                   Margin="20,0,35,15"
+                   VerticalAlignment="Center"
+                   IsHitTestVisible="False"/>
+
+                            <!-- Кнопка глазика -->
+                        <Button x:Name="ShowPasswordButton"
+                                Width="30"
+                                Height="30"
+                                Margin="0,0,10,15"
+                                HorizontalAlignment="Right"
+                                Background="Transparent"
+                                BorderThickness="0"
+                                Cursor="Hand"
+                                PreviewMouseLeftButtonDown="ShowPasswordButton_PreviewMouseLeftButtonDown"
+                                PreviewMouseLeftButtonUp="ShowPasswordButton_PreviewMouseLeftButtonUp">
+                            <Button.Style>
+                                <Style TargetType="Button">
+                                    <Setter Property="Background" Value="Transparent"/>
+                                    <Setter Property="BorderBrush" Value="Transparent"/>
+                                    <Setter Property="BorderThickness" Value="0"/>
+                                    <Setter Property="OverridesDefaultStyle" Value="True"/>
+                                    <Setter Property="Template">
+                                        <Setter.Value>
+                                            <ControlTemplate TargetType="Button">
+                                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                            </ControlTemplate>
+                                        </Setter.Value>
+                                    </Setter>
+                                </Style>
+                            </Button.Style>
+                            <TextBlock Text="👁" FontSize="14"/>
+                        </Button>
+                    </Grid>
+                    
+                    <Button x:Name="AuthButton" Width="120" Height="38"
+                        HorizontalAlignment="Center"
+                        Cursor="Hand"
+                        Background="#3F64A9"
+                            Click="ButtonLogin_Click"
+                        BorderThickness="1">
+                        <Button.Template>
+                            <ControlTemplate TargetType="Button">
+                                <Border x:Name="border"
+                                    Background="{TemplateBinding Background}"
+                                    BorderThickness="{TemplateBinding BorderThickness}"
+                                    CornerRadius="20">
+                                    <TextBlock HorizontalAlignment="Center"
+                                           VerticalAlignment="Center"
+                                           Text="Войти"
+                                           FontWeight="SemiBold"
+                                           Foreground="White"/>
+                                </Border>
+                                <ControlTemplate.Triggers>
+                                    <!-- Изменение цвета при наведении -->
+                                    <Trigger Property="IsMouseOver" Value="True">
+                                        <Setter TargetName="border" Property="Background" Value="#d0d0d0"/>
+                                        <!-- более тёмный -->
+                                    </Trigger>
+                                    <!-- нажатие -->
+                                    <Trigger Property="IsPressed" Value="True">
+                                        <Setter TargetName="border" Property="Background" Value="#b0b0b0"/>
+                                        <!-- ещё темнее -->
+                                    </Trigger>
+                                </ControlTemplate.Triggers>
+                            </ControlTemplate>
+                        </Button.Template>
+                    </Button>
+                    <TextBlock Text="Нет аккаунта?"
+                               Foreground="#9b9b9b"
+                               TextAlignment="Center"
+                               Margin="0,15,0,0"
+                               Cursor="Hand"/>
+
+                    <TextBlock Text="Зарегистрируйся"
+                               Foreground="#e0e0e0"
+                               TextAlignment="Center"
+                               Cursor="Hand"
+                               MouseLeftButtonDown="RegisterTextBlock_Click"/>
+                </StackPanel>
+
+                <!-- ЭКРАН РЕГИСТРАЦИИ -->
+                <StackPanel x:Name="RegisterPanel"
+                            Margin="25"
+                            Visibility="Collapsed"
+                            VerticalAlignment="Center">
+
+                    <TextBlock Text="Регистрация"
+                               Foreground="White"
+                               FontSize="22"
+                               TextAlignment="Center"
+                               Margin="0,0,0,20"/>
+
+                    <TextBox Height="35"
+                             x:Name="RegisterUsernameTextBox"
+             Margin="0,0,0,10"
+             VerticalContentAlignment="Center" />
+                    
+                    <TextBox Height="35"
+                x:Name="RegisterEmailTextBox"
+Margin="0,0,0,10"
+VerticalContentAlignment="Center" />
+
+                    <TextBox Height="35"
+                 Margin="0,0,0,20"
+                                 x:Name="RegisterPasswordBox"
+                 VerticalContentAlignment="Center"/>
+
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+
+                        <!-- Светлая кнопка -->
+                        <Button x:Name="RegisterButton" Width="120" Height="30"
+            Cursor="Hand"
+            Background="#E0E0E0"
+            BorderBrush="#888888"
+            BorderThickness="1"
+                                Click="ButtonLogin_Click">
+                            <Button.Template>
+                                <ControlTemplate TargetType="Button">
+                                    <Border x:Name="border"
+                        Background="{TemplateBinding Background}"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        BorderThickness="{TemplateBinding BorderThickness}"
+                        CornerRadius="15">
+                                        <TextBlock Text="Войти"
+                               HorizontalAlignment="Center"
+                               VerticalAlignment="Center"
+                               FontWeight="Medium"
+                               Foreground="#202020"/>
+                                    </Border>
+                                    <ControlTemplate.Triggers>
+                                        <Trigger Property="IsMouseOver" Value="True">
+                                            <Setter TargetName="border" Property="Background" Value="#D0D0D0"/>
+                                        </Trigger>
+                                        <Trigger Property="IsPressed" Value="True">
+                                            <Setter TargetName="border" Property="Background" Value="#B0B0B0"/>
+                                        </Trigger>
+                                    </ControlTemplate.Triggers>
+                                </ControlTemplate>
+                            </Button.Template>
+                        </Button>
+
+                        <!-- Тёмная полупрозрачная кнопка -->
+                        <Button Width="120" Height="30"
+            Cursor="Hand"
+            Background="#66000000"
+                            BorderBrush="#AAAAAA"
+            BorderThickness="1"
+                                Click="ButtonBack_Click">
+                            <Button.Template>
+                                <ControlTemplate TargetType="Button">
+                                    <Border x:Name="border"
+                        Background="{TemplateBinding Background}"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        BorderThickness="{TemplateBinding BorderThickness}"
+                        CornerRadius="15">
+                                        <TextBlock Text="Назад"
+                               HorizontalAlignment="Center"
+                               VerticalAlignment="Center"
+                               FontWeight="Medium"
+                               Foreground="White"/>
+                                    </Border>
+                                    <ControlTemplate.Triggers>
+                                        <Trigger Property="IsMouseOver" Value="True">
+                                            <Setter TargetName="border" Property="Background" Value="#88000000"/>
+                                            <!-- чуть менее прозрачная -->
+                                        </Trigger>
+                                        <Trigger Property="IsPressed" Value="True">
+                                            <Setter TargetName="border" Property="Background" Value="#AA000000"/>
+                                            <!-- ещё более тёмная -->
+                                        </Trigger>
+                                    </ControlTemplate.Triggers>
+                                </ControlTemplate>
+                            </Button.Template>
+                        </Button>
+
+                    </StackPanel>
+                </StackPanel>
+
+                <!-- ПРОФИЛЬ ПОЛЬЗОВАТЕЛЯ -->
+                <StackPanel x:Name="UserPanel"
+                    Margin="25"
+                    Visibility="Collapsed"
+                    VerticalAlignment="Center">
+
+                    <TextBlock Text="Добро пожаловать!"
+                       Foreground="White"
+                       FontSize="20"
+                       Margin="0,0,0,15"/>
+
+                    <TextBlock x:Name="UsernameProfileText"
+           FontSize="18"
+           Foreground="White"/>
+
+                    <Button Content="Выйти"
+                    Margin="0,20,0,0"
+                    Height="35"
+                            Click="ButtonLogout_Click"/>
+                </StackPanel>
+
+            </Grid>
+        </Grid>
 
         <!-- КНОПКА ВЫХОД -->
         <Button
