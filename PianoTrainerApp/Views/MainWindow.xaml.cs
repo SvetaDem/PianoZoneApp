@@ -22,7 +22,7 @@ namespace PianoTrainerApp.Views
     public partial class MainWindow : Window
     {
         private User currentUser;
-        
+
         public MainWindow()
         {
             InitializeComponent();
@@ -31,7 +31,7 @@ namespace PianoTrainerApp.Views
 
         private void ButtonBeginner_Click(object sender, RoutedEventArgs e)
         {
-           //
+            //
         }
 
         private void ButtonLibrary_Click(object sender, RoutedEventArgs e)
@@ -121,105 +121,6 @@ namespace PianoTrainerApp.Views
         private string realAuthPassword = "";
         private string realRegisterPassword = "";
 
-        private void ButtonLogin_Click(object sender, RoutedEventArgs e)
-        {
-            var button = sender as Button;
-            if (button == null) return;
-
-            using (var db = new ReMinorContext())
-            {
-                if (button.Name == "RegisterButton")
-                {
-                    string username = RegisterUsernameTextBox.Text.Trim();
-                    string email = RegisterEmailTextBox.Text.Trim();
-                    string password = realRegisterPassword;
-
-                    // проверка пустых полей
-                    if (string.IsNullOrWhiteSpace(username) ||
-                        string.IsNullOrWhiteSpace(email) ||
-                        string.IsNullOrWhiteSpace(password))
-                    {
-                        MessageBox.Show("Все поля должны быть заполнены");
-                        return;
-                    }
-
-                    // проверка уникальности логина
-                    if (db.Users.Any(u => u.Username == username))
-                    {
-                        MessageBox.Show("Пользователь с таким логином уже существует");
-                        return;
-                    }
-
-                    // проверка сложности пароля
-                    if (!IsValidPassword(password))
-                    {
-                        MessageBox.Show("Пароль должен быть минимум 6 символов, содержать заглавную букву, строчную и цифру");
-                        return;
-                    }
-
-                    string passwordHash = PasswordHelper.HashPassword(password);
-
-                    var user = new User
-                    {
-                        Username = username,
-                        Email = email,
-                        PasswordHash = passwordHash
-                    };
-
-                    db.Users.Add(user);
-                    db.SaveChanges();
-
-                    currentUser = user;
-                }
-                else if (button.Name == "AuthButton")
-                {
-                    string username = AuthUsernameTextBox.Text.Trim();
-                    string password = realAuthPassword;
-
-                    // проверка пустых полей
-                    if (string.IsNullOrWhiteSpace(username) || string.IsNullOrWhiteSpace(password))
-                    {
-                        MessageBox.Show("Введите логин и пароль");
-                        return;
-                    }
-
-                    string passwordHash = PasswordHelper.HashPassword(password);
-
-                    var user = db.Users.FirstOrDefault(u =>
-                        u.Username == username &&
-                        u.PasswordHash == passwordHash);
-
-                    if (user == null)
-                    {
-                        MessageBox.Show("Неверный логин или пароль");
-                        return;
-                    }
-
-                    currentUser = user;
-                }
-            }
-
-            // ---------- АВТОЛОГИН ----------
-            Properties.Settings.Default.CurrentUserId = currentUser.Id;
-            Properties.Settings.Default.Save();
-
-            // ---------- ОТОБРАЖЕНИЕ ПРОФИЛЯ ----------
-            UsernameProfileText.Text = currentUser.Username;
-
-            RegisterPanel.Visibility = Visibility.Collapsed;
-            AuthPanel.Visibility = Visibility.Collapsed;
-            UserPanel.Visibility = Visibility.Visible;
-        }
-        // ---------- Вспомогательный метод для проверки сложности пароля ----------
-        private bool IsValidPassword(string password)
-        {
-            if (password.Length < 6) return false;
-            if (!password.Any(char.IsUpper)) return false;
-            if (!password.Any(char.IsLower)) return false;
-            if (!password.Any(char.IsDigit)) return false;
-            return true;
-        }
-
         private void AutoLogin()
         {
             int savedUserId = Properties.Settings.Default.CurrentUserId;
@@ -257,81 +158,234 @@ namespace PianoTrainerApp.Views
 
         private bool showPassword = false;
 
-        // ---------------- PLACEHOLDER ЛОГИН ----------------
-        private void UsernameTextBox_TextChanged(object sender, TextChangedEventArgs e)
+        // ---------- Универсальный TextChanged для логина/почты ----------
+        private void TextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
-            UsernamePlaceholder.Visibility = string.IsNullOrEmpty(AuthUsernameTextBox.Text)
-                                             ? Visibility.Visible
-                                             : Visibility.Collapsed;
+            var tb = sender as TextBox;
+            if (tb == null) return;
+
+            // placeholder — ищем как TextBlock в родительском Grid
+            var parentGrid = tb.Parent as Grid;
+            if (parentGrid == null) return;
+
+            // ищем TextBlock с IsHitTestVisible=false (наш placeholder)
+            var placeholder = parentGrid.Children.OfType<TextBlock>()
+                                 .FirstOrDefault(t => !t.IsHitTestVisible);
+            if (placeholder == null) return;
+
+            // скрываем placeholder, если есть текст
+            placeholder.Visibility = string.IsNullOrEmpty(tb.Text) ? Visibility.Visible : Visibility.Collapsed;
         }
 
-        // ---------------- PLACEHOLDER ПАРОЛЬ ----------------
+        // ---------- Универсальный Loaded для пароля ----------
         private void PasswordBox_Loaded(object sender, RoutedEventArgs e)
         {
-            if (string.IsNullOrWhiteSpace(AuthPasswordBox.Text))
-                PasswordPlaceholder.Visibility = Visibility.Visible;
+            var tb = sender as TextBox;
+            if (tb == null) return;
+
+            var placeholder = tb.Name.Contains("Auth") ? AuthPasswordPlaceholder : RegisterPasswordPlaceholder;
+
+            if (string.IsNullOrWhiteSpace(tb.Text))
+                placeholder.Visibility = Visibility.Visible;
         }
 
         private void PasswordBox_LostFocus(object sender, RoutedEventArgs e)
         {
-            if (string.IsNullOrWhiteSpace(realAuthPassword))
-                PasswordPlaceholder.Visibility = Visibility.Visible;
-        }
+            var tb = sender as TextBox;
+            if (tb == null) return;
 
-        // ---------------- МАСКА ПАРОЛЯ ----------------
+            bool isAuth = tb.Name.Contains("Auth");
+
+            var placeholder = isAuth ? AuthPasswordPlaceholder : RegisterPasswordPlaceholder;
+            string realPassword = isAuth ? realAuthPassword : realRegisterPassword;
+
+            placeholder.Visibility = string.IsNullOrEmpty(realPassword)
+                ? Visibility.Visible
+                : Visibility.Collapsed;
+        }
+        // ---------- Универсальный TextChanged для пароля ----------
         private void PasswordBox_TextChanged(object sender, TextChangedEventArgs e)
         {
             var tb = sender as TextBox;
             if (tb == null) return;
 
-            PasswordPlaceholder.Visibility = string.IsNullOrEmpty(tb.Text) && string.IsNullOrEmpty(realAuthPassword)
-                                             ? Visibility.Visible
-                                             : Visibility.Collapsed;
+            bool isAuth = tb.Name.Contains("Auth");
 
-            if (showPassword)
-            {
-                realAuthPassword = tb.Text;
-                return;
-            }
+            var placeholder = isAuth ? AuthPasswordPlaceholder : RegisterPasswordPlaceholder;
+            string realPassword = isAuth ? realAuthPassword : realRegisterPassword;
 
             int selStart = tb.SelectionStart;
 
-            if (tb.Text.Length < realAuthPassword.Length)
+            // 👉 РЕЖИМ ПОКАЗА ПАРОЛЯ
+            if (showPassword)
             {
-                int diff = realAuthPassword.Length - tb.Text.Length;
-                int removeIndex = Math.Max(0, selStart);
-                int removeLength = Math.Min(diff, realAuthPassword.Length - removeIndex);
-                if (removeLength > 0)
-                    realAuthPassword = realAuthPassword.Remove(removeIndex, removeLength);
+                realPassword = tb.Text;
+
+                if (isAuth) realAuthPassword = realPassword;
+                else realRegisterPassword = realPassword;
+
+                placeholder.Visibility = string.IsNullOrEmpty(realPassword)
+                    ? Visibility.Visible
+                    : Visibility.Collapsed;
+
+                return;
             }
-            else if (tb.Text.Length > realAuthPassword.Length)
+
+            // 👉 ОБНОВЛЕНИЕ realPassword
+            if (tb.Text.Length < realPassword.Length)
             {
-                int diff = tb.Text.Length - realAuthPassword.Length;
+                int diff = realPassword.Length - tb.Text.Length;
+                int removeIndex = Math.Max(0, selStart);
+                int removeLength = Math.Min(diff, realPassword.Length - removeIndex);
+
+                if (removeLength > 0)
+                    realPassword = realPassword.Remove(removeIndex, removeLength);
+            }
+            else if (tb.Text.Length > realPassword.Length)
+            {
+                int diff = tb.Text.Length - realPassword.Length;
                 int insertIndex = Math.Max(0, selStart - diff);
+
                 if (insertIndex + diff <= tb.Text.Length && insertIndex >= 0)
                 {
                     string added = tb.Text.Substring(insertIndex, diff);
-                    realAuthPassword = realAuthPassword.Insert(insertIndex, added);
+                    realPassword = realPassword.Insert(insertIndex, added);
                 }
             }
 
-            tb.Text = new string('•', realAuthPassword.Length);
+            // 👉 СОХРАНЯЕМ
+            if (isAuth) realAuthPassword = realPassword;
+            else realRegisterPassword = realPassword;
+
+            // 💥 ВАЖНО: placeholder только от realPassword
+            placeholder.Visibility = string.IsNullOrEmpty(realPassword)
+                ? Visibility.Visible
+                : Visibility.Collapsed;
+
+            // 👉 ВСЕГДА маска
+            tb.Text = new string('•', realPassword.Length);
             tb.SelectionStart = selStart;
         }
-
-        // ---------------- ГЛАЗИК ----------------
+        // ---------- Универсальный глазик ----------
         private void ShowPasswordButton_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             showPassword = true;
-            AuthPasswordBox.Text = realAuthPassword;
-            AuthPasswordBox.SelectionStart = AuthPasswordBox.Text.Length;
+            var button = sender as Button;
+            var grid = button.Parent as Grid;
+            var tb = grid.Children.OfType<TextBox>().FirstOrDefault();
+            if (tb == null) return;
+
+            string realPassword = tb.Name.Contains("Auth") ? realAuthPassword : realRegisterPassword;
+            tb.Text = realPassword;
+            tb.SelectionStart = tb.Text.Length;
         }
 
         private void ShowPasswordButton_PreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
             showPassword = false;
-            AuthPasswordBox.Text = new string('•', realAuthPassword.Length);
-            AuthPasswordBox.SelectionStart = AuthPasswordBox.Text.Length;
+            var button = sender as Button;
+            var grid = button.Parent as Grid;
+            var tb = grid.Children.OfType<TextBox>().FirstOrDefault();
+            if (tb == null) return;
+
+            string realPassword = tb.Name.Contains("Auth") ? realAuthPassword : realRegisterPassword;
+            tb.Text = new string('•', realPassword.Length);
+            tb.SelectionStart = tb.Text.Length;
+        }
+
+        // ---------- Проверка логина ----------
+        private bool IsValidUsername(string username)
+        {
+            if (username.Length < 2) return false;
+            if (!char.IsLetter(username[0])) return false;
+            return true;
+        }
+
+        // ---------- Проверка пароля ----------
+        private bool IsValidPassword(string password)
+        {
+            if (password.Length < 6) return false;
+            if (!password.Any(char.IsUpper)) return false;
+            if (!password.Any(char.IsLower)) return false;
+            if (!password.Any(char.IsDigit)) return false;
+            return true;
+        }
+
+        // ---------- Кнопка входа / регистрации ----------
+        private void ButtonLogin_Click(object sender, RoutedEventArgs e)
+        {
+            var button = sender as Button;
+            if (button == null) return;
+
+            using (var db = new ReMinorContext())
+            {
+                if (button.Name == "RegisterButton")
+                {
+                    string username = RegisterUsernameTextBox.Text.Trim();
+                    string email = RegisterEmailTextBox.Text.Trim();
+                    string password = realRegisterPassword;
+
+                    if (string.IsNullOrWhiteSpace(username) || string.IsNullOrWhiteSpace(email) || string.IsNullOrWhiteSpace(password))
+                    {
+                        MessageBox.Show("Все поля должны быть заполнены");
+                        return;
+                    }
+
+                    if (!IsValidUsername(username))
+                    {
+                        MessageBox.Show("Логин должен быть минимум 2 символа и начинаться с буквы");
+                        return;
+                    }
+
+                    if (db.Users.Any(u => u.Username == username))
+                    {
+                        MessageBox.Show("Пользователь с таким логином уже существует");
+                        return;
+                    }
+
+                    if (!IsValidPassword(password))
+                    {
+                        MessageBox.Show("Пароль должен быть минимум 6 символов, содержать заглавную букву, строчную и цифру");
+                        return;
+                    }
+
+                    string passwordHash = PasswordHelper.HashPassword(password);
+
+                    currentUser = new User { Username = username, Email = email, PasswordHash = passwordHash };
+                    db.Users.Add(currentUser);
+                    db.SaveChanges();
+                }
+                else if (button.Name == "AuthButton")
+                {
+                    string username = AuthUsernameTextBox.Text.Trim();
+                    string password = realAuthPassword;
+
+                    if (string.IsNullOrWhiteSpace(username) || string.IsNullOrWhiteSpace(password))
+                    {
+                        MessageBox.Show("Введите логин и пароль");
+                        return;
+                    }
+
+                    string passwordHash = PasswordHelper.HashPassword(password);
+                    currentUser = db.Users.FirstOrDefault(u => u.Username == username && u.PasswordHash == passwordHash);
+
+                    if (currentUser == null)
+                    {
+                        MessageBox.Show("Неверный логин или пароль");
+                        return;
+                    }
+                }
+            }
+
+            // ---------- АВТОЛОГИН ----------
+            Properties.Settings.Default.CurrentUserId = currentUser.Id;
+            Properties.Settings.Default.Save();
+
+            // ---------- Показ профиля ----------
+            UsernameProfileText.Text = currentUser.Username;
+            RegisterPanel.Visibility = Visibility.Collapsed;
+            AuthPanel.Visibility = Visibility.Collapsed;
+            UserPanel.Visibility = Visibility.Visible;
         }
     }
 }
