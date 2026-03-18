@@ -443,7 +443,7 @@
 
                 <!-- ЭКРАН АВТОРИЗАЦИИ -->
                 <StackPanel x:Name="AuthPanel"
-                    Margin="25"
+                    Margin="30"
                             Visibility="Visible"
                     VerticalAlignment="Center" Cursor="">
 
@@ -454,47 +454,45 @@
                                TextAlignment="Center"
                                Margin="0,0,0,20"/>
 
-                    <TextBox x:Name="AuthUsernameTextBox"
-                             Style="{StaticResource RoundedTextBox}"
-                             Tag="Логин"
-                             Loaded="TextBox_Loaded"
-                             GotFocus="TextBox_GotFocus"
-                             LostFocus="TextBox_LostFocus"/>
                     <Grid>
-                        <!-- TextBox с placeholder -->
+                        <TextBox x:Name="AuthUsernameTextBox"
+                 Style="{StaticResource RoundedTextBox}"
+                 TextChanged="UsernameTextBox_TextChanged"/>
+                        <TextBlock Text="Логин"
+                   Foreground="#555555"
+                   Margin="24,0,24,15"
+                                   FontWeight="Medium"
+                   VerticalAlignment="Center"
+                   IsHitTestVisible="False"
+                   x:Name="UsernamePlaceholder"/>
+                    </Grid>
+
+                    <Grid>
                         <TextBox x:Name="AuthPasswordBox"
                  Style="{StaticResource RoundedTextBox}"
-                 Tag="Пароль"
-                 FontSize="13"
-                 FontWeight="Medium"
-                 Padding="10,0,35,0"
-                 VerticalContentAlignment="Center"
                  TextChanged="PasswordBox_TextChanged"
-                 GotFocus="PasswordBox_GotFocus"
                  LostFocus="PasswordBox_LostFocus"
                  Loaded="PasswordBox_Loaded"/>
 
-                            <!-- Placeholder -->
-                            <TextBlock x:Name="PasswordPlaceholder"
-                   Text="Пароль"
+                        <!-- Placeholder -->
+                        <TextBlock Text="Пароль"
                    Foreground="#555555"
-                   FontSize="13"
-                   FontWeight="Medium"
-                   Margin="20,0,35,15"
+                                   FontWeight="Medium"
+                   Margin="24,0,45,15"
                    VerticalAlignment="Center"
-                   IsHitTestVisible="False"/>
+                   IsHitTestVisible="False"
+                   x:Name="PasswordPlaceholder"/>
 
-                            <!-- Кнопка глазика -->
+                        <!-- Глазик -->
                         <Button x:Name="ShowPasswordButton"
-                                Width="30"
-                                Height="30"
-                                Margin="0,0,10,15"
-                                HorizontalAlignment="Right"
-                                Background="Transparent"
-                                BorderThickness="0"
-                                Cursor="Hand"
-                                PreviewMouseLeftButtonDown="ShowPasswordButton_PreviewMouseLeftButtonDown"
-                                PreviewMouseLeftButtonUp="ShowPasswordButton_PreviewMouseLeftButtonUp">
+                Width="30" Height="30"
+                HorizontalAlignment="Right"
+                Background="Transparent"
+                BorderThickness="0"
+                                Margin="15,0,10,15"
+                Cursor="Hand"
+                PreviewMouseLeftButtonDown="ShowPasswordButton_PreviewMouseLeftButtonDown"
+                PreviewMouseLeftButtonUp="ShowPasswordButton_PreviewMouseLeftButtonUp">
                             <Button.Style>
                                 <Style TargetType="Button">
                                     <Setter Property="Background" Value="Transparent"/>
@@ -513,10 +511,11 @@
                             <TextBlock Text="👁" FontSize="14"/>
                         </Button>
                     </Grid>
-                    
+
                     <Button x:Name="AuthButton" Width="120" Height="38"
                         HorizontalAlignment="Center"
                         Cursor="Hand"
+                            Margin="0,10,0,0"
                         Background="#3F64A9"
                             Click="ButtonLogin_Click"
                         BorderThickness="1">
@@ -535,12 +534,12 @@
                                 <ControlTemplate.Triggers>
                                     <!-- Изменение цвета при наведении -->
                                     <Trigger Property="IsMouseOver" Value="True">
-                                        <Setter TargetName="border" Property="Background" Value="#d0d0d0"/>
+                                        <Setter TargetName="border" Property="Background" Value="#5F84C9"/>
                                         <!-- более тёмный -->
                                     </Trigger>
                                     <!-- нажатие -->
                                     <Trigger Property="IsPressed" Value="True">
-                                        <Setter TargetName="border" Property="Background" Value="#b0b0b0"/>
+                                        <Setter TargetName="border" Property="Background" Value="#7FA4E9"/>
                                         <!-- ещё темнее -->
                                     </Trigger>
                                 </ControlTemplate.Triggers>
@@ -576,7 +575,7 @@
                              x:Name="RegisterUsernameTextBox"
              Margin="0,0,0,10"
              VerticalContentAlignment="Center" />
-                    
+
                     <TextBox Height="35"
                 x:Name="RegisterEmailTextBox"
 Margin="0,0,0,10"

@@ -124,15 +124,15 @@ namespace PianoTrainerApp.Views
         private void ButtonLogin_Click(object sender, RoutedEventArgs e)
         {
             var button = sender as Button;
+            if (button == null) return;
 
             using (var db = new ReMinorContext())
             {
-                // ---------- РЕГИСТРАЦИЯ ----------
                 if (button.Name == "RegisterButton")
                 {
                     string username = RegisterUsernameTextBox.Text.Trim();
                     string email = RegisterEmailTextBox.Text.Trim();
-                    string password = realRegisterPassword; // используем реальный пароль
+                    string password = realRegisterPassword;
 
                     // проверка пустых полей
                     if (string.IsNullOrWhiteSpace(username) ||
@@ -144,8 +144,7 @@ namespace PianoTrainerApp.Views
                     }
 
                     // проверка уникальности логина
-                    var existingUser = db.Users.FirstOrDefault(u => u.Username == username);
-                    if (existingUser != null)
+                    if (db.Users.Any(u => u.Username == username))
                     {
                         MessageBox.Show("Пользователь с таким логином уже существует");
                         return;
@@ -172,12 +171,11 @@ namespace PianoTrainerApp.Views
 
                     currentUser = user;
                 }
-
-                // ---------- АВТОРИЗАЦИЯ ----------
                 else if (button.Name == "AuthButton")
                 {
                     string username = AuthUsernameTextBox.Text.Trim();
-                    string password = realAuthPassword; // используем реальный пароль
+                    string password = realAuthPassword;
+
                     // проверка пустых полей
                     if (string.IsNullOrWhiteSpace(username) || string.IsNullOrWhiteSpace(password))
                     {
@@ -212,7 +210,6 @@ namespace PianoTrainerApp.Views
             AuthPanel.Visibility = Visibility.Collapsed;
             UserPanel.Visibility = Visibility.Visible;
         }
-
         // ---------- Вспомогательный метод для проверки сложности пароля ----------
         private bool IsValidPassword(string password)
         {
@@ -260,143 +257,81 @@ namespace PianoTrainerApp.Views
 
         private bool showPassword = false;
 
-        private void PasswordBox_Loaded(object sender, RoutedEventArgs e)
+        // ---------------- PLACEHOLDER ЛОГИН ----------------
+        private void UsernameTextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
-            var tb = sender as TextBox;
-            if (tb == null) return;
-
-            // Placeholder
-            if (string.IsNullOrWhiteSpace(tb.Text))
-                PasswordPlaceholder.Visibility = Visibility.Visible;
+            UsernamePlaceholder.Visibility = string.IsNullOrEmpty(AuthUsernameTextBox.Text)
+                                             ? Visibility.Visible
+                                             : Visibility.Collapsed;
         }
 
-        private void PasswordBox_GotFocus(object sender, RoutedEventArgs e)
+        // ---------------- PLACEHOLDER ПАРОЛЬ ----------------
+        private void PasswordBox_Loaded(object sender, RoutedEventArgs e)
         {
-            PasswordPlaceholder.Visibility = Visibility.Collapsed;
+            if (string.IsNullOrWhiteSpace(AuthPasswordBox.Text))
+                PasswordPlaceholder.Visibility = Visibility.Visible;
         }
 
         private void PasswordBox_LostFocus(object sender, RoutedEventArgs e)
         {
-            var tb = sender as TextBox;
-            if (tb == null) return;
-
-            string realPassword = tb.Name.Contains("Auth") ? realAuthPassword : realRegisterPassword;
-
-            if (string.IsNullOrWhiteSpace(realPassword))
+            if (string.IsNullOrWhiteSpace(realAuthPassword))
                 PasswordPlaceholder.Visibility = Visibility.Visible;
         }
 
+        // ---------------- МАСКА ПАРОЛЯ ----------------
         private void PasswordBox_TextChanged(object sender, TextChangedEventArgs e)
         {
             var tb = sender as TextBox;
             if (tb == null) return;
 
-            string realPassword = tb.Name.Contains("Auth") ? realAuthPassword : realRegisterPassword;
-
-            // Placeholder
-            PasswordPlaceholder.Visibility = string.IsNullOrEmpty(tb.Text) && string.IsNullOrEmpty(realPassword)
-                                             ? Visibility.Visible : Visibility.Collapsed;
+            PasswordPlaceholder.Visibility = string.IsNullOrEmpty(tb.Text) && string.IsNullOrEmpty(realAuthPassword)
+                                             ? Visibility.Visible
+                                             : Visibility.Collapsed;
 
             if (showPassword)
             {
-                if (tb.Name.Contains("Auth")) realAuthPassword = tb.Text;
-                else realRegisterPassword = tb.Text;
+                realAuthPassword = tb.Text;
                 return;
             }
 
             int selStart = tb.SelectionStart;
 
-            if (tb.Text.Length < realPassword.Length)
+            if (tb.Text.Length < realAuthPassword.Length)
             {
-                int diff = realPassword.Length - tb.Text.Length;
+                int diff = realAuthPassword.Length - tb.Text.Length;
                 int removeIndex = Math.Max(0, selStart);
-                int removeLength = Math.Min(diff, realPassword.Length - removeIndex);
+                int removeLength = Math.Min(diff, realAuthPassword.Length - removeIndex);
                 if (removeLength > 0)
-                    realPassword = realPassword.Remove(removeIndex, removeLength);
+                    realAuthPassword = realAuthPassword.Remove(removeIndex, removeLength);
             }
-            else if (tb.Text.Length > realPassword.Length)
+            else if (tb.Text.Length > realAuthPassword.Length)
             {
-                int diff = tb.Text.Length - realPassword.Length;
+                int diff = tb.Text.Length - realAuthPassword.Length;
                 int insertIndex = Math.Max(0, selStart - diff);
-
                 if (insertIndex + diff <= tb.Text.Length && insertIndex >= 0)
                 {
                     string added = tb.Text.Substring(insertIndex, diff);
-                    realPassword = realPassword.Insert(insertIndex, added);
+                    realAuthPassword = realAuthPassword.Insert(insertIndex, added);
                 }
             }
 
-            // Сохраняем обратно в нужную переменную
-            if (tb.Name.Contains("Auth")) realAuthPassword = realPassword;
-            else realRegisterPassword = realPassword;
-
-            // Заменяем ввод на точки
-            tb.Text = new string('•', realPassword.Length);
+            tb.Text = new string('•', realAuthPassword.Length);
             tb.SelectionStart = selStart;
         }
 
-        // Глазик: показать пароль
+        // ---------------- ГЛАЗИК ----------------
         private void ShowPasswordButton_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             showPassword = true;
-
-            var button = sender as Button;
-            var grid = button.Parent as Grid;
-
-            var tb = grid.Children.OfType<TextBox>().FirstOrDefault();
-            if (tb == null) return;
-
-            string realPassword = tb.Name.Contains("Auth") ? realAuthPassword : realRegisterPassword;
-
-            tb.Text = realPassword;
-            tb.SelectionStart = tb.Text.Length;
+            AuthPasswordBox.Text = realAuthPassword;
+            AuthPasswordBox.SelectionStart = AuthPasswordBox.Text.Length;
         }
 
-        // Глазик: скрыть пароль
         private void ShowPasswordButton_PreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
             showPassword = false;
-
-            var button = sender as Button;
-            var grid = button.Parent as Grid;
-
-            var tb = grid.Children.OfType<TextBox>().FirstOrDefault();
-            if (tb == null) return;
-
-            string realPassword = tb.Name.Contains("Auth") ? realAuthPassword : realRegisterPassword;
-
-            tb.Text = new string('•', realPassword.Length);
-            tb.SelectionStart = tb.Text.Length;
-        }
-
-        private void TextBox_Loaded(object sender, RoutedEventArgs e)
-        {
-            var tb = sender as TextBox;
-            if (tb != null && string.IsNullOrWhiteSpace(tb.Text))
-            {
-                tb.Text = tb.Tag.ToString();     // устанавливаем placeholder
-                tb.Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#555555"));
-            }
-        }
-
-        private void TextBox_GotFocus(object sender, RoutedEventArgs e)
-        {
-            var tb = sender as TextBox;
-            if (tb != null && tb.Text == tb.Tag.ToString())
-            {
-                tb.Text = "";
-                tb.Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#1e1e1e"));
-            }
-        }
-
-        private void TextBox_LostFocus(object sender, RoutedEventArgs e)
-        {
-            var tb = sender as TextBox;
-            if (tb != null && string.IsNullOrWhiteSpace(tb.Text))
-            {
-                tb.Text = tb.Tag.ToString();
-                tb.Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#555555"));
-            }
+            AuthPasswordBox.Text = new string('•', realAuthPassword.Length);
+            AuthPasswordBox.SelectionStart = AuthPasswordBox.Text.Length;
         }
     }
 }
