@@ -286,7 +286,8 @@
                                       Background="Transparent"
                                       BorderThickness="0"
                                       Cursor="Hand"
-                                      IsChecked="{Binding IsFavorite, Mode=TwoWay}">
+                                      IsChecked="{Binding IsFavorite, Mode=TwoWay}"
+                                      Click="Favorite_Click">
                                     <ToggleButton.Template>
                                         <ControlTemplate TargetType="ToggleButton">
                                             <Grid>

@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
@@ -127,10 +128,22 @@ namespace PianoTrainerApp.Views
             }
         }
 
+        // Обработка нажатия на кнопку отображения любимых песен
         private void ShowFavorites_Click(object sender, RoutedEventArgs e)
         {
             var vm = DataContext as LibraryViewModel;
             vm?.ToggleFavoritesFilter();
+        }
+
+        // Обработка нажатия на кнопку в виде сердца (в списке)
+        private void Favorite_Click(object sender, RoutedEventArgs e)
+        {
+            var button = sender as ToggleButton;
+            if (button?.DataContext is Song song)
+            {
+                var vm = DataContext as LibraryViewModel;
+                vm?.ToggleFavorite(song);
+            }
         }
 
         private void ImportMidi_Click(object sender, RoutedEventArgs e)
