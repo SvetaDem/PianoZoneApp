@@ -575,7 +575,23 @@
                     <Grid>
                         <TextBox x:Name="RegisterUsernameTextBox"
                  Style="{StaticResource RoundedTextBox}"
-                 TextChanged="TextBox_TextChanged"/>
+                 TextChanged="TextBox_TextChanged">
+                            <TextBox.ToolTip>
+                                <ToolTip Background="#2b2b2b" Foreground="White" Padding="10" BorderThickness="0">
+                                    <TextBlock TextWrapping="Wrap" Width="220">
+                <Run Text="Логин должен быть:"/>
+                                        <LineBreak/>
+                <Run Text="• от 3 до 32 символов"/>
+                                        <LineBreak/>
+                <Run Text="• начинаться с буквы"/>
+                                            <LineBreak/>
+                <Run Text="• содержать только буквы, цифры и символы: _ . -"/>
+                            <LineBreak/>
+                <Run Text="• без подряд идущих спецсимволов (_ . -)"/>
+                                    </TextBlock>
+                                </ToolTip>
+                            </TextBox.ToolTip>
+                        </TextBox>
                         <TextBlock Text="Логин"
                    Foreground="#555555"
                    Margin="24,0,24,15"
@@ -588,7 +604,15 @@
                     <Grid>
                         <TextBox x:Name="RegisterEmailTextBox"
                                 Style="{StaticResource RoundedTextBox}"
-                                TextChanged="TextBox_TextChanged"/>
+                                TextChanged="TextBox_TextChanged">
+                            <TextBox.ToolTip>
+                                <ToolTip Background="#2b2b2b" Foreground="White" Padding="10" BorderThickness="0">
+                                    <TextBlock TextWrapping="Wrap" Width="220">
+                Email должен соответсвовать формату example@example.com
+                                    </TextBlock>
+                                </ToolTip>
+                            </TextBox.ToolTip>
+                        </TextBox>
                         <TextBlock Text="E-mail"
                                   Foreground="#555555"
                                   Margin="24,0,24,15"
@@ -603,7 +627,19 @@
                                  Style="{StaticResource RoundedTextBox}"
                                  TextChanged="PasswordBox_TextChanged"
                                  LostFocus="PasswordBox_LostFocus"
-                                 Loaded="PasswordBox_Loaded"/>
+                                 Loaded="PasswordBox_Loaded">
+                            <TextBox.ToolTip>
+                                <ToolTip Background="#2b2b2b" Foreground="White" Padding="10" BorderThickness="0">
+                                    <TextBlock TextWrapping="Wrap" Width="220">
+                <Run Text="Пароль должен быть:"/>
+                                        <LineBreak/>
+                <Run Text="• от 6 до 32 символов"/>
+                                            <LineBreak/>
+                <Run Text="• содержать хотя бы 1 заглавную, 1 строчную букву и цифру"/>
+                                    </TextBlock>
+                                </ToolTip>
+                            </TextBox.ToolTip>
+                        </TextBox>
 
                         <!-- Placeholder -->
                         <TextBlock Text="Пароль"
