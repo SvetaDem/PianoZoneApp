@@ -549,12 +549,14 @@
                     <TextBlock Text="Нет аккаунта?"
                                Foreground="#9b9b9b"
                                TextAlignment="Center"
+                               FontSize="13"
                                Margin="0,15,0,0"
                                Cursor="Hand"/>
 
                     <TextBlock Text="Зарегистрируйся"
                                Foreground="#e0e0e0"
                                TextAlignment="Center"
+                               FontSize="13"
                                Cursor="Hand"
                                MouseLeftButtonDown="RegisterTextBlock_Click"/>
                 </StackPanel>
@@ -608,7 +610,7 @@
                             <TextBox.ToolTip>
                                 <ToolTip Background="#2b2b2b" Foreground="White" Padding="10" BorderThickness="0">
                                     <TextBlock TextWrapping="Wrap" Width="220">
-                Email должен соответсвовать формату example@example.com
+                Email должен соответсвовать формату email@example.com
                                     </TextBlock>
                                 </ToolTip>
                             </TextBox.ToolTip>
@@ -685,7 +687,7 @@
                             <ColumnDefinition Width="*"/>
                             <ColumnDefinition Width="Auto"/>
                         </Grid.ColumnDefinitions>
-                        
+
                         <Button x:Name="RegisterButton" Width="120" Height="38"
                         HorizontalAlignment="Center"
                         Cursor="Hand"
@@ -763,23 +765,164 @@
 
                 <!-- ПРОФИЛЬ ПОЛЬЗОВАТЕЛЯ -->
                 <StackPanel x:Name="UserPanel"
-                    Margin="25"
-                    Visibility="Collapsed"
-                    VerticalAlignment="Center">
+                    Margin="30, 20"
+                            Visibility="Collapsed"
+                    VerticalAlignment="Top" Cursor="">
 
-                    <TextBlock Text="Добро пожаловать!"
-                       Foreground="White"
-                       FontSize="20"
-                       Margin="0,0,0,15"/>
-
+                    <!-- HEADER -->
                     <TextBlock x:Name="UsernameProfileText"
-           FontSize="18"
-           Foreground="White"/>
+                               Text="Username"
+                               Foreground="White"
+                               FontSize="22"
+                               FontWeight="Bold"/>
 
-                    <Button Content="Выйти"
-                    Margin="0,20,0,0"
-                    Height="35"
-                            Click="ButtonLogout_Click"/>
+                    <!-- EMAIL -->
+                    <TextBlock x:Name="EmailProfileText"
+                               Text="email@example.com"
+                   Foreground="#9b9b9b"
+                               FontSize="13"
+                   Margin="0,0,0,30"/>
+
+                    <!-- СТАТИСТИКА -->
+                    <TextBlock Text="Статистика"
+                   Foreground="#E0E0E0"
+                   FontSize="16"
+                   FontWeight="Medium"
+                   Margin="10,0,0,10"/>
+
+                    <!-- Карточки -->
+                    <UniformGrid Columns="2" Margin="0,0,0,20">
+
+                        <Border Background="#2a2a2a" Height="60" Width="140" CornerRadius="15" Margin="0,0,5,5" Padding="10">
+                            <StackPanel>
+                                <TextBlock Text="🎹 24"
+                               Foreground="#E0E0E0"
+                               FontSize="16"
+                               FontWeight="Bold"/>
+                                <TextBlock Text="Сыграно композиций"
+                               Foreground="#9B9B9B"
+                                           Margin="0,5,0,0"/>
+                            </StackPanel>
+                        </Border>
+
+                        <Border Background="#2a2a2a" CornerRadius="15" Margin="5,0,0,5" Height="60" Width="140" Padding="10">
+                            <StackPanel>
+                                <TextBlock Text="⭐ 8"
+                               Foreground="#E0E0E0"
+                               FontSize="16"
+                               FontWeight="Bold"/>
+                                <TextBlock Text="В избранном"
+                               Foreground="#9B9B9B"
+                                           Margin="0,5,0,0"/>
+                            </StackPanel>
+                        </Border>
+
+                        <Border Background="#2a2a2a" CornerRadius="15" Height="60" Width="140" Margin="0,5,5,0" Padding="10">
+                            <StackPanel>
+                                <TextBlock Text="📈 87%"
+                               Foreground="#E0E0E0"
+                               FontSize="16"
+                               FontWeight="Bold"/>
+                                <TextBlock Text="Точность"
+                               Foreground="#9B9B9B"
+                                           Margin="0,5,0,0"/>
+                            </StackPanel>
+                        </Border>
+
+                        <Border Background="#2a2a2a" CornerRadius="15" Height="60" Width="140" Margin="5,5,0,0" Padding="10">
+                            <StackPanel>
+                                <TextBlock Text="🔥 5 дней"
+                               Foreground="#E0E0E0"
+                               FontSize="16"
+                               FontWeight="Bold"/>
+                                <TextBlock Text="Стрик"
+                               Foreground="#9B9B9B"
+                                           Margin="0,5,0,0"/>
+                            </StackPanel>
+                        </Border>
+
+                    </UniformGrid>
+
+                    <!-- КНОПКИ -->
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+
+                        <Button x:Name="EditUserButton"
+                                Height="38"
+                                Width="190"
+                                HorizontalAlignment="Center"
+                                Cursor="Hand"
+                                Grid.Column="0"
+                                Margin="0,0,5,0"
+                                Background="#3F64A9"
+                                BorderThickness="1">
+                            <Button.Template>
+                                <ControlTemplate TargetType="Button">
+                                    <Border x:Name="border"
+                                        Background="{TemplateBinding Background}"
+                                        BorderThickness="{TemplateBinding BorderThickness}"
+                                        CornerRadius="20">
+                                        <TextBlock HorizontalAlignment="Center"
+                                           VerticalAlignment="Center"
+                                           Text="Редактировать профиль"
+                                           FontWeight="SemiBold"
+                                           Foreground="White"/>
+                                    </Border>
+                                    <ControlTemplate.Triggers>
+                                        <!-- Изменение цвета при наведении -->
+                                        <Trigger Property="IsMouseOver" Value="True">
+                                            <Setter TargetName="border" Property="Background" Value="#5F84C9"/>
+                                            <!-- более тёмный -->
+                                        </Trigger>
+                                        <!-- нажатие -->
+                                        <Trigger Property="IsPressed" Value="True">
+                                            <Setter TargetName="border" Property="Background" Value="#7FA4E9"/>
+                                            <!-- ещё темнее -->
+                                        </Trigger>
+                                    </ControlTemplate.Triggers>
+                                </ControlTemplate>
+                            </Button.Template>
+                        </Button>
+
+                        <Button x:Name="LogoutButton"
+                                Height="38"
+                                Width="90"
+                            HorizontalAlignment="Center"
+                            Cursor="Hand"
+                                Margin="5,0,0,0"
+                            Grid.Column="2"
+                            Background="#E0E0E0"
+                            Click="ButtonLogout_Click"
+                            BorderThickness="1">
+                            <Button.Template>
+                                <ControlTemplate TargetType="Button">
+                                    <Border x:Name="border"
+                                        Background="{TemplateBinding Background}"
+                                        BorderThickness="{TemplateBinding BorderThickness}"
+                                        CornerRadius="20">
+                                        <TextBlock HorizontalAlignment="Center"
+                                           VerticalAlignment="Center"
+                                           Text="Выйти"
+                                           FontWeight="SemiBold"
+                                           Foreground="#1e1e1e"/>
+                                    </Border>
+                                    <ControlTemplate.Triggers>
+                                        <!-- Изменение цвета при наведении -->
+                                        <Trigger Property="IsMouseOver" Value="True">
+                                            <Setter TargetName="border" Property="Background" Value="#C0C0C0"/>
+                                            <!-- более тёмный -->
+                                        </Trigger>
+                                        <!-- нажатие -->
+                                        <Trigger Property="IsPressed" Value="True">
+                                            <Setter TargetName="border" Property="Background" Value="#a0a0a0"/>
+                                            <!-- ещё темнее -->
+                                        </Trigger>
+                                    </ControlTemplate.Triggers>
+                                </ControlTemplate>
+                            </Button.Template>
+                        </Button>
+
+                    </StackPanel>
+
                 </StackPanel>
 
             </Grid>

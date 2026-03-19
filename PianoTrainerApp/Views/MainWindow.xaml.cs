@@ -139,7 +139,8 @@ namespace PianoTrainerApp.Views
 
                 currentUser = user;
 
-                UsernameProfileText.Text = user.Username;
+                UsernameProfileText.Text = currentUser.Username;
+                EmailProfileText.Text = currentUser.Email;
 
                 AuthPanel.Visibility = Visibility.Collapsed;
                 RegisterPanel.Visibility = Visibility.Collapsed;
@@ -438,6 +439,8 @@ namespace PianoTrainerApp.Views
 
             // ---------- Показ профиля ----------
             UsernameProfileText.Text = currentUser.Username;
+            EmailProfileText.Text = currentUser.Email;
+
             RegisterPanel.Visibility = Visibility.Collapsed;
             AuthPanel.Visibility = Visibility.Collapsed;
             UserPanel.Visibility = Visibility.Visible;
