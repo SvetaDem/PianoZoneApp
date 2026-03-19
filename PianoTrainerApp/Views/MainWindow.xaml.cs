@@ -142,6 +142,12 @@ namespace PianoTrainerApp.Views
                 UsernameProfileText.Text = currentUser.Username;
                 EmailProfileText.Text = currentUser.Email;
 
+                int favoritesCount = db.SongsUsers
+                                        .Count(su => su.UserId == currentUser.Id && su.IsFavorite);
+                
+                FavoritesCountText.Text = $"⭐ {favoritesCount}";
+
+
                 AuthPanel.Visibility = Visibility.Collapsed;
                 RegisterPanel.Visibility = Visibility.Collapsed;
                 UserPanel.Visibility = Visibility.Visible;
@@ -440,6 +446,14 @@ namespace PianoTrainerApp.Views
             // ---------- Показ профиля ----------
             UsernameProfileText.Text = currentUser.Username;
             EmailProfileText.Text = currentUser.Email;
+
+            using (var db = new ReMinorContext())
+            {
+                int favoritesCount = db.SongsUsers
+                    .Count(su => su.UserId == currentUser.Id && su.IsFavorite);
+                MessageBox.Show($"⭐ {favoritesCount}");
+                FavoritesCountText.Text = $"⭐ {favoritesCount}";
+            }
 
             RegisterPanel.Visibility = Visibility.Collapsed;
             AuthPanel.Visibility = Visibility.Collapsed;

@@ -807,7 +807,7 @@
 
                         <Border Background="#2a2a2a" CornerRadius="15" Margin="5,0,0,5" Height="60" Width="140" Padding="10">
                             <StackPanel>
-                                <TextBlock Text="⭐ 8"
+                                <TextBlock x:Name="FavoritesCountText" Text="⭐ 8"
                                Foreground="#E0E0E0"
                                FontSize="16"
                                FontWeight="Bold"/>
