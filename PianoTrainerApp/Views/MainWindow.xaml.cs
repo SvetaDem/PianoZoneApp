@@ -2,7 +2,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Mail;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -294,17 +296,64 @@ namespace PianoTrainerApp.Views
         }
 
         // ---------- Проверка логина ----------
-        private bool IsValidUsername(string username)
+        private bool IsValidUsername(string username, out string error)
         {
-            if (username.Length < 2) return false;
-            if (!char.IsLetter(username[0])) return false;
+            error = "";
+
+            string allowedSpecials = "_-.";
+
+            // Проверяем на недопустимые символы
+            if (!username.All(c => char.IsLetterOrDigit(c) || allowedSpecials.Contains(c)))
+            {
+                error = "Логин может содержать только буквы, цифры и символы: _ . -";
+                return false;
+            }
+
+            // Проверка: спецсимволы не стоят рядом
+            for (int i = 1; i < username.Length; i++)
+            {
+                if (allowedSpecials.Contains(username[i]) && allowedSpecials.Contains(username[i - 1]))
+                {
+                    error = "Спецсимволы в логине не могут идти подряд";
+                    return false;
+                }
+            }
+
+            // минимальная длина
+            if (username.Length < 3)
+            {
+                error = "Логин должен быть не менее 3 символов";  // цифры, буквы 
+                return false;
+            }
+
+            // максимальная длина
+            if (username.Length > 32)
+            {
+                error = "Логин должен быть не более 32 символов";  // цифры, буквы 
+                return false;
+            }
+
+
+            // первая буква
+            if (!char.IsLetter(username[0]) || !char.IsLetter(username[username.Length - 1]))
+            {
+                error = "Логин должен начинаться и заканчиваться буквой";
+                return false;
+            }
+
             return true;
+        }
+        // ---------- Проверка email ----------
+        bool IsValidEmail(string email)
+        {
+            string pattern = @"^(?=.{1,254}$)(?=.{1,64}@)([a-zA-Z0-9_-]+(?:\.[a-zA-Z0-9_-]+)*)@([a-zA-Z]{2,64}(?:\.[a-zA-Z]{2,64})+)$";
+            return Regex.IsMatch(email, pattern, RegexOptions.IgnoreCase);
         }
 
         // ---------- Проверка пароля ----------
         private bool IsValidPassword(string password)
         {
-            if (password.Length < 6) return false;
+            if (password.Length < 6 || password.Length > 32) return false;
             if (!password.Any(char.IsUpper)) return false;
             if (!password.Any(char.IsLower)) return false;
             if (!password.Any(char.IsDigit)) return false;
@@ -321,7 +370,7 @@ namespace PianoTrainerApp.Views
             {
                 if (button.Name == "RegisterButton")
                 {
-                    string username = RegisterUsernameTextBox.Text.Trim();
+                    string username = RegisterUsernameTextBox.Text;
                     string email = RegisterEmailTextBox.Text.Trim();
                     string password = realRegisterPassword;
 
@@ -331,21 +380,27 @@ namespace PianoTrainerApp.Views
                         return;
                     }
 
-                    if (!IsValidUsername(username))
+                    if (!IsValidUsername(username, out string errorUsername))
                     {
-                        MessageBox.Show("Логин должен быть минимум 2 символа и начинаться с буквы");
+                        MessageBox.Show(errorUsername, "Ошибка в логине");
                         return;
                     }
 
                     if (db.Users.Any(u => u.Username == username))
                     {
-                        MessageBox.Show("Пользователь с таким логином уже существует");
+                        MessageBox.Show("Пользователь с таким логином уже существует", "Ошибка в логине");
+                        return;
+                    }
+
+                    if (!IsValidEmail(email))
+                    {
+                        MessageBox.Show("Ошибка в e-mail");
                         return;
                     }
 
                     if (!IsValidPassword(password))
                     {
-                        MessageBox.Show("Пароль должен быть минимум 6 символов, содержать заглавную букву, строчную и цифру");
+                        MessageBox.Show("Пароль должен быть от 6 до 32 символов, содержать заглавную букву, строчную и цифру", "Ошибка в пароле");
                         return;
                     }
 
