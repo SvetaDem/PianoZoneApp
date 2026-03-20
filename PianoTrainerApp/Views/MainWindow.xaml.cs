@@ -63,40 +63,56 @@ namespace PianoTrainerApp.Views
         }
 
         // В родительском окне (например, MainWindow.xaml.cs) подписываемся на событие при создании HomeView
-/*        private void ShowHome()
-        {
-            var home = new HomeView();
+        /*        private void ShowHome()
+                {
+                    var home = new HomeView();
 
-            // Подписываемся на события навигации
-            home.NavigateRequested += page =>
-            {
-                ShowPage(page); // Используем универсальный метод из предыдущего шага
-            };
+                    // Подписываемся на события навигации
+                    home.NavigateRequested += page =>
+                    {
+                        ShowPage(page); // Используем универсальный метод из предыдущего шага
+                    };
 
-            MainContent.Content = home;
+                    MainContent.Content = home;
 
-            // Обновляем подсветку меню
-            ResetMenuItems();
-            HighlightMenuItem(HomeTextBlock);
-        }
-*/
+                    // Обновляем подсветку меню
+                    ResetMenuItems();
+                    HighlightMenuItem(HomeTextBlock);
+                }
+        */
         // Сброс выделения всех пунктов
         private void ResetMenuItems()
         {
-            var allItems = new TextBlock[] { HomeTextBlock, LibraryTextBlock, BeginnerTextBlock };
+            ResetItem(HomeTextBlock);
+            ResetItem(BeginnerTextBlock);
+            ResetItem(LibraryTextBlock);
+        }
 
-            foreach (var tb in allItems)
+        private void ResetItem(TextBlock tb)
+        {
+            tb.Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#202020"));
+
+            var scale = tb.RenderTransform as ScaleTransform;
+            if (scale != null)
             {
-                tb.Foreground = new SolidColorBrush(Color.FromRgb(32, 32, 32)); // #202020
-                tb.FontSize = 16;
+                scale.ScaleX = 1;
+                scale.ScaleY = 1;
             }
         }
 
         // Подсветка выбранного пункта
         private void HighlightMenuItem(TextBlock tb)
         {
+            if (tb == null) return;
+
             tb.Foreground = Brushes.White;
-            tb.FontSize = 17;
+
+            var scale = tb.RenderTransform as ScaleTransform;
+            if (scale != null)
+            {
+                scale.ScaleX = 1.2;
+                scale.ScaleY = 1.2;
+            }
         }
 
         private void MenuTextBlock_Click(object sender, MouseButtonEventArgs e)
@@ -181,32 +197,72 @@ namespace PianoTrainerApp.Views
         private void AutoLogin()
         {
             int savedUserId = Properties.Settings.Default.CurrentUserId;
+            if (savedUserId == 0) return;
 
-            if (savedUserId == 0)
-                return;
-
-            using (var db = new ReMinorContext())
+            try
             {
-                var user = db.Users.FirstOrDefault(u => u.Id == savedUserId);
+                using (var db = new ReMinorContext())
+                {
+                    var user = db.Users.FirstOrDefault(u => u.Id == savedUserId);
 
-                if (user == null)
-                    return;
+                    if (user == null)
+                        return;
 
-                currentUser = user;
-
-                UsernameProfileText.Text = currentUser.Username;
-                EmailProfileText.Text = currentUser.Email;
-
-                int favoritesCount = db.SongsUsers
-                                        .Count(su => su.UserId == currentUser.Id && su.IsFavorite);
-
-                FavoritesCountText.Text = $"⭐ {favoritesCount}";
-
-
-                AuthPanel.Visibility = Visibility.Collapsed;
-                RegisterPanel.Visibility = Visibility.Collapsed;
-                UserPanel.Visibility = Visibility.Visible;
+                    ShowUserProfile(user);
+                }
             }
+            catch (System.Data.SqlClient.SqlException ex)
+            {
+                MessageBox.Show("Ошибка SQL при автологине: " + ex.InnerException.Message);
+            }
+            catch (System.Data.Entity.Core.EntityException ex)
+            {
+                MessageBox.Show("Ошибка подключения к БД: " + ex.InnerException.Message);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Неизвестная ошибка при автологине: " + ex.InnerException.Message);
+            }
+        }
+
+        private void ShowUserProfile(User user)
+        {
+            if (user == null) return;
+
+            currentUser = user;
+
+            UsernameProfileText.Text = currentUser.Username;
+            EmailProfileText.Text = currentUser.Email;
+            try
+            {
+                using (var db = new ReMinorContext())
+                {
+                    int favoritesCount = db.SongsUsers
+                        .Count(su => su.UserId == currentUser.Id && su.IsFavorite);
+
+                    FavoritesCountText.Text = $"⭐ {favoritesCount}";
+                }
+            }
+            catch (System.Data.SqlClient.SqlException ex)
+            {
+                MessageBox.Show("Ошибка SQL при автологине: " + ex.InnerException.Message);
+            }
+            catch (System.Data.Entity.Core.EntityException ex)
+            {
+                MessageBox.Show("Ошибка подключения к БД: " + ex.InnerException.Message);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Неизвестная ошибка при автологине: " + ex.InnerException.Message);
+            }
+
+            RegisterPanel.Visibility = Visibility.Collapsed;
+            AuthPanel.Visibility = Visibility.Collapsed;
+            UserPanel.Visibility = Visibility.Visible;
+
+            // Сохраняем для автологина
+            Properties.Settings.Default.CurrentUserId = currentUser.Id;
+            Properties.Settings.Default.Save();
         }
 
         private void ButtonLogout_Click(object sender, RoutedEventArgs e)
@@ -428,91 +484,125 @@ namespace PianoTrainerApp.Views
             var button = sender as Button;
             if (button == null) return;
 
-            using (var db = new ReMinorContext())
+            if (button.Name == "RegisterButton")
             {
-                if (button.Name == "RegisterButton")
+                string username = RegisterUsernameTextBox.Text;
+                string email = RegisterEmailTextBox.Text.Trim();
+                string password = realRegisterPassword;
+
+                if (string.IsNullOrWhiteSpace(username) || string.IsNullOrWhiteSpace(email) || string.IsNullOrWhiteSpace(password))
                 {
-                    string username = RegisterUsernameTextBox.Text;
-                    string email = RegisterEmailTextBox.Text.Trim();
-                    string password = realRegisterPassword;
-
-                    if (string.IsNullOrWhiteSpace(username) || string.IsNullOrWhiteSpace(email) || string.IsNullOrWhiteSpace(password))
-                    {
-                        MessageBox.Show("Все поля должны быть заполнены");
-                        return;
-                    }
-
-                    if (!IsValidUsername(username, out string errorUsername))
-                    {
-                        MessageBox.Show(errorUsername, "Ошибка в логине");
-                        return;
-                    }
-
-                    if (db.Users.Any(u => u.Username == username))
-                    {
-                        MessageBox.Show("Пользователь с таким логином уже существует", "Ошибка в логине");
-                        return;
-                    }
-
-                    if (!IsValidEmail(email))
-                    {
-                        MessageBox.Show("Ошибка в e-mail");
-                        return;
-                    }
-
-                    if (!IsValidPassword(password))
-                    {
-                        MessageBox.Show("Пароль должен быть от 6 до 32 символов, содержать заглавную букву, строчную и цифру", "Ошибка в пароле");
-                        return;
-                    }
-
-                    string passwordHash = PasswordHelper.HashPassword(password);
-
-                    currentUser = new User { Username = username, Email = email, PasswordHash = passwordHash };
-                    db.Users.Add(currentUser);
-                    db.SaveChanges();
+                    MessageBox.Show("Все поля должны быть заполнены");
+                    return;
                 }
-                else if (button.Name == "AuthButton")
+
+                if (!IsValidUsername(username, out string errorUsername))
                 {
-                    string username = AuthUsernameTextBox.Text.Trim();
-                    string password = realAuthPassword;
+                    MessageBox.Show(errorUsername, "Ошибка в логине");
+                    return;
+                }
 
-                    if (string.IsNullOrWhiteSpace(username) || string.IsNullOrWhiteSpace(password))
+                if (!IsValidEmail(email))
+                {
+                    MessageBox.Show("Ошибка в e-mail");
+                    return;
+                }
+
+                if (!IsValidPassword(password))
+                {
+                    MessageBox.Show("Пароль должен быть от 6 до 32 символов, содержать заглавную букву, строчную и цифру", "Ошибка в пароле");
+                    return;
+                }
+
+                string passwordHash = PasswordHelper.HashPassword(password);
+
+                try
+                {
+                    using (var db = new ReMinorContext())
                     {
-                        MessageBox.Show("Введите логин и пароль");
-                        return;
-                    }
+                        if (db.Users.Any(u => u.Username == username))
+                        {
+                            MessageBox.Show("Пользователь с таким логином уже существует");
+                            return;
+                        }
 
-                    string passwordHash = PasswordHelper.HashPassword(password);
-                    currentUser = db.Users.FirstOrDefault(u => u.Username == username && u.PasswordHash == passwordHash);
+                        currentUser = new User
+                        {
+                            Username = username,
+                            Email = email,
+                            PasswordHash = passwordHash
+                        };
 
-                    if (currentUser == null)
-                    {
-                        MessageBox.Show("Неверный логин или пароль");
-                        return;
+                        db.Users.Add(currentUser);
+                        db.SaveChanges();
                     }
                 }
+                catch (System.Data.SqlClient.SqlException ex)
+                {
+                    MessageBox.Show("Ошибка SQL: " + ex.InnerException.Message);
+                    return;
+                }
+                catch (System.Data.Entity.Core.EntityException ex)
+                {
+                    MessageBox.Show("Ошибка подключения к БД: " + ex.InnerException.Message);
+                    return;
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Неизвестная ошибка: " + ex.InnerException.Message);
+                    return;
+                }
+
+                ShowUserProfile(currentUser);
             }
 
-            // ---------- АВТОЛОГИН ----------
-            Properties.Settings.Default.CurrentUserId = currentUser.Id;
-            Properties.Settings.Default.Save();
 
-            // ---------- Показ профиля ----------
-            UsernameProfileText.Text = currentUser.Username;
-            EmailProfileText.Text = currentUser.Email;
-
-            using (var db = new ReMinorContext())
+            else if (button.Name == "AuthButton")
             {
-                int favoritesCount = db.SongsUsers
-                    .Count(su => su.UserId == currentUser.Id && su.IsFavorite);
-                MessageBox.Show($"⭐ {favoritesCount}");
-                FavoritesCountText.Text = $"⭐ {favoritesCount}";
-            }
+                string username = AuthUsernameTextBox.Text.Trim();
+                string password = realAuthPassword;
 
-            RegisterPanel.Visibility = Visibility.Collapsed;
-            AuthPanel.Visibility = Visibility.Collapsed;
-            UserPanel.Visibility = Visibility.Visible;
+                if (string.IsNullOrWhiteSpace(username) || string.IsNullOrWhiteSpace(password))
+                {
+                    MessageBox.Show("Введите логин и пароль");
+                    return;
+                }
+
+                string passwordHash = PasswordHelper.HashPassword(password);
+                try
+                {
+                    using (var db = new ReMinorContext())
+                    {
+                        currentUser = db.Users
+                            .FirstOrDefault(u => u.Username == username && u.PasswordHash == passwordHash);
+                    }
+                }
+                catch (System.Data.SqlClient.SqlException ex)
+                {
+                    MessageBox.Show("Ошибка SQL: " + ex.InnerException.Message);
+                    return;
+                }
+                catch (System.Data.Entity.Core.EntityException ex)
+                {
+                    MessageBox.Show("Ошибка подключения к БД: " + ex.InnerException.Message);
+                    return;
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Неизвестная ошибка: " + ex.InnerException.Message);
+                    return;
+                }
+
+                if (currentUser == null)
+                {
+                    MessageBox.Show("Неверный логин или пароль");
+                    return;
+                }
+
+                // Показ профиля
+                ShowUserProfile(currentUser);
+            }
         }
     }
 }
+

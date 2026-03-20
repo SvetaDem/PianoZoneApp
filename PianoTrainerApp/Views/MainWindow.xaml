@@ -12,7 +12,7 @@
     <Window.Resources>
 
         <!-- Стиль вкладок навигации -->
-        
+
 
         <!-- Универсальный стиль кнопки-иконки (profile/settings/exit) -->
         <Style x:Key="IconButtonStyle" TargetType="Button">
@@ -115,7 +115,7 @@
         </Grid.Background>
 
         <!-- ВЕРХНЯЯ ПАНЕЛЬ -->
-        <Grid Margin="20,0" Height="60" VerticalAlignment="Top">
+        <Grid Margin="20,0" Height="60" VerticalAlignment="Top" Cursor="">
 
             <!-- Заголовок -->
             <TextBlock Text="Планета Ре-минор"
@@ -132,13 +132,18 @@
                 <TextBlock x:Name="HomeTextBlock"
                            Text="Главная"
                            Foreground="White"
-                           FontSize="20"
+                           FontSize="16"
                            Cursor="Hand"
                            Margin="0,0,25,0"
                            FontWeight="Medium"
                            MouseLeftButtonUp="MenuTextBlock_Click"
-                           VerticalAlignment="Bottom"/>
+                           VerticalAlignment="Bottom"
+                           RenderTransformOrigin="0.5,1">
 
+                    <TextBlock.RenderTransform>
+                        <ScaleTransform ScaleX="1" ScaleY="1"/>
+                    </TextBlock.RenderTransform>
+                </TextBlock>
                 <TextBlock Text="|"
                            Foreground="#202020"
                            FontSize="20"
@@ -154,8 +159,13 @@
                            Cursor="Hand"
                            Margin="0,0,25,0"
                            MouseLeftButtonUp="MenuTextBlock_Click"
-                           VerticalAlignment="Bottom"/>
+                           VerticalAlignment="Bottom"
+                           RenderTransformOrigin="0.5,1">
 
+                    <TextBlock.RenderTransform>
+                        <ScaleTransform ScaleX="1" ScaleY="1"/>
+                    </TextBlock.RenderTransform>
+                </TextBlock>
                 <TextBlock Text="|"
                            Foreground="#202020"
                            FontSize="20"
@@ -170,7 +180,13 @@
                            Cursor="Hand"
                            FontWeight="Medium"
                            MouseLeftButtonUp="MenuTextBlock_Click"
-                           VerticalAlignment="Bottom"/>
+                           VerticalAlignment="Bottom"
+                           RenderTransformOrigin="0.5,1">
+
+                    <TextBlock.RenderTransform>
+                        <ScaleTransform ScaleX="1" ScaleY="1"/>
+                    </TextBlock.RenderTransform>
+                </TextBlock>
             </StackPanel>
 
         </Grid>

@@ -77,6 +77,24 @@ namespace PianoTrainerApp.Views
             var button = sender as ToggleButton;
             if (button?.DataContext is Song song)
             {
+                int currentUserId = Properties.Settings.Default.CurrentUserId;
+                // Проверяем авторизацию
+                if (currentUserId == 0)
+                {
+                    // Показать сообщение
+                    MessageBox.Show(
+                        "Добавлять треки в избранное могут только избранные ♥\nХочешь быть одним из них?) Тогда регистрируйся!",
+                        "Псс…",
+                        MessageBoxButton.OK,
+                        MessageBoxImage.Information
+                    );
+
+                    // Отменяем переключение ToggleButton
+                    button.IsChecked = false;
+                    return;
+                }
+
+                // Если авторизован, продолжаем обычный код
                 var vm = DataContext as LibraryViewModel;
                 vm?.ToggleFavorite(song);
             }

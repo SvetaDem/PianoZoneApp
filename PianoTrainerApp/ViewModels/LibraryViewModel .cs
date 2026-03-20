@@ -55,31 +55,45 @@ namespace PianoTrainerApp.ViewModels
         public LibraryViewModel()
         {
             CurrentUserId = Properties.Settings.Default.CurrentUserId;
-
-            using (var db = new ReMinorContext())
+            try
             {
-                var songsFromDb = db.Songs
-                    .Include(s => s.Genres)
-                    .Include(s => s.SongUsers)
-                    .ToList();
-
-                Songs = new ObservableCollection<Song>(songsFromDb);
-
-                var allGenres = db.Genres
-                    .Select(g => g.GenreName)
-                    .OrderBy(x => x)
-                    .ToList();
-
-                Genres.Add("Все жанры");
-                foreach (var g in allGenres)
-                    Genres.Add(g);
-
-                // 🔥 выставляем лайки пользователя
-                foreach (var song in Songs)
+                using (var db = new ReMinorContext())
                 {
-                    song.IsFavorite = song.SongUsers?
-                        .Any(su => su.UserId == CurrentUserId && su.IsFavorite) ?? false;
+                    var songsFromDb = db.Songs
+                        .Include(s => s.Genres)
+                        .Include(s => s.SongUsers)
+                        .ToList();
+
+                    Songs = new ObservableCollection<Song>(songsFromDb);
+
+                    var allGenres = db.Genres
+                        .Select(g => g.GenreName)
+                        .OrderBy(x => x)
+                        .ToList();
+
+                    Genres.Add("Все жанры");
+                    foreach (var g in allGenres)
+                        Genres.Add(g);
+
+                    // 🔥 выставляем лайки пользователя
+                    foreach (var song in Songs)
+                    {
+                        song.IsFavorite = song.SongUsers?
+                            .Any(su => su.UserId == CurrentUserId && su.IsFavorite) ?? false;
+                    }
                 }
+            }
+            catch (System.Data.SqlClient.SqlException ex)
+            {
+                MessageBox.Show("Ошибка SQL при автологине: " + ex.InnerException.Message);
+            }
+            catch (System.Data.Entity.Core.EntityException ex)
+            {
+                MessageBox.Show("Ошибка подключения к БД: " + ex.InnerException.Message);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Неизвестная ошибка при автологине: " + ex.InnerException.Message);
             }
 
             FilteredSongs = new ObservableCollection<Song>(Songs);
@@ -92,32 +106,47 @@ namespace PianoTrainerApp.ViewModels
         {
             if (song == null) return;
 
-            using (var db = new ReMinorContext())
+            try
             {
-                var songUser = db.SongsUsers
-                    .FirstOrDefault(su => su.SongId == song.Id && su.UserId == CurrentUserId);
-
-                if (songUser == null)
+                using (var db = new ReMinorContext())
                 {
-                    // создаем новую запись
-                    songUser = new SongUser
+                    var songUser = db.SongsUsers
+                        .FirstOrDefault(su => su.SongId == song.Id && su.UserId == CurrentUserId);
+
+                    if (songUser == null)
                     {
-                        SongId = song.Id,
-                        UserId = CurrentUserId,
-                        IsFavorite = true
-                    };
+                        // создаем новую запись
+                        songUser = new SongUser
+                        {
+                            SongId = song.Id,
+                            UserId = CurrentUserId,
+                            IsFavorite = true
+                        };
 
-                    db.SongsUsers.Add(songUser);
-                    song.IsFavorite = true;
-                }
-                else
-                {
-                    // переключаем лайк
-                    songUser.IsFavorite = !songUser.IsFavorite;
-                    song.IsFavorite = songUser.IsFavorite;
-                }
+                        db.SongsUsers.Add(songUser);
+                        song.IsFavorite = true;
+                    }
+                    else
+                    {
+                        // переключаем лайк
+                        songUser.IsFavorite = !songUser.IsFavorite;
+                        song.IsFavorite = songUser.IsFavorite;
+                    }
 
-                db.SaveChanges();
+                    db.SaveChanges();
+                }
+            }
+            catch (System.Data.SqlClient.SqlException ex)
+            {
+                MessageBox.Show("Ошибка SQL при автологине: " + ex.InnerException.Message);
+            }
+            catch (System.Data.Entity.Core.EntityException ex)
+            {
+                MessageBox.Show("Ошибка подключения к БД: " + ex.InnerException.Message);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Неизвестная ошибка при автологине: " + ex.InnerException.Message);
             }
 
             // если включен фильтр избранного
