@@ -28,27 +28,82 @@ namespace PianoTrainerApp.Views
         public MainWindow()
         {
             InitializeComponent();
+            //ShowHome();
+            ShowPage(PageType.Home);
             AutoLogin();
         }
 
-        private void ButtonBeginner_Click(object sender, RoutedEventArgs e)
+        // Универсальный метод для смены страницы
+        private void ShowPage(PageType page)
         {
-            //
+            // Сбрасываем все подсветки
+            ResetMenuItems();
+
+            // Переключаем контент и подсвечиваем нужный TextBlock
+            switch (page)
+            {
+                case PageType.Home:
+                    var home = new HomeView();
+                    home.NavigateRequested += ShowPage; // подписка на событие
+
+                    MainContent.Content = home;
+                    HighlightMenuItem(HomeTextBlock);
+                    break;
+
+                case PageType.Library:
+                    MainContent.Content = new LibraryView();
+                    HighlightMenuItem(LibraryTextBlock);
+                    break;
+
+                case PageType.Beginner:
+                    //MainContent.Content = new BeginnerView();
+                    HighlightMenuItem(BeginnerTextBlock);
+                    break;
+            }
         }
 
-        private void ButtonLibrary_Click(object sender, RoutedEventArgs e)
+        // В родительском окне (например, MainWindow.xaml.cs) подписываемся на событие при создании HomeView
+/*        private void ShowHome()
         {
-            var libraryWindow = new LibraryWindow();
+            var home = new HomeView();
 
-            // копируем размеры и позиции
-            libraryWindow.Width = this.Width;
-            libraryWindow.Height = this.Height;
-            libraryWindow.WindowState = this.WindowState;
-            libraryWindow.Left = this.Left;
-            libraryWindow.Top = this.Top;
+            // Подписываемся на события навигации
+            home.NavigateRequested += page =>
+            {
+                ShowPage(page); // Используем универсальный метод из предыдущего шага
+            };
 
-            libraryWindow.Show();
-            this.Close();
+            MainContent.Content = home;
+
+            // Обновляем подсветку меню
+            ResetMenuItems();
+            HighlightMenuItem(HomeTextBlock);
+        }
+*/
+        // Сброс выделения всех пунктов
+        private void ResetMenuItems()
+        {
+            var allItems = new TextBlock[] { HomeTextBlock, LibraryTextBlock, BeginnerTextBlock };
+
+            foreach (var tb in allItems)
+            {
+                tb.Foreground = new SolidColorBrush(Color.FromRgb(32, 32, 32)); // #202020
+                tb.FontSize = 16;
+            }
+        }
+
+        // Подсветка выбранного пункта
+        private void HighlightMenuItem(TextBlock tb)
+        {
+            tb.Foreground = Brushes.White;
+            tb.FontSize = 17;
+        }
+
+        private void MenuTextBlock_Click(object sender, MouseButtonEventArgs e)
+        {
+            if (sender == HomeTextBlock) ShowPage(PageType.Home);
+            else if (sender == LibraryTextBlock) ShowPage(PageType.Library);
+            else if (sender == BeginnerTextBlock) ShowPage(PageType.Beginner);
         }
 
         private void ButtonExit_Click(object sender, RoutedEventArgs e)
@@ -144,7 +199,7 @@ namespace PianoTrainerApp.Views
 
                 int favoritesCount = db.SongsUsers
                                         .Count(su => su.UserId == currentUser.Id && su.IsFavorite);
-                
+
                 FavoritesCountText.Text = $"⭐ {favoritesCount}";
 
 

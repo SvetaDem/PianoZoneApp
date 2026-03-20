@@ -1,89 +1,15 @@
-﻿<Window x:Class="PianoTrainerApp.Views.LibraryWindow"
-        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:PianoTrainerApp"
-        mc:Ignorable="d"
-        Title="Планета Ре-минор" Height="650" Width="1050"
-        MinHeight="600" MinWidth="1000"
-        WindowStartupLocation="CenterScreen">
-    <Window.Resources>
+﻿<UserControl x:Class="PianoTrainerApp.Views.LibraryView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:PianoTrainerApp.Views"
+             mc:Ignorable="d" 
+             Height="auto" Width="auto">
 
-        <!-- Стиль вкладок навигации -->
-        <Style x:Key="NavTabTextStyle" TargetType="TextBlock">
-            <Setter Property="Cursor" Value="Hand"/>
-            <Setter Property="RenderTransformOrigin" Value="0.5,0.5"/>
-            <Setter Property="Foreground" Value="#E5E5E5"/>
-            <Setter Property="RenderTransform">
-                <Setter.Value>
-                    <ScaleTransform ScaleX="1" ScaleY="1"/>
-                </Setter.Value>
-            </Setter>
-
-            <!-- Hover эффект -->
-            <Style.Triggers>
-                <Trigger Property="IsMouseOver" Value="True">
-                    <Setter Property="Foreground" Value="White"/>
-                    <Setter Property="RenderTransform">
-                        <Setter.Value>
-                            <ScaleTransform ScaleX="1.1" ScaleY="1.1"/>
-                        </Setter.Value>
-                    </Setter>
-                </Trigger>
-            </Style.Triggers>
-        </Style>
-
-        <!-- Универсальный стиль кнопки-иконки (profile/settings/exit) -->
-        <Style x:Key="IconButtonStyle" TargetType="Button">
-            <Setter Property="Cursor" Value="Hand"/>
-            <Setter Property="Background" Value="Transparent"/>
-            <Setter Property="BorderThickness" Value="0"/>
-            <Setter Property="RenderTransformOrigin" Value="0.5,0.5"/>
-            <Setter Property="RenderTransform">
-                <Setter.Value>
-                    <ScaleTransform ScaleX="1" ScaleY="1"/>
-                </Setter.Value>
-            </Setter>
-
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="Button">
-                        <ContentPresenter HorizontalAlignment="Center"
-                                  VerticalAlignment="Center"/>
-
-                        <ControlTemplate.Triggers>
-                            <Trigger Property="IsMouseOver" Value="True">
-                                <Trigger.EnterActions>
-                                    <BeginStoryboard>
-                                        <Storyboard>
-                                            <DoubleAnimation Storyboard.TargetProperty="RenderTransform.(ScaleTransform.ScaleX)"
-                                                     To="1.1" Duration="0:0:0.15"/>
-                                            <DoubleAnimation Storyboard.TargetProperty="RenderTransform.(ScaleTransform.ScaleY)"
-                                                     To="1.1" Duration="0:0:0.15"/>
-                                        </Storyboard>
-                                    </BeginStoryboard>
-                                </Trigger.EnterActions>
-
-                                <Trigger.ExitActions>
-                                    <BeginStoryboard>
-                                        <Storyboard>
-                                            <DoubleAnimation Storyboard.TargetProperty="RenderTransform.(ScaleTransform.ScaleX)"
-                                                     To="1" Duration="0:0:0.15"/>
-                                            <DoubleAnimation Storyboard.TargetProperty="RenderTransform.(ScaleTransform.ScaleY)"
-                                                     To="1" Duration="0:0:0.15"/>
-                                        </Storyboard>
-                                    </BeginStoryboard>
-                                </Trigger.ExitActions>
-                            </Trigger>
-                        </ControlTemplate.Triggers>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
-
+    <UserControl.Resources>
         <!-- Стиль для Combobox -->
-       <!-- СТИЛЬ ДЛЯ ЭЛЕМЕНТОВ СПИСКА -->
+        <!-- СТИЛЬ ДЛЯ ЭЛЕМЕНТОВ СПИСКА -->
         <Style TargetType="ComboBoxItem">
             <Setter Property="Background" Value="Transparent"/>
             <Setter Property="Foreground" Value="Black"/>
@@ -342,104 +268,15 @@
                 </Setter.Value>
             </Setter>
         </Style>
-
-
-    </Window.Resources>
-
+    </UserControl.Resources>
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="60"/>
             <RowDefinition Height="90"/>
             <RowDefinition Height="*"/>
             <!-- Список -->
         </Grid.RowDefinitions>
-        
-        <!-- Фон -->
-        <Grid.Background>
-            <ImageBrush ImageSource="/Images/main_background.png" Stretch="Fill"/>
-        </Grid.Background>
-
-        <!-- ВЕРХНЯЯ ПАНЕЛЬ -->
-        <Grid Margin="20,0" Height="60" VerticalAlignment="Top">
-
-            <!-- Заголовок -->
-            <TextBlock Text="Планета Ре-минор"
-                       VerticalAlignment="Center"
-                       Foreground="White"
-                       FontSize="24"
-                       FontWeight="Black"/>
-
-            <!-- Среднее меню -->
-            <StackPanel Orientation="Horizontal"
-                        HorizontalAlignment="Center"
-                        VerticalAlignment="Center">
-
-                <TextBlock Text="Главная"
-                           Foreground="#202020"
-                           FontSize="16"
-                           Cursor="Hand"
-                           Margin="0,0,25,0"                         
-                           MouseLeftButtonDown="Home_CLick"
-                           Style="{StaticResource NavTabTextStyle}"
-                           FontWeight="Medium"
-                           VerticalAlignment="Bottom"/>
-
-                <TextBlock Text="|"
-                           Foreground="#202020"
-                           FontSize="20"
-                           FontWeight="Medium"
-                           Margin="0,0,25,0"
-                           VerticalAlignment="Bottom"/>
-
-                <TextBlock Text="Обучение"
-                           Foreground="#202020"
-                           FontSize="16"
-                           FontWeight="Medium"
-                           Cursor="Hand"
-                           MouseLeftButtonDown="ButtonBeginner_Click"
-                           Style="{StaticResource NavTabTextStyle}"
-                           Margin="0,0,25,0"
-                           VerticalAlignment="Bottom"/>
-
-                <TextBlock Text="|"
-                           Foreground="#202020"
-                           FontSize="20"
-                           FontWeight="Medium"
-                           Margin="0,0,25,0"
-                           VerticalAlignment="Bottom"/>
-
-                <TextBlock Text="Музыка"
-                           Foreground="White"
-                           FontSize="20"
-                           Cursor="Hand"
-                           Style="{StaticResource NavTabTextStyle}"
-                           FontWeight="Medium"
-                           MouseLeftButtonDown="ButtonLibrary_Click"
-                           VerticalAlignment="Bottom"/>
-            </StackPanel>
-
-        </Grid>
-
-        <!-- Иконки справа -->
-        <StackPanel Orientation="Vertical"
-            VerticalAlignment="Top"
-                    Margin="20"
-            HorizontalAlignment="Right"
-                    Grid.RowSpan="2">
-
-            <Button Width="32" Height="32" Margin="0,0,0,10"
-                    Style="{StaticResource IconButtonStyle}">
-                <Image Source="/Images/profile.png"/>
-            </Button>
-
-            <Button Width="32" Height="32"
-                    Style="{StaticResource IconButtonStyle}">
-                <Image Source="/Images/settings.png"/>
-            </Button>
-        </StackPanel>
-
         <!-- БЛОК ФИЛЬТРОВ -->
-        <StackPanel Grid.Row="1" Orientation="Horizontal"
+        <StackPanel Grid.Row="0" Orientation="Horizontal"
                     HorizontalAlignment="Center"
                     VerticalAlignment="Center" Cursor="">
 
@@ -538,7 +375,7 @@
         </StackPanel>
 
         <!-- СПИСОК ПЕСЕН -->
-        <Border Grid.Row="2" Background="#d9d9d9"
+        <Border Grid.Row="1" Background="#d9d9d9"
                 CornerRadius="15"
                 Margin="60 15 60 75">
             <Grid>
@@ -555,7 +392,7 @@
                             <ColumnDefinition Width="Auto"/>
                             <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
-                        
+
                         <!-- Фильтр по жанрам -->
                         <ComboBox Width="360" Height="26"
                       ItemsSource="{Binding Genres}"
@@ -588,7 +425,7 @@
                                     <ColumnDefinition Width="*"/>
                                     <ColumnDefinition Width="26"/>
                                 </Grid.ColumnDefinitions>
-                                
+
                                 <!-- Текстовое поле -->
                                 <TextBox Grid.Column="0"
                                      Background="Transparent"
@@ -641,14 +478,5 @@
             </Grid>
         </Border>
 
-        <!-- КНОПКА ВЫХОД -->
-        <Button Grid.Row="2"
-            Width="32" Height="32" Margin="20"
-            HorizontalAlignment="Right"
-            VerticalAlignment="Bottom"
-            Click="ButtonExit_Click"
-            Style="{StaticResource IconButtonStyle}">
-            <Image Source="/Images/exit.png"/>
-        </Button>
     </Grid>
-</Window>
+</UserControl>

@@ -20,11 +20,11 @@ using System.Windows.Shapes;
 namespace PianoTrainerApp.Views
 {
     /// <summary>
-    /// Логика взаимодействия для MainWindow.xaml
+    /// Логика взаимодействия для LibraryView.xaml
     /// </summary>
-    public partial class LibraryWindow : Window
+    public partial class LibraryView : UserControl
     {
-        public LibraryWindow()
+        public LibraryView()
         {
             InitializeComponent();
             DataContext = new LibraryViewModel();
@@ -43,88 +43,24 @@ namespace PianoTrainerApp.Views
                     return;
                 }
 
+                var parentWindow = Window.GetWindow(this); // получаем родителя
+
                 // копируем размеры и позиции
-                pianoWindow.Width = this.Width;
-                pianoWindow.Height = this.Height;
-                pianoWindow.WindowState = this.WindowState;
-                pianoWindow.Left = this.Left;
-                pianoWindow.Top = this.Top;
+                pianoWindow.Width = parentWindow.Width;
+                pianoWindow.Height = parentWindow.Height;
+                pianoWindow.WindowState = parentWindow.WindowState;
+                pianoWindow.Left = parentWindow.Left;
+                pianoWindow.Top = parentWindow.Top;
 
-                // Скрытие окна библиотеки
-                this.Hide();
+                parentWindow.Hide(); // скрываем текущее окно
 
-                // Когда пианино закроется — возврат библиотеки
-                pianoWindow.Closed += PianoWindow_Closed;
                 pianoWindow.Show();
-            }
 
-        }
-
-        private void PianoWindow_Closed(object sender, EventArgs e)
-        {
-            var pianoWindow = sender as Window;
-            if (pianoWindow == null)
-                return;
-
-            // копируем размер пианино - библиотеке
-            this.Width = pianoWindow.Width;
-            this.Height = pianoWindow.Height;
-            this.Left = pianoWindow.Left;
-            this.Top = pianoWindow.Top;
-            this.WindowState = pianoWindow.WindowState;
-
-            this.Show();
-            this.Activate();
-        }
-
-
-        private void ButtonBeginner_Click(object sender, RoutedEventArgs e)
-        {
-            //
-        }
-
-        private void ButtonLibrary_Click(object sender, RoutedEventArgs e)
-        {
-            var libraryWindow = new LibraryWindow();
-
-            // копируем размеры и позиции
-            libraryWindow.Width = this.Width;
-            libraryWindow.Height = this.Height;
-            libraryWindow.WindowState = this.WindowState;
-            libraryWindow.Left = this.Left;
-            libraryWindow.Top = this.Top;
-
-            libraryWindow.Show();
-            this.Close();
-        }
-
-        private void Home_CLick(object sender, RoutedEventArgs e)
-        {
-            var mainWindow = new MainWindow();
-
-            // копируем размеры и позиции
-            mainWindow.Width = this.Width;
-            mainWindow.Height = this.Height;
-            mainWindow.WindowState = this.WindowState;
-            mainWindow.Left = this.Left;
-            mainWindow.Top = this.Top;
-
-            mainWindow.Show();
-            this.Close();
-        }
-
-        private void ButtonExit_Click(object sender, RoutedEventArgs e)
-        {
-            var result = MessageBox.Show(
-                "Вы точно хотите выйти?",
-                "Подтверждение выхода",
-                MessageBoxButton.YesNo,
-                MessageBoxImage.Question
-                );
-
-            if (result == MessageBoxResult.Yes)
-            {
-                Application.Current.Shutdown();
+                // Когда PianoWindow закроется — вернуть обратно
+                pianoWindow.Closed += (s, args) =>
+                {
+                    parentWindow.Show();
+                };
             }
         }
 
@@ -146,6 +82,7 @@ namespace PianoTrainerApp.Views
             }
         }
 
+        // Обработка нажатия на кнопку для импорта MIDI-файлов
         private void ImportMidi_Click(object sender, RoutedEventArgs e)
         {
             // Создаем диалог выбора файла
@@ -172,14 +109,24 @@ namespace PianoTrainerApp.Views
                 {
                     var pianoWindow = new PianoWindow(song, tempoDialog.SelectedMultiplier);
 
+                    var parentWindow = Window.GetWindow(this); // получаем родителя
+
                     // копируем размеры и позиции
-                    pianoWindow.Width = this.Width;
-                    pianoWindow.Height = this.Height;
-                    pianoWindow.WindowState = this.WindowState;
-                    pianoWindow.Left = this.Left;
-                    pianoWindow.Top = this.Top;
+                    pianoWindow.Width = parentWindow.Width;
+                    pianoWindow.Height = parentWindow.Height;
+                    pianoWindow.WindowState = parentWindow.WindowState;
+                    pianoWindow.Left = parentWindow.Left;
+                    pianoWindow.Top = parentWindow.Top;
+
+                    parentWindow.Hide(); // скрываем текущее окно
 
                     pianoWindow.Show();
+
+                    // Когда PianoWindow закроется — вернуть обратно
+                    pianoWindow.Closed += (s, args) =>
+                    {
+                        parentWindow.Show();
+                    };
                 }
             }
         }
