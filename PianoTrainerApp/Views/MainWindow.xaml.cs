@@ -25,6 +25,8 @@ namespace PianoTrainerApp.Views
     {
         private User currentUser;
 
+        private Dictionary<string, string> passwords = new Dictionary<string, string>();
+
         public MainWindow()
         {
             InitializeComponent();
@@ -191,9 +193,6 @@ namespace PianoTrainerApp.Views
             AuthPanel.Visibility = Visibility.Visible;
         }
 
-        private string realAuthPassword = "";
-        private string realRegisterPassword = "";
-
         private void AutoLogin()
         {
             int savedUserId = Properties.Settings.Default.CurrentUserId;
@@ -258,6 +257,7 @@ namespace PianoTrainerApp.Views
 
             RegisterPanel.Visibility = Visibility.Collapsed;
             AuthPanel.Visibility = Visibility.Collapsed;
+            UserEditPanel.Visibility = Visibility.Collapsed;
             UserPanel.Visibility = Visibility.Visible;
 
             // Сохраняем для автологина
@@ -303,9 +303,9 @@ namespace PianoTrainerApp.Views
             var tb = sender as TextBox;
             if (tb == null) return;
 
-            var placeholder = tb.Name.Contains("Auth") ? AuthPasswordPlaceholder : RegisterPasswordPlaceholder;
+            var placeholder = FindPlaceholder(tb);
 
-            if (string.IsNullOrWhiteSpace(tb.Text))
+            if (!passwords.ContainsKey(tb.Name) || string.IsNullOrEmpty(passwords[tb.Name]))
                 placeholder.Visibility = Visibility.Visible;
         }
 
@@ -314,44 +314,44 @@ namespace PianoTrainerApp.Views
             var tb = sender as TextBox;
             if (tb == null) return;
 
-            bool isAuth = tb.Name.Contains("Auth");
+            var placeholder = FindPlaceholder(tb);
 
-            var placeholder = isAuth ? AuthPasswordPlaceholder : RegisterPasswordPlaceholder;
-            string realPassword = isAuth ? realAuthPassword : realRegisterPassword;
+            string realPassword = passwords.ContainsKey(tb.Name)
+                    ? passwords[tb.Name]
+                    : "";
 
             placeholder.Visibility = string.IsNullOrEmpty(realPassword)
                 ? Visibility.Visible
                 : Visibility.Collapsed;
         }
+
         // ---------- Универсальный TextChanged для пароля ----------
         private void PasswordBox_TextChanged(object sender, TextChangedEventArgs e)
         {
             var tb = sender as TextBox;
             if (tb == null) return;
 
-            bool isAuth = tb.Name.Contains("Auth");
+            if (!passwords.ContainsKey(tb.Name))
+                passwords[tb.Name] = "";
 
-            var placeholder = isAuth ? AuthPasswordPlaceholder : RegisterPasswordPlaceholder;
-            string realPassword = isAuth ? realAuthPassword : realRegisterPassword;
+            string realPassword = passwords[tb.Name];
+            var placeholder = FindPlaceholder(tb);
 
             int selStart = tb.SelectionStart;
 
-            // 👉 РЕЖИМ ПОКАЗА ПАРОЛЯ
+            // 👁 режим показа
             if (showPassword)
             {
-                realPassword = tb.Text;
+                passwords[tb.Name] = tb.Text;
 
-                if (isAuth) realAuthPassword = realPassword;
-                else realRegisterPassword = realPassword;
-
-                placeholder.Visibility = string.IsNullOrEmpty(realPassword)
+                placeholder.Visibility = string.IsNullOrEmpty(tb.Text)
                     ? Visibility.Visible
                     : Visibility.Collapsed;
 
                 return;
             }
 
-            // 👉 ОБНОВЛЕНИЕ realPassword
+            // удаление
             if (tb.Text.Length < realPassword.Length)
             {
                 int diff = realPassword.Length - tb.Text.Length;
@@ -361,6 +361,7 @@ namespace PianoTrainerApp.Views
                 if (removeLength > 0)
                     realPassword = realPassword.Remove(removeIndex, removeLength);
             }
+            // добавление
             else if (tb.Text.Length > realPassword.Length)
             {
                 int diff = tb.Text.Length - realPassword.Length;
@@ -373,29 +374,30 @@ namespace PianoTrainerApp.Views
                 }
             }
 
-            // 👉 СОХРАНЯЕМ
-            if (isAuth) realAuthPassword = realPassword;
-            else realRegisterPassword = realPassword;
+            passwords[tb.Name] = realPassword;
 
-            // 💥 ВАЖНО: placeholder только от realPassword
             placeholder.Visibility = string.IsNullOrEmpty(realPassword)
-                ? Visibility.Visible
-                : Visibility.Collapsed;
+                        ? Visibility.Visible
+                        : Visibility.Collapsed;
 
-            // 👉 ВСЕГДА маска
             tb.Text = new string('•', realPassword.Length);
             tb.SelectionStart = selStart;
         }
+
         // ---------- Универсальный глазик ----------
         private void ShowPasswordButton_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             showPassword = true;
+
             var button = sender as Button;
             var grid = button.Parent as Grid;
             var tb = grid.Children.OfType<TextBox>().FirstOrDefault();
             if (tb == null) return;
 
-            string realPassword = tb.Name.Contains("Auth") ? realAuthPassword : realRegisterPassword;
+            string realPassword = passwords.ContainsKey(tb.Name)
+                    ? passwords[tb.Name]
+                    : "";
+            
             tb.Text = realPassword;
             tb.SelectionStart = tb.Text.Length;
         }
@@ -403,14 +405,28 @@ namespace PianoTrainerApp.Views
         private void ShowPasswordButton_PreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
             showPassword = false;
+
             var button = sender as Button;
             var grid = button.Parent as Grid;
             var tb = grid.Children.OfType<TextBox>().FirstOrDefault();
             if (tb == null) return;
 
-            string realPassword = tb.Name.Contains("Auth") ? realAuthPassword : realRegisterPassword;
+            string realPassword = passwords.ContainsKey(tb.Name)
+                    ? passwords[tb.Name]
+                    : "";
+            
             tb.Text = new string('•', realPassword.Length);
             tb.SelectionStart = tb.Text.Length;
+        }
+
+        // Поиск placeholder в textbox
+        private TextBlock FindPlaceholder(TextBox tb)
+        {
+            var grid = tb.Parent as Grid;
+
+            return grid?.Children
+                .OfType<TextBlock>()
+                .FirstOrDefault(t => t.Name.Contains("Placeholder"));
         }
 
         // ---------- Проверка логина ----------
@@ -453,9 +469,9 @@ namespace PianoTrainerApp.Views
 
 
             // первая буква
-            if (!char.IsLetter(username[0]) || !char.IsLetter(username[username.Length - 1]))
+            if (!char.IsLetter(username[0]))
             {
-                error = "Логин должен начинаться и заканчиваться буквой";
+                error = "Логин должен начинаться с буквы";
                 return false;
             }
 
@@ -488,7 +504,8 @@ namespace PianoTrainerApp.Views
             {
                 string username = RegisterUsernameTextBox.Text;
                 string email = RegisterEmailTextBox.Text.Trim();
-                string password = realRegisterPassword;
+                // Получаем пароль из словаря
+                passwords.TryGetValue("RegisterPasswordBox", out string password);
 
                 if (string.IsNullOrWhiteSpace(username) || string.IsNullOrWhiteSpace(email) || string.IsNullOrWhiteSpace(password))
                 {
@@ -560,7 +577,8 @@ namespace PianoTrainerApp.Views
             else if (button.Name == "AuthButton")
             {
                 string username = AuthUsernameTextBox.Text.Trim();
-                string password = realAuthPassword;
+                // Получаем пароль из словаря
+                passwords.TryGetValue("AuthPasswordBox", out string password);
 
                 if (string.IsNullOrWhiteSpace(username) || string.IsNullOrWhiteSpace(password))
                 {
@@ -624,53 +642,159 @@ namespace PianoTrainerApp.Views
         // Обработчик кнопки сохранения изменений данных пользователя
         private void SaveProfile_Click(object sender, RoutedEventArgs e)
         {
-/*            try
+            if (currentUser == null) return;
+
+            string newUsername = EditUsernameBox.Text;
+            string newEmail = EditEmailBox.Text;
+
+            // Проверки
+            if (string.IsNullOrWhiteSpace(newUsername) || string.IsNullOrWhiteSpace(newEmail))
+            {
+                MessageBox.Show("Все поля должны быть заполнены");
+                return;
+            }
+
+            if (!IsValidUsername(newUsername, out string usernameError))
+            {
+                MessageBox.Show(usernameError, "Ошибка в логине");
+                return;
+            }
+
+            if (!IsValidEmail(newEmail))
+            {
+                MessageBox.Show("Некорректный формат e-mail");
+                return;
+            }
+
+            // Подтверждение действия
+            var result = MessageBox.Show("Сохранить изменения профиля?", "Подтверждение", MessageBoxButton.YesNoCancel, MessageBoxImage.Question);
+            if (result != MessageBoxResult.Yes) return;
+
+            try
             {
                 using (var db = new ReMinorContext())
                 {
                     var user = db.Users.FirstOrDefault(u => u.Id == currentUser.Id);
-
-                    user.Username = EditUsernameBox.Text.Trim();
-                    user.Email = EditEmailBox.Text.Trim();
-
-                    // если меняли пароль
-                    if (PasswordPanel.Visibility == Visibility.Visible)
+                    if (user == null)
                     {
-                        string currentHash = PasswordHelper.HashPassword(CurrentPasswordBox.Password);
-
-                        if (user.PasswordHash != currentHash)
-                        {
-                            MessageBox.Show("Неверный текущий пароль");
-                            return;
-                        }
-
-                        if (NewPasswordBox.Password != RepeatPasswordBox.Password)
-                        {
-                            MessageBox.Show("Пароли не совпадают");
-                            return;
-                        }
-
-                        user.PasswordHash = PasswordHelper.HashPassword(NewPasswordBox.Password);
+                        MessageBox.Show("Пользователь не найден в БД");
+                        return;
                     }
 
+                    // Проверка уникальности логина
+                    if (db.Users.Any(u => u.Username == newUsername && u.Id != currentUser.Id))
+                    {
+                        MessageBox.Show("Пользователь с таким логином уже существует", "Ошибка");
+                        return;
+                    }
+
+                    user.Username = newUsername;
+                    user.Email = newEmail;
                     db.SaveChanges();
 
-                    currentUser = user;
-                }
+                    // Обновляем текущего пользователя
+                    currentUser.Username = newUsername;
+                    currentUser.Email = newEmail;
 
-                MessageBox.Show("Сохранено ✨");
-                BackToProfile_Click(null, null);
+                    MessageBox.Show("Профиль успешно обновлён", "Успех", MessageBoxButton.OK, MessageBoxImage.Information);
+
+                    // Обновляем отображение
+                    ShowUserProfile(currentUser);
+                }
+            }
+            catch (System.Data.SqlClient.SqlException ex)
+            {
+                MessageBox.Show("Ошибка SQL: " + ex.InnerException.Message, "Ошибка при сохранении профиля");
+                return;
+            }
+            catch (System.Data.Entity.Core.EntityException ex)
+            {
+                MessageBox.Show("Ошибка подключения к БД: " + ex.InnerException.Message, "Ошибка при сохранении профиля");
+                return;
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Ошибка: " + ex.Message);
+                MessageBox.Show("Неизвестная ошибка: " + ex.InnerException.Message, "Ошибка при сохранении профиля");
+                return;
             }
-*/        }
-
+        }
         // Обработчик кнопки сохранения изменененного пароля пользователя
         private void SavePassword_Click(object sender, RoutedEventArgs e)
         {
-            //
+            if (currentUser == null) return;
+
+            // Получаем пароли из словаря
+            passwords.TryGetValue("CurrentPasswordBox", out string currentPassword);
+            passwords.TryGetValue("NewPasswordBox", out string newPassword);
+            passwords.TryGetValue("RepeatPasswordBox", out string repeatPassword);
+
+            if (string.IsNullOrWhiteSpace(currentPassword) || string.IsNullOrWhiteSpace(newPassword) || string.IsNullOrWhiteSpace(repeatPassword))
+            {
+                MessageBox.Show("Заполните все поля пароля");
+                return;
+            }
+
+            // Проверка нового пароля
+            if (!IsValidPassword(newPassword))
+            {
+                MessageBox.Show("Новый пароль должен быть от 6 до 32 символов, содержать заглавную, строчную букву и цифру", "Ошибка");
+                return;
+            }
+
+            if (newPassword != repeatPassword)
+            {
+                MessageBox.Show("Новый пароль и подтверждение не совпадают", "Ошибка");
+                return;
+            }
+
+            // Подтверждение действия
+            var result = MessageBox.Show("Сменить пароль?", "Подтверждение", MessageBoxButton.YesNo, MessageBoxImage.Question);
+            if (result != MessageBoxResult.Yes) return;
+
+            try
+            {
+                using (var db = new ReMinorContext())
+                {
+                    var user = db.Users.FirstOrDefault(u => u.Id == currentUser.Id);
+                    if (user == null)
+                    {
+                        MessageBox.Show("Пользователь не найден в БД");
+                        return;
+                    }
+
+                    string currentPasswordHash = PasswordHelper.HashPassword(currentPassword);
+                    if (user.PasswordHash != currentPasswordHash)
+                    {
+                        MessageBox.Show("Текущий пароль введён неверно", "Ошибка");
+                        return;
+                    }
+
+                    user.PasswordHash = PasswordHelper.HashPassword(newPassword);
+                    db.SaveChanges();
+
+                    // Обновляем словарь и переменные
+                    passwords["CurrentPasswordBox"] = "";
+                    passwords["NewPasswordBox"] = "";
+                    passwords["RepeatPasswordBox"] = "";
+
+                    MessageBox.Show("Пароль успешно изменён", "Успех", MessageBoxButton.OK, MessageBoxImage.Information);
+                }
+            }
+            catch (System.Data.SqlClient.SqlException ex)
+            {
+                MessageBox.Show("Ошибка SQL: " + ex.InnerException.Message, "Ошибка при сохранении пароля");
+                return;
+            }
+            catch (System.Data.Entity.Core.EntityException ex)
+            {
+                MessageBox.Show("Ошибка подключения к БД: " + ex.InnerException.Message, "Ошибка при сохранении пароля");
+                return;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Неизвестная ошибка: " + ex.InnerException.Message, "Ошибка при сохранении пароля");
+                return;
+            }
         }
     }
 }
