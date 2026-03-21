@@ -29,12 +29,14 @@ namespace PianoTrainerApp.Views
             InitializeComponent();
         }
 
+        // Обработчик кнопки открытия библиотеки песен
         private void ButtonLibrary_Click(object sender, RoutedEventArgs e)
         {
             // Сообщаем родителю: открыть Library
             NavigateRequested?.Invoke(PageType.Library);
         }
 
+        // Обработчик кнопки открытия обучающей страницы
         private void ButtonBeginner_Click(object sender, RoutedEventArgs e)
         {
             // Сообщаем родителю: открыть Beginner

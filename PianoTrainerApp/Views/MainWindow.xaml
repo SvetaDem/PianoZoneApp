@@ -11,9 +11,6 @@
 
     <Window.Resources>
 
-        <!-- Стиль вкладок навигации -->
-
-
         <!-- Универсальный стиль кнопки-иконки (profile/settings/exit) -->
         <Style x:Key="IconButtonStyle" TargetType="Button">
             <Setter Property="Cursor" Value="Hand"/>
@@ -62,6 +59,7 @@
             </Setter>
         </Style>
 
+        <!-- Универсальный стиль TextBox -->
         <Style x:Key="RoundedTextBox" TargetType="TextBox">
             <Setter Property="Foreground" Value="#1e1e1e"/>
             <Setter Property="Height" Value="42"/>
@@ -266,10 +264,11 @@
 
                     <Grid>
                         <TextBox x:Name="AuthPasswordBox"
-                 Style="{StaticResource RoundedTextBox}"
-                 TextChanged="PasswordBox_TextChanged"
-                 LostFocus="PasswordBox_LostFocus"
-                 Loaded="PasswordBox_Loaded"/>
+                                 Style="{StaticResource RoundedTextBox}"
+                                 TextChanged="PasswordBox_TextChanged"
+                                 LostFocus="PasswordBox_LostFocus"
+                                 Loaded="PasswordBox_Loaded"
+                                 DataObject.Pasting="PasswordBox_Pasting"/>
 
                         <!-- Placeholder -->
                         <TextBlock Text="Пароль"
@@ -426,7 +425,8 @@
                                  Style="{StaticResource RoundedTextBox}"
                                  TextChanged="PasswordBox_TextChanged"
                                  LostFocus="PasswordBox_LostFocus"
-                                 Loaded="PasswordBox_Loaded">
+                                 Loaded="PasswordBox_Loaded"
+                                 DataObject.Pasting="PasswordBox_Pasting">
                             <TextBox.ToolTip>
                                 <ToolTip Background="#2b2b2b" Foreground="White" Padding="10" BorderThickness="0">
                                     <TextBlock TextWrapping="Wrap" Width="220">
@@ -566,28 +566,27 @@
                             Visibility="Collapsed"
                     VerticalAlignment="Top" Cursor="">
 
-                    <!-- HEADER -->
+                    <!-- Заголовок -->
                     <TextBlock x:Name="UsernameProfileText"
                                Text="Username"
                                Foreground="White"
                                FontSize="22"
                                FontWeight="Bold"/>
 
-                    <!-- EMAIL -->
+                    <!-- E-mail -->
                     <TextBlock x:Name="EmailProfileText"
                                Text="email@example.com"
                    Foreground="#9b9b9b"
                                FontSize="13"
                    Margin="0,0,0,30"/>
 
-                    <!-- СТАТИСТИКА -->
+                    <!-- Статистика (карточки) -->
                     <TextBlock Text="Статистика"
                    Foreground="#E0E0E0"
                    FontSize="16"
                    FontWeight="Medium"
                    Margin="10,0,0,10"/>
 
-                    <!-- Карточки -->
                     <UniformGrid Columns="2" Margin="0,0,0,20">
 
                         <Border Background="#2a2a2a" Height="60" Width="140" CornerRadius="15" Margin="0,0,5,5" Padding="10">
@@ -640,7 +639,7 @@
 
                     </UniformGrid>
 
-                    <!-- КНОПКИ -->
+                    <!-- Кнопки -->
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
 
                         <Button x:Name="EditUserButton"
@@ -723,7 +722,7 @@
 
                 </StackPanel>
 
-                <!-- РЕДАКТИРОDАНИЕ ПРОФИЛЯ -->
+                <!-- РЕДАКТИРОВАНИЕ ПРОФИЛЯ -->
                 <StackPanel x:Name="UserEditPanel"
                             Margin="30, 20"
                             Visibility="Collapsed"
@@ -751,7 +750,7 @@
 
                     </DockPanel>
 
-                    <!-- ================= ОСНОВНАЯ ИНФОРМАЦИЯ ================= -->
+                    <!-- ОСНОВНАЯ ИНФОРМАЦИЯ -->
                     <TextBlock Text="Основная информация"
                Foreground="#E0E0E0"
                FontSize="16"
@@ -816,53 +815,48 @@ Email должен соответсвовать формату email@example.com
 
                             </Grid>
 
-                            <!-- КНОПКИ -->
-                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-
-                                <Button x:Name="SaveProfileButton"
-    Height="38"
-    Width="160"
-    HorizontalAlignment="Center"
-    Cursor="Hand"
-    Grid.Column="0"
-                    Click="SaveProfile_Click"
-    Margin="0,0,5,0"
-    Background="#3F64A9"
-    BorderThickness="1">
-                                    <Button.Template>
-                                        <ControlTemplate TargetType="Button">
-                                            <Border x:Name="border"
-            Background="{TemplateBinding Background}"
-            BorderThickness="{TemplateBinding BorderThickness}"
-            CornerRadius="20">
-                                                <TextBlock HorizontalAlignment="Center"
-               VerticalAlignment="Center"
-               Text="Сохранить изменения"
-               FontWeight="SemiBold"
-               Foreground="White"/>
-                                            </Border>
-                                            <ControlTemplate.Triggers>
-                                                <!-- Изменение цвета при наведении -->
-                                                <Trigger Property="IsMouseOver" Value="True">
-                                                    <Setter TargetName="border" Property="Background" Value="#5F84C9"/>
-                                                    <!-- более тёмный -->
-                                                </Trigger>
-                                                <!-- нажатие -->
-                                                <Trigger Property="IsPressed" Value="True">
-                                                    <Setter TargetName="border" Property="Background" Value="#7FA4E9"/>
-                                                    <!-- ещё темнее -->
-                                                </Trigger>
-                                            </ControlTemplate.Triggers>
-                                        </ControlTemplate>
-                                    </Button.Template>
-                                </Button>
-
-                                
-                            </StackPanel>
+                            <!-- Кнопки -->
+                            <Button x:Name="SaveProfileButton"
+                                        Height="38"
+                                        Width="160"
+                                        HorizontalAlignment="Center"
+                                        Cursor="Hand"
+                                        Grid.Column="0"
+                                        Click="SaveProfile_Click"
+                                        Margin="0,0,5,0"
+                                        Background="#3F64A9"
+                                        BorderThickness="1">
+                                <Button.Template>
+                                    <ControlTemplate TargetType="Button">
+                                        <Border x:Name="border"
+                                                    Background="{TemplateBinding Background}"
+                                                    BorderThickness="{TemplateBinding BorderThickness}"
+                                                    CornerRadius="20">
+                                            <TextBlock HorizontalAlignment="Center"
+                                                       VerticalAlignment="Center"
+                                                       Text="Сохранить изменения"
+                                                       FontWeight="SemiBold"
+                                                       Foreground="White"/>
+                                        </Border>
+                                        <ControlTemplate.Triggers>
+                                            <!-- Изменение цвета при наведении -->
+                                            <Trigger Property="IsMouseOver" Value="True">
+                                                <Setter TargetName="border" Property="Background" Value="#5F84C9"/>
+                                                <!-- более тёмный -->
+                                            </Trigger>
+                                            <!-- нажатие -->
+                                            <Trigger Property="IsPressed" Value="True">
+                                                <Setter TargetName="border" Property="Background" Value="#7FA4E9"/>
+                                                <!-- ещё темнее -->
+                                            </Trigger>
+                                        </ControlTemplate.Triggers>
+                                    </ControlTemplate>
+                                </Button.Template>
+                            </Button>
                         </StackPanel>
                     </Border>
 
-                    <!-- ================= БЕЗОПАСНОСТЬ ================= -->
+                    <!-- БЕЗОПАСНОСТЬ -->
                     <TextBlock Text="Безопасность"
                Foreground="#E0E0E0"
                FontSize="16"
@@ -880,30 +874,31 @@ Email должен соответсвовать формату email@example.com
 
                             <Grid>
                                 <TextBox x:Name="CurrentPasswordBox"
-                 Style="{StaticResource RoundedTextBox}"
-                 TextChanged="PasswordBox_TextChanged"
-                 LostFocus="PasswordBox_LostFocus"
-                 Loaded="PasswordBox_Loaded"/>
+                                         Style="{StaticResource RoundedTextBox}"
+                                         TextChanged="PasswordBox_TextChanged"
+                                         LostFocus="PasswordBox_LostFocus"
+                                         Loaded="PasswordBox_Loaded"
+                                         DataObject.Pasting="PasswordBox_Pasting"/>
 
                                 <!-- Placeholder -->
                                 <TextBlock Text="Текущий пароль"
-                   Foreground="#555555"
-                   FontWeight="Medium"
-                   Margin="24,0,50,15"
-                   VerticalAlignment="Center"
-                   IsHitTestVisible="False"
-                   x:Name="EditCurrentPasswordPlaceholder"/>
+                                           Foreground="#555555"
+                                           FontWeight="Medium"
+                                           Margin="24,0,50,15"
+                                           VerticalAlignment="Center"
+                                           IsHitTestVisible="False"
+                                           x:Name="EditCurrentPasswordPlaceholder"/>
 
                                 <!-- Глазик -->
                                 <Button x:Name="EditCurrentShowPasswordButton"
-                Width="30" Height="30"
-                HorizontalAlignment="Right"
-                Background="Transparent"
-                BorderThickness="0"
-                Margin="25,0,10,15"
-                Cursor="Hand"
-                PreviewMouseLeftButtonDown="ShowPasswordButton_PreviewMouseLeftButtonDown"
-                PreviewMouseLeftButtonUp="ShowPasswordButton_PreviewMouseLeftButtonUp">
+                                        Width="30" Height="30"
+                                        HorizontalAlignment="Right"
+                                        Background="Transparent"
+                                        BorderThickness="0"
+                                        Margin="25,0,10,15"
+                                        Cursor="Hand"
+                                        PreviewMouseLeftButtonDown="ShowPasswordButton_PreviewMouseLeftButtonDown"
+                                        PreviewMouseLeftButtonUp="ShowPasswordButton_PreviewMouseLeftButtonUp">
                                     <Button.Style>
                                         <Style TargetType="Button">
                                             <Setter Property="Background" Value="Transparent"/>
@@ -925,18 +920,19 @@ Email должен соответсвовать формату email@example.com
 
                             <Grid>
                                 <TextBox x:Name="NewPasswordBox"
-                 Style="{StaticResource RoundedTextBox}"
-                 TextChanged="PasswordBox_TextChanged"
-                 LostFocus="PasswordBox_LostFocus"
-                 Loaded="PasswordBox_Loaded">
+                                         Style="{StaticResource RoundedTextBox}"
+                                         TextChanged="PasswordBox_TextChanged"
+                                         LostFocus="PasswordBox_LostFocus"
+                                         Loaded="PasswordBox_Loaded"
+                                         DataObject.Pasting="PasswordBox_Pasting">
                                     <TextBox.ToolTip>
                                         <ToolTip Background="#2b2b2b" Foreground="White" Padding="10" BorderThickness="0">
                                             <TextBlock TextWrapping="Wrap" Width="220">
-<Run Text="Пароль должен быть:"/>
-                        <LineBreak/>
-<Run Text="• от 6 до 32 символов"/>
-                            <LineBreak/>
-<Run Text="• содержать хотя бы 1 заглавную, 1 строчную букву и цифру"/>
+                                                <Run Text="Пароль должен быть:"/>
+                                                                        <LineBreak/>
+                                                <Run Text="• от 6 до 32 символов"/>
+                                                                            <LineBreak/>
+                                                <Run Text="• содержать хотя бы 1 заглавную, 1 строчную букву и цифру"/>
                                             </TextBlock>
                                         </ToolTip>
                                     </TextBox.ToolTip>
@@ -944,23 +940,23 @@ Email должен соответсвовать формату email@example.com
 
                                 <!-- Placeholder -->
                                 <TextBlock Text="Новый пароль"
-                   Foreground="#555555"
-                   FontWeight="Medium"
-                   Margin="24,0,50,15"
-                   VerticalAlignment="Center"
-                   IsHitTestVisible="False"
-                   x:Name="EditNewPasswordPlaceholder"/>
+                                           Foreground="#555555"
+                                           FontWeight="Medium"
+                                           Margin="24,0,50,15"
+                                           VerticalAlignment="Center"
+                                           IsHitTestVisible="False"
+                                           x:Name="EditNewPasswordPlaceholder"/>
 
                                 <!-- Глазик -->
                                 <Button x:Name="EditNewShowPasswordButton"
-                Width="30" Height="30"
-                HorizontalAlignment="Right"
-                Background="Transparent"
-                BorderThickness="0"
-                Margin="25,0,10,15"
-                Cursor="Hand"
-                PreviewMouseLeftButtonDown="ShowPasswordButton_PreviewMouseLeftButtonDown"
-                PreviewMouseLeftButtonUp="ShowPasswordButton_PreviewMouseLeftButtonUp">
+                                        Width="30" Height="30"
+                                        HorizontalAlignment="Right"
+                                        Background="Transparent"
+                                        BorderThickness="0"
+                                        Margin="25,0,10,15"
+                                        Cursor="Hand"
+                                        PreviewMouseLeftButtonDown="ShowPasswordButton_PreviewMouseLeftButtonDown"
+                                        PreviewMouseLeftButtonUp="ShowPasswordButton_PreviewMouseLeftButtonUp">
                                     <Button.Style>
                                         <Style TargetType="Button">
                                             <Setter Property="Background" Value="Transparent"/>
@@ -982,30 +978,31 @@ Email должен соответсвовать формату email@example.com
 
                             <Grid>
                                 <TextBox x:Name="RepeatPasswordBox"
-                 Style="{StaticResource RoundedTextBox}"
-                 TextChanged="PasswordBox_TextChanged"
-                 LostFocus="PasswordBox_LostFocus"
-                 Loaded="PasswordBox_Loaded"/>
+                                         Style="{StaticResource RoundedTextBox}"
+                                         TextChanged="PasswordBox_TextChanged"
+                                         LostFocus="PasswordBox_LostFocus"
+                                         Loaded="PasswordBox_Loaded"
+                                         DataObject.Pasting="PasswordBox_Pasting"/>
 
                                 <!-- Placeholder -->
                                 <TextBlock Text="Подтверждение нового пароля"
-                   Foreground="#555555"
-                   FontWeight="Medium"
-                   Margin="24,0,50,15"
-                   VerticalAlignment="Center"
-                   IsHitTestVisible="False"
-                   x:Name="EditRepeatPasswordPlaceholder"/>
+                                           Foreground="#555555"
+                                           FontWeight="Medium"
+                                           Margin="24,0,50,15"
+                                           VerticalAlignment="Center"
+                                           IsHitTestVisible="False"
+                                           x:Name="EditRepeatPasswordPlaceholder"/>
 
                                 <!-- Глазик -->
                                 <Button x:Name="EditRepeatCurrentShowPasswordButton"
-                Width="30" Height="30"
-                HorizontalAlignment="Right"
-                Background="Transparent"
-                BorderThickness="0"
-                Margin="25,0,10,15"
-                Cursor="Hand"
-                PreviewMouseLeftButtonDown="ShowPasswordButton_PreviewMouseLeftButtonDown"
-                PreviewMouseLeftButtonUp="ShowPasswordButton_PreviewMouseLeftButtonUp">
+                                        Width="30" Height="30"
+                                        HorizontalAlignment="Right"
+                                        Background="Transparent"
+                                        BorderThickness="0"
+                                        Margin="25,0,10,15"
+                                        Cursor="Hand"
+                                        PreviewMouseLeftButtonDown="ShowPasswordButton_PreviewMouseLeftButtonDown"
+                                        PreviewMouseLeftButtonUp="ShowPasswordButton_PreviewMouseLeftButtonUp">
                                     <Button.Style>
                                         <Style TargetType="Button">
                                             <Setter Property="Background" Value="Transparent"/>

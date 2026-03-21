@@ -75,7 +75,6 @@ namespace PianoTrainerApp.ViewModels
             animationTimer.Start();
         }
 
-
         private double GetKeyX(string noteName)
         {
             var whiteKey = WhiteKeys.FirstOrDefault(k => k.Note == noteName);

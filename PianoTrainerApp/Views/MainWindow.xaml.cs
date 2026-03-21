@@ -384,6 +384,47 @@ namespace PianoTrainerApp.Views
             tb.SelectionStart = selStart;
         }
 
+        // Обработчик вставки
+        private void PasswordBox_Pasting(object sender, DataObjectPastingEventArgs e)
+        {
+            var tb = sender as TextBox;
+            if (tb == null) return;
+
+            if (!e.DataObject.GetDataPresent(DataFormats.Text))
+            {
+                e.CancelCommand();
+                return;
+            }
+
+            string pastedText = e.DataObject.GetData(DataFormats.Text) as string ?? "";
+
+            if (!passwords.ContainsKey(tb.Name))
+                passwords[tb.Name] = "";
+
+            string realPassword = passwords[tb.Name];
+
+            int selectionStart = tb.SelectionStart;
+            int selectionLength = tb.SelectionLength;
+
+            // Вставляем в реальный пароль
+            realPassword = realPassword.Remove(selectionStart, selectionLength);
+            realPassword = realPassword.Insert(selectionStart, pastedText);
+
+            passwords[tb.Name] = realPassword;
+
+            // Отменяем стандартную вставку
+            e.CancelCommand();
+
+            // Обновляем UI
+            tb.Text = new string('•', realPassword.Length);
+            tb.SelectionStart = selectionStart + pastedText.Length;
+
+            var placeholder = FindPlaceholder(tb);
+            placeholder.Visibility = string.IsNullOrEmpty(realPassword)
+                ? Visibility.Visible
+                : Visibility.Collapsed;
+        }
+
         // ---------- Универсальный глазик ----------
         private void ShowPasswordButton_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {

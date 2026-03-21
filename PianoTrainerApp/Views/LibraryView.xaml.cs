@@ -29,6 +29,8 @@ namespace PianoTrainerApp.Views
             InitializeComponent();
             DataContext = new LibraryViewModel();
         }
+
+        // Обработка двойного клика по элементу списка
         private void ListBox_DoubleClick(object sender, MouseButtonEventArgs e)
         {
             if (DataContext is LibraryViewModel vm && vm.SelectedSong != null)

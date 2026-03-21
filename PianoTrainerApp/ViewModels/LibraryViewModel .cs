@@ -75,7 +75,7 @@ namespace PianoTrainerApp.ViewModels
                     foreach (var g in allGenres)
                         Genres.Add(g);
 
-                    // 🔥 выставляем лайки пользователя
+                    // Выставляем лайки пользователя
                     foreach (var song in Songs)
                     {
                         song.IsFavorite = song.SongUsers?
@@ -164,6 +164,7 @@ namespace PianoTrainerApp.ViewModels
             FilterSongs();
         }
 
+        // Фильтрация списка песен
         private void FilterSongs()
         {
             FilteredSongs.Clear();
