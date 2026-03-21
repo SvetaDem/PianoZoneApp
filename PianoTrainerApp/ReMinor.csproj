@@ -275,6 +275,7 @@
     <Content Include="Assets\Celine Dion - My Heart Will Go On - Titanic Theme - EASY.mid">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Resource Include="Images\cross.png" />
     <Resource Include="Images\repeat.png" />
     <Resource Include="Assets\covers\umka.jpg" />
     <Resource Include="Assets\covers\titanic.jpg" />

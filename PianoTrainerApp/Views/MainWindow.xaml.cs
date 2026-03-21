@@ -478,7 +478,7 @@ namespace PianoTrainerApp.Views
             return true;
         }
 
-        // ---------- Кнопка входа / регистрации ----------
+        // Обработчик кнопки авторизации/регистрации
         private void ButtonLogin_Click(object sender, RoutedEventArgs e)
         {
             var button = sender as Button;
@@ -602,6 +602,75 @@ namespace PianoTrainerApp.Views
                 // Показ профиля
                 ShowUserProfile(currentUser);
             }
+        }
+
+        // Обработчик кнопки возврата в профиль после редактирования
+        private void BackToProfile_Click(object sender, RoutedEventArgs e)
+        {
+            UserEditPanel.Visibility = Visibility.Collapsed;
+            UserPanel.Visibility = Visibility.Visible;
+        }
+
+        // Обработчик кнопки редактирования профиля
+        private void EditUser_Click(object sender, RoutedEventArgs e)
+        {
+            EditUsernameBox.Text = currentUser.Username;
+            EditEmailBox.Text = currentUser.Email;
+
+            UserEditPanel.Visibility = Visibility.Visible;
+            UserPanel.Visibility = Visibility.Collapsed;
+        }
+
+        // Обработчик кнопки сохранения изменений данных пользователя
+        private void SaveProfile_Click(object sender, RoutedEventArgs e)
+        {
+/*            try
+            {
+                using (var db = new ReMinorContext())
+                {
+                    var user = db.Users.FirstOrDefault(u => u.Id == currentUser.Id);
+
+                    user.Username = EditUsernameBox.Text.Trim();
+                    user.Email = EditEmailBox.Text.Trim();
+
+                    // если меняли пароль
+                    if (PasswordPanel.Visibility == Visibility.Visible)
+                    {
+                        string currentHash = PasswordHelper.HashPassword(CurrentPasswordBox.Password);
+
+                        if (user.PasswordHash != currentHash)
+                        {
+                            MessageBox.Show("Неверный текущий пароль");
+                            return;
+                        }
+
+                        if (NewPasswordBox.Password != RepeatPasswordBox.Password)
+                        {
+                            MessageBox.Show("Пароли не совпадают");
+                            return;
+                        }
+
+                        user.PasswordHash = PasswordHelper.HashPassword(NewPasswordBox.Password);
+                    }
+
+                    db.SaveChanges();
+
+                    currentUser = user;
+                }
+
+                MessageBox.Show("Сохранено ✨");
+                BackToProfile_Click(null, null);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Ошибка: " + ex.Message);
+            }
+*/        }
+
+        // Обработчик кнопки сохранения изменененного пароля пользователя
+        private void SavePassword_Click(object sender, RoutedEventArgs e)
+        {
+            //
         }
     }
 }
