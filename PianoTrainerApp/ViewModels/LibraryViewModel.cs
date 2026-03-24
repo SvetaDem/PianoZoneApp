@@ -108,7 +108,9 @@ namespace PianoTrainerApp.ViewModels
 
             FilteredSongs = new ObservableCollection<Song>(Songs);
             SelectedGenre = "Все жанры";
+
             OnPropertyChanged(nameof(FilteredSongs));
+            OnPropertyChanged(nameof(Genres));
         }
 
         // Сброс любимых песен (вызывается при logout)
@@ -122,7 +124,10 @@ namespace PianoTrainerApp.ViewModels
                 song.IsFavorite = false;
 
             FilteredSongs = new ObservableCollection<Song>(Songs);
+            SelectedGenre = "Все жанры";
+
             OnPropertyChanged(nameof(FilteredSongs));
+            OnPropertyChanged(nameof(Genres));
         }
 
         // Обновление значения CurrentUser

@@ -131,7 +131,7 @@ namespace PianoTrainerApp.Views
             var result = MessageBox.Show(
                 "Вы точно хотите выйти?",
                 "Подтверждение выхода",
-                MessageBoxButton.YesNo,
+                MessageBoxButton.YesNoCancel,
                 MessageBoxImage.Question
                 );
 
@@ -269,20 +269,30 @@ namespace PianoTrainerApp.Views
 
         private void ButtonLogout_Click(object sender, RoutedEventArgs e)
         {
-            Properties.Settings.Default.CurrentUserId = 0;
-            Properties.Settings.Default.Save();
+            var result = MessageBox.Show(
+                "Вы точно хотите выйти из аккаунта?",
+                "Подтверждение выхода",
+                MessageBoxButton.YesNoCancel,
+                MessageBoxImage.Question
+                );
 
-            currentUser = null;
-
-            // Сбрасываем лайки в текущей библиотеке
-            if (MainContent.Content is LibraryView libraryView &&
-                libraryView.DataContext is LibraryViewModel vm)
+            if (result == MessageBoxResult.Yes)
             {
-                vm.ResetFavorites();
-            }
+                Properties.Settings.Default.CurrentUserId = 0;
+                Properties.Settings.Default.Save();
 
-            UserPanel.Visibility = Visibility.Collapsed;
-            AuthPanel.Visibility = Visibility.Visible;
+                currentUser = null;
+
+                // Сбрасываем лайки в текущей библиотеке
+                if (MainContent.Content is LibraryView libraryView &&
+                    libraryView.DataContext is LibraryViewModel vm)
+                {
+                    vm.ResetFavorites();
+                }
+
+                UserPanel.Visibility = Visibility.Collapsed;
+                AuthPanel.Visibility = Visibility.Visible;
+            }            
         }
 
         private bool showPassword = false;
@@ -619,6 +629,7 @@ namespace PianoTrainerApp.Views
                     MessageBox.Show("Неизвестная ошибка: " + ex.InnerException.Message);
                     return;
                 }
+                MessageBox.Show("Регистрация прошла успешно!");
 
                 ShowUserProfile(currentUser);
 
@@ -672,6 +683,8 @@ namespace PianoTrainerApp.Views
                     MessageBox.Show("Неверный логин или пароль");
                     return;
                 }
+
+                MessageBox.Show($"С возвращением, {currentUser.Username}!");
 
                 // Показ профиля
                 ShowUserProfile(currentUser);
