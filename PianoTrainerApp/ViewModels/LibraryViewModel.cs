@@ -55,6 +55,13 @@ namespace PianoTrainerApp.ViewModels
         public LibraryViewModel()
         {
             CurrentUserId = Properties.Settings.Default.CurrentUserId;
+            LoadSongs();
+
+        }
+
+        // Загрузка песен
+        public void LoadSongs()
+        {
             try
             {
                 using (var db = new ReMinorContext())
@@ -75,11 +82,14 @@ namespace PianoTrainerApp.ViewModels
                     foreach (var g in allGenres)
                         Genres.Add(g);
 
-                    // Выставляем лайки пользователя
-                    foreach (var song in Songs)
+                    if (CurrentUserId != 0)
                     {
-                        song.IsFavorite = song.SongUsers?
-                            .Any(su => su.UserId == CurrentUserId && su.IsFavorite) ?? false;
+                        // Выставляем лайки пользователя
+                        foreach (var song in Songs)
+                        {
+                            song.IsFavorite = song.SongUsers?
+                                .Any(su => su.UserId == CurrentUserId && su.IsFavorite) ?? false;
+                        }
                     }
                 }
             }
@@ -93,12 +103,33 @@ namespace PianoTrainerApp.ViewModels
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Неизвестная ошибка при автологине: " + ex.InnerException.Message);
+                MessageBox.Show("Неизвестная ошибка: " + ex.InnerException.Message);
             }
 
             FilteredSongs = new ObservableCollection<Song>(Songs);
             SelectedGenre = "Все жанры";
+            OnPropertyChanged(nameof(FilteredSongs));
+        }
 
+        // Сброс любимых песен (вызывается при logout)
+        public void ResetFavorites()
+        {
+            CurrentUserId = 0;
+            Properties.Settings.Default.CurrentUserId = 0;
+            Properties.Settings.Default.Save();
+
+            foreach (var song in Songs)
+                song.IsFavorite = false;
+
+            FilteredSongs = new ObservableCollection<Song>(Songs);
+            OnPropertyChanged(nameof(FilteredSongs));
+        }
+
+        // Обновление значения CurrentUser
+        public void SetCurrentUser(int userId)
+        {
+            CurrentUserId = userId;
+            LoadSongs();
         }
 
         // Для чтения/записи в таблицу понравившихся песен

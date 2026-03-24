@@ -27,7 +27,10 @@ namespace PianoTrainerApp.Views
         public LibraryView()
         {
             InitializeComponent();
-            DataContext = new LibraryViewModel();
+            var vm = new LibraryViewModel();
+            DataContext = vm;
+
+            vm.LoadSongs();
         }
 
         // Обработка двойного клика по элементу списка

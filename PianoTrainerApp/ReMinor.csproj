@@ -192,7 +192,7 @@
     <Compile Include="Models\User.cs" />
     <Compile Include="Services\MidiParser.cs" />
     <Compile Include="Services\PitchDetector.cs" />
-    <Compile Include="ViewModels\LibraryViewModel .cs" />
+    <Compile Include="ViewModels\LibraryViewModel.cs" />
     <Compile Include="ViewModels\PianoViewModel.cs" />
     <Compile Include="Views\HomeView.xaml.cs">
       <DependentUpon>HomeView.xaml</DependentUpon>
@@ -284,6 +284,11 @@
     <Resource Include="Assets\covers\requiem_for_a_dream.jpg" />
     <Resource Include="Assets\covers\sounds_of_Silence.jpg" />
     <Resource Include="Assets\covers\river_flows_in_you.jpg" />
+    <Resource Include="Assets\covers\canon.jpg" />
+    <Resource Include="Assets\covers\hallelujah.jpg" />
+    <Resource Include="Assets\covers\imagine.jpg" />
+    <Resource Include="Assets\covers\interstellar.jpg" />
+    <Resource Include="Assets\covers\let_it_be.jpg" />
     <Content Include="Assets\hz.mid">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

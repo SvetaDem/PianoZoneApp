@@ -1,6 +1,8 @@
 ﻿using PianoTrainerApp.Models;
+using PianoTrainerApp.ViewModels;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Net.Mail;
 using System.Text;
@@ -271,6 +273,13 @@ namespace PianoTrainerApp.Views
             Properties.Settings.Default.Save();
 
             currentUser = null;
+
+            // Сбрасываем лайки в текущей библиотеке
+            if (MainContent.Content is LibraryView libraryView &&
+                libraryView.DataContext is LibraryViewModel vm)
+            {
+                vm.ResetFavorites();
+            }
 
             UserPanel.Visibility = Visibility.Collapsed;
             AuthPanel.Visibility = Visibility.Visible;
@@ -612,6 +621,12 @@ namespace PianoTrainerApp.Views
                 }
 
                 ShowUserProfile(currentUser);
+
+                // Обновляем лайки в библиотеке
+                if (MainContent.Content is LibraryView libraryView && libraryView.DataContext is LibraryViewModel vm)
+                {
+                    vm.SetCurrentUser(currentUser.Id);
+                }
             }
 
 
@@ -660,6 +675,12 @@ namespace PianoTrainerApp.Views
 
                 // Показ профиля
                 ShowUserProfile(currentUser);
+
+                // Обновляем лайки в библиотеке
+                if (MainContent.Content is LibraryView libraryView && libraryView.DataContext is LibraryViewModel vm)
+                {
+                    vm.SetCurrentUser(currentUser.Id);
+                }
             }
         }
 
