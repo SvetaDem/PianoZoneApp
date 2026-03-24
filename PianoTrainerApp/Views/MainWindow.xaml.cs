@@ -55,7 +55,15 @@ namespace PianoTrainerApp.Views
                     break;
 
                 case PageType.Library:
-                    MainContent.Content = new LibraryView();
+                    var libraryView = new LibraryView();
+                    MainContent.Content = libraryView;
+
+                    if (libraryView.DataContext is LibraryViewModel vm)
+                    {
+                        // Подписываемся на событие лайков
+                        vm.FavoritesChanged += UpdateProfileStats;
+                    }
+
                     HighlightMenuItem(LibraryTextBlock);
                     break;
 
@@ -124,6 +132,27 @@ namespace PianoTrainerApp.Views
             if (sender == HomeTextBlock) ShowPage(PageType.Home);
             else if (sender == LibraryTextBlock) ShowPage(PageType.Library);
             else if (sender == BeginnerTextBlock) ShowPage(PageType.Beginner);
+        }
+
+        // Обновление статистики
+        private void UpdateProfileStats()
+        {
+            if (currentUser == null) return;
+
+            try
+            {
+                using (var db = new ReMinorContext())
+                {
+                    int favoritesCount = db.SongsUsers
+                        .Count(su => su.UserId == currentUser.Id && su.IsFavorite);
+
+                    FavoritesCountText.Text = $"⭐ {favoritesCount}";
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Ошибка обновления профиля: " + ex.Message);
+            }
         }
 
         private void ButtonExit_Click(object sender, RoutedEventArgs e)
@@ -689,13 +718,15 @@ namespace PianoTrainerApp.Views
                 // Показ профиля
                 ShowUserProfile(currentUser);
 
-                // Обновляем лайки в библиотеке
+                // Обновляем лайки в библиотеке и статистику пользователя
                 if (MainContent.Content is LibraryView libraryView && libraryView.DataContext is LibraryViewModel vm)
                 {
                     vm.SetCurrentUser(currentUser.Id);
                 }
             }
         }
+
+        
 
         // Обработчик кнопки возврата в профиль после редактирования
         private void BackToProfile_Click(object sender, RoutedEventArgs e)

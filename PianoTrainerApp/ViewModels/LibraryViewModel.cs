@@ -19,6 +19,8 @@ namespace PianoTrainerApp.ViewModels
         // Список всех жанров + специальный "ничего не выбрано"
         public ObservableCollection<string> Genres { get; set; } = new ObservableCollection<string>();
 
+        public event Action FavoritesChanged;
+
         public int CurrentUserId { get; set; }
 
         private string selectedGenre;
@@ -185,12 +187,18 @@ namespace PianoTrainerApp.ViewModels
                 MessageBox.Show("Неизвестная ошибка при автологине: " + ex.InnerException.Message);
             }
 
+            // вызов события
+            FavoritesChanged?.Invoke();
+
             // если включен фильтр избранного
             if (showingFavorites)
                 FilterSongs();
 
             OnPropertyChanged(nameof(FilteredSongs));
+
+            
         }
+
         // Для отображения списка понравившихся песен
         private bool showingFavorites = false;
 
