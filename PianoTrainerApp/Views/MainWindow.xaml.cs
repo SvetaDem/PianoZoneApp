@@ -127,7 +127,7 @@ namespace PianoTrainerApp.Views
                     int favoritesCount = db.SongsUsers
                         .Count(su => su.UserId == currentUser.Id && su.IsFavorite);
 
-                    FavoritesCountText.Text = $"⭐ {favoritesCount}";
+                    FavouritesCountText.Text = favoritesCount.ToString();
                 }
             }
             catch (Exception ex)
@@ -251,7 +251,7 @@ namespace PianoTrainerApp.Views
                     int favoritesCount = db.SongsUsers
                         .Count(su => su.UserId == currentUser.Id && su.IsFavorite);
 
-                    FavoritesCountText.Text = $"⭐ {favoritesCount}";
+                    FavouritesCountText.Text = favoritesCount.ToString();
                 }
             }
             catch (System.Data.SqlClient.SqlException ex)
