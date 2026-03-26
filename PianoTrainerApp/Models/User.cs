@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -23,6 +24,14 @@ namespace PianoTrainerApp.Models
         [Column("password_hash")]
         public string PasswordHash { get; set; }
 
+        [Column("last_login_date")]
+        public DateTime? LastLoginDate { get; set; }  // дата последнего захода
+
+        [Column("current_streak")]
+        public int CurrentStreak { get; set; }  // текущий стрик
+
         public virtual ICollection<SongUser> FavoriteSongs { get; set; }
+
+
     }
 }

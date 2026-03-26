@@ -73,7 +73,35 @@ namespace PianoTrainerApp.Views
         private void ShowFavorites_Click(object sender, RoutedEventArgs e)
         {
             var vm = DataContext as LibraryViewModel;
-            vm?.ToggleFavoritesFilter();
+            if (vm == null) return;
+
+            var toggleButton = sender as ToggleButton;
+
+            // Пользователь не авторизован
+            if (!vm.IsUserAuthorized)
+            {
+                MessageBox.Show("Избранное доступно только для авторизованных пользователей");
+
+                // откатываем кнопку назад
+                if (toggleButton != null)
+                    toggleButton.IsChecked = false;
+
+                return;
+            }
+
+            // Нет избранных
+            if (vm.FavoritesCount == 0)
+            {
+                MessageBox.Show("Добавьте композиции в избранное ❤️");
+
+                if (toggleButton != null)
+                    toggleButton.IsChecked = false;
+
+                return;
+            }
+
+            // Всё ок
+            vm.ToggleFavoritesFilter();
         }
 
         // Обработка нажатия на кнопку в виде сердца (в списке)
@@ -112,7 +140,7 @@ namespace PianoTrainerApp.Views
             OpenFileDialog openFileDialog = new OpenFileDialog
             {
                 Filter = "MIDI files (*.mid;*.midi)|*.mid;*.midi",
-                Title = "Select a MIDI file"
+                Title = "Выберите MIDI-файл"
             };
 
             if (openFileDialog.ShowDialog() == true)

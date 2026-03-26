@@ -61,7 +61,7 @@ namespace PianoTrainerApp.Views
                     if (libraryView.DataContext is LibraryViewModel vm)
                     {
                         // Подписываемся на событие лайков
-                        vm.FavoritesChanged += UpdateProfileStats;
+                        vm.FavoritesChanged += () => RefreshUserStats(includeStreak: false);
                     }
 
                     HighlightMenuItem(LibraryTextBlock);
@@ -115,8 +115,8 @@ namespace PianoTrainerApp.Views
             else if (sender == BeginnerTextBlock) ShowPage(PageType.Beginner);
         }
 
-        // Обновление статистики
-        private void UpdateProfileStats()
+        // Обновление статистики профиля
+        private void RefreshUserStats(bool includeStreak = false)
         {
             if (currentUser == null) return;
 
@@ -124,10 +124,20 @@ namespace PianoTrainerApp.Views
             {
                 using (var db = new ReMinorContext())
                 {
+                    // Избранное
                     int favoritesCount = db.SongsUsers
                         .Count(su => su.UserId == currentUser.Id && su.IsFavorite);
-
                     FavouritesCountText.Text = favoritesCount.ToString();
+
+                    // Стрик обновляем только при входе/автологине/регистрации
+                    if (includeStreak)
+                    {
+                        var user = db.Users.FirstOrDefault(u => u.Id == currentUser.Id);
+                        if (user != null)
+                        {
+                            StreakText.Text = user.CurrentStreak + " дн.";
+                        }
+                    }
                 }
             }
             catch (Exception ex)
@@ -219,54 +229,39 @@ namespace PianoTrainerApp.Views
                     if (user == null)
                         return;
 
+                    // Обновляем дату последнего входа и стрик в БД
+                    UpdateUserLoginStats(savedUserId);
+
+                    // Показываем профиль
                     ShowUserProfile(user);
                 }
             }
             catch (System.Data.SqlClient.SqlException ex)
             {
-                MessageBox.Show("Ошибка SQL при автологине: " + ex.InnerException.Message);
+                MessageBox.Show("Ошибка автологина: не удалось подключиться к базе данных." + ex.InnerException.Message);
             }
             catch (System.Data.Entity.Core.EntityException ex)
             {
-                MessageBox.Show("Ошибка подключения к БД: " + ex.InnerException.Message);
+                MessageBox.Show("Ошибка автологина: база данных недоступна." + ex.InnerException.Message);
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Неизвестная ошибка при автологине: " + ex.InnerException.Message);
+                MessageBox.Show("Неизвестная ошибка при автологине." + ex.InnerException.Message);
             }
         }
 
+        // Отображение профиля
         private void ShowUserProfile(User user)
         {
             if (user == null) return;
 
             currentUser = user;
 
+            // Обновляем UI: имя и email
             UsernameProfileText.Text = currentUser.Username;
             EmailProfileText.Text = currentUser.Email;
-            try
-            {
-                using (var db = new ReMinorContext())
-                {
-                    int favoritesCount = db.SongsUsers
-                        .Count(su => su.UserId == currentUser.Id && su.IsFavorite);
 
-                    FavouritesCountText.Text = favoritesCount.ToString();
-                }
-            }
-            catch (System.Data.SqlClient.SqlException ex)
-            {
-                MessageBox.Show("Ошибка SQL при автологине: " + ex.InnerException.Message);
-            }
-            catch (System.Data.Entity.Core.EntityException ex)
-            {
-                MessageBox.Show("Ошибка подключения к БД: " + ex.InnerException.Message);
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Неизвестная ошибка при автологине: " + ex.InnerException.Message);
-            }
-
+            // Показываем панель пользователя, скрываем регистрацию/авторизацию
             RegisterPanel.Visibility = Visibility.Collapsed;
             AuthPanel.Visibility = Visibility.Collapsed;
             UserEditPanel.Visibility = Visibility.Collapsed;
@@ -275,6 +270,9 @@ namespace PianoTrainerApp.Views
             // Сохраняем для автологина
             Properties.Settings.Default.CurrentUserId = currentUser.Id;
             Properties.Settings.Default.Save();
+
+            // Обновляем статистику
+            RefreshUserStats(includeStreak: true);
         }
 
         private void ButtonLogout_Click(object sender, RoutedEventArgs e)
@@ -641,13 +639,17 @@ namespace PianoTrainerApp.Views
                 }
                 MessageBox.Show("Регистрация прошла успешно!");
 
-                ShowUserProfile(currentUser);
-
                 // Обновляем лайки в библиотеке
                 if (MainContent.Content is LibraryView libraryView && libraryView.DataContext is LibraryViewModel vm)
                 {
                     vm.SetCurrentUser(currentUser.Id);
                 }
+
+                // Обновляем дату последнего входа и стрик в БД
+                UpdateUserLoginStats(currentUser.Id);
+
+                // Показываем профиль
+                ShowUserProfile(currentUser);
             }
 
 
@@ -696,18 +698,55 @@ namespace PianoTrainerApp.Views
 
                 MessageBox.Show($"С возвращением, {currentUser.Username}!");
 
-                // Показ профиля
-                ShowUserProfile(currentUser);
-
                 // Обновляем лайки в библиотеке и статистику пользователя
                 if (MainContent.Content is LibraryView libraryView && libraryView.DataContext is LibraryViewModel vm)
                 {
                     vm.SetCurrentUser(currentUser.Id);
                 }
+
+                // Обновляем дату последнего входа и стрик в БД
+                UpdateUserLoginStats(currentUser.Id);
+
+                // Показываем профиль
+                ShowUserProfile(currentUser);
             }
         }
 
-        
+        // Обнволение даты последнего входа и стрика в БД
+        private void UpdateUserLoginStats(int userId)
+        {
+            try
+            {
+                using (var db = new ReMinorContext())
+                {
+                    var user = db.Users.FirstOrDefault(u => u.Id == userId);
+                    if (user == null) return;
+
+                    // тут обновляем LastLoginDate и CurrentStreak
+                    var today = DateTime.Today;
+                    if (user.LastLoginDate.HasValue)
+                    {
+                        var daysDiff = (today - user.LastLoginDate.Value.Date).Days;
+
+                        if (daysDiff == 1)
+                            user.CurrentStreak += 1;
+                        else if (daysDiff > 1)
+                            user.CurrentStreak = 1;
+                    }
+                    else
+                    {
+                        user.CurrentStreak = 1;
+                    }
+
+                    user.LastLoginDate = today;
+                    db.SaveChanges();
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Не удалось обновить статистику пользователя: " + ex.Message);
+            }
+        }
 
         // Обработчик кнопки возврата в профиль после редактирования
         private void BackToProfile_Click(object sender, RoutedEventArgs e)
@@ -805,6 +844,7 @@ namespace PianoTrainerApp.Views
                 return;
             }
         }
+        
         // Обработчик кнопки сохранения изменененного пароля пользователя
         private void SavePassword_Click(object sender, RoutedEventArgs e)
         {

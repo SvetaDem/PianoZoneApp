@@ -776,7 +776,8 @@
                                                    FontSize="24"
                                                    Foreground="#E0E0E0"
                                                    Margin="0,0,1.5,0"/>
-                                        <TextBlock Text="5 дн."
+                                        <TextBlock x:Name="StreakText"
+                                                   Text="5 дн."
                                                    Foreground="#E0E0E0"
                                                    FontSize="24"
                                                    FontWeight="Bold"/>

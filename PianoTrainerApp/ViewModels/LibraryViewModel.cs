@@ -18,6 +18,9 @@ namespace PianoTrainerApp.ViewModels
 
         // Список всех жанров + специальный "ничего не выбрано"
         public ObservableCollection<string> Genres { get; set; } = new ObservableCollection<string>();
+        public bool IsUserAuthorized => CurrentUserId != 0;
+        public int FavoritesCount =>
+    Songs.Count(s => s.IsFavorite);
 
         public event Action FavoritesChanged;
 
