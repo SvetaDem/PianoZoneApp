@@ -224,21 +224,21 @@
                                                             C19.58,3 22,5.42 22,8.5 C22,12.28 18.6,15.36 13.45,20.03 
                                                             L12,21.35 Z"
                                                       Fill="Transparent"
-                                                      Stroke="Black"
+                                                      Stroke="#3F64A9"
                                                       StrokeThickness="2"
                                                       Stretch="Uniform"/>
                                             </Grid>
                                             <ControlTemplate.Triggers>
-                                                <!-- При нажатии заполняем сердце черным -->
+                                                <!-- При нажатии заполняем сердце цветом -->
                                                 <Trigger Property="IsChecked" Value="True">
-                                                    <Setter TargetName="HeartPath" Property="Fill" Value="Black"/>
+                                                    <Setter TargetName="HeartPath" Property="Fill" Value="#3F64A9"/>
                                                 </Trigger>
                                                 <!-- При наведении можно немного затемнять контур -->
                                                 <Trigger Property="IsMouseOver" Value="True">
-                                                    <Setter TargetName="HeartPath" Property="Stroke" Value="#555"/>
+                                                    <Setter TargetName="HeartPath" Property="Stroke" Value="#2F4E85"/>
                                                 </Trigger>
                                                 <Trigger Property="IsMouseOver" Value="False">
-                                                    <Setter TargetName="HeartPath" Property="Stroke" Value="Black"/>
+                                                    <Setter TargetName="HeartPath" Property="Stroke" Value="#3F64A9"/>
                                                 </Trigger>
                                             </ControlTemplate.Triggers>
                                         </ControlTemplate>
@@ -281,96 +281,123 @@
                     VerticalAlignment="Center" Cursor="">
 
             <Button Width="226" Height="44"
-        Background="#252121"
-        BorderBrush="#d9d9d9"
-        BorderThickness="1"
+        Background="#d9d9d9"
         Margin="0 0 25 0"
         Cursor="Hand" Click="ImportMidi_Click"
         Command="{Binding ImportCommand}">
                 <Button.Template>
                     <ControlTemplate TargetType="Button">
-                        <Border x:Name="border"
+                        <Grid>
+                            <!-- Слой тени (отдельно!) -->
+                            <Border CornerRadius="20"
+                        Background="{TemplateBinding Background}">
+                                <Border.Effect>
+                                    <DropShadowEffect 
+                            Color="Black"
+                            BlurRadius="10"
+                            ShadowDepth="0"
+                            Opacity="0.35"/>
+                                </Border.Effect>
+                            </Border>
+                            <!-- Слой контента -->
+                            <Border x:Name="border"
                     Background="{TemplateBinding Background}"
-                    BorderBrush="{TemplateBinding BorderBrush}"
-                    BorderThickness="{TemplateBinding BorderThickness}"
                     CornerRadius="20">
-                            <TextBlock HorizontalAlignment="Center"
+                                <TextBlock HorizontalAlignment="Center"
                            VerticalAlignment="Center"
                            Text="Импорт MIDI"
                            FontWeight="Medium"
                            FontSize="16"
-                           Foreground="White"/>
-                        </Border>
+                           Foreground="#1E1E1E"/>
+                            </Border>
+                        </Grid>
+
                         <ControlTemplate.Triggers>
-                            <!-- Изменение цвета при наведении -->
+                            <!-- Наведение -->
                             <Trigger Property="IsMouseOver" Value="True">
-                                <Setter TargetName="border" Property="Background" Value="#1C1A1A"/>
-                                <!-- более тёмный -->
+                                <Setter TargetName="border" Property="Background" Value="#C0C0C0"/>
                             </Trigger>
-                            <!-- нажатие -->
+
+                            <!-- Нажатие -->
                             <Trigger Property="IsPressed" Value="True">
-                                <Setter TargetName="border" Property="Background" Value="#141212"/>
-                                <!-- ещё темнее -->
+                                <Setter TargetName="border" Property="Background" Value="#A0A0A0"/>
                             </Trigger>
                         </ControlTemplate.Triggers>
                     </ControlTemplate>
                 </Button.Template>
             </Button>
-            <Button Width="226" Height="44"
+            <ToggleButton Width="226" Height="44"
                     Background="#d9d9d9"
-                    BorderBrush="Black"
-                    BorderThickness="1"
                     Cursor="Hand"
                     Click="ShowFavorites_Click">
-                <Button.Template>
-                    <ControlTemplate TargetType="{x:Type Button}">
-                        <Border x:Name="border"
-                    Background="{TemplateBinding Background}"
-                    BorderBrush="{TemplateBinding BorderBrush}"
-                    BorderThickness="{TemplateBinding BorderThickness}"
-                    CornerRadius="20"
-                    Effect="{TemplateBinding Effect}">
+                <ToggleButton.Template>
+                    <ControlTemplate TargetType="{x:Type ToggleButton}">
+                        <Grid>
+                            <!-- Слой тени (отдельно!) -->
+                            <Border x:Name="BorderShadow"
+                                    CornerRadius="20"
+                                    Background="{TemplateBinding Background}">
+                                <Border.Effect>
+                                    <DropShadowEffect 
+                                            Color="Black"
+                                            BlurRadius="10"
+                                            ShadowDepth="0"
+                                            Opacity="0.35"/>
+                                </Border.Effect>
+                            </Border>
+                            <!-- Слой контента -->
+                            <Border x:Name="BorderContent"
+                                Background="{TemplateBinding Background}"
+                                CornerRadius="20" Cursor="">
 
-                            <!-- Контент -->
-                            <StackPanel Orientation="Horizontal"                                        
+                                <!-- Контент -->
+                                <StackPanel Orientation="Horizontal"                                        
                             HorizontalAlignment="Right"
                             Margin="0 0 25 0"
                             VerticalAlignment="Center">
-                                <TextBlock VerticalAlignment="Center"
+                                    <TextBlock x:Name="YourFavourite" VerticalAlignment="Center"
                                Text="Твои любимые"
                                FontWeight="Medium"
                                FontSize="16"
-                               Foreground="Black"
+                               Foreground="#1E1E1E"
                                Margin="0 0 10 0"/>
-                                <!-- Векторное сердце -->
-                                <Path x:Name="HeartPath"
+                                    <!-- Векторное сердце -->
+                                    <Path x:Name="HeartPath"
                                       Data="M12,21.35 L10.55,20.03 C5.4,15.36 2,12.28 2,8.5 C2,5.42 4.42,3 7.5,3 
                                             C9.24,3 10.91,3.81 12,5.08 C13.09,3.81 14.76,3 16.5,3 
                                             C19.58,3 22,5.42 22,8.5 C22,12.28 18.6,15.36 13.45,20.03 
                                             L12,21.35 Z"
                                       Fill="#605C5C"
-                                      Stroke="Black"
-                                      StrokeThickness="1"
                                       Stretch="Uniform"
                                       Height="28" Width="28"/>
-                            </StackPanel>
-                        </Border>
+                                </StackPanel>
+                            </Border>
+                        </Grid>
 
                         <ControlTemplate.Triggers>
-                            <!-- Наведение: затемнение -->
+
+                            <!-- Наведение -->
                             <Trigger Property="IsMouseOver" Value="True">
-                                <Setter TargetName="border" Property="Background" Value="#C0C0C0"/>
-                                <!-- более тёмный серый -->
+                                <Setter TargetName="BorderContent" Property="Background" Value="#C0C0C0"/>
                             </Trigger>
-                            <!-- Нажатие -->
+
+                            <!-- Нажатия -->
                             <Trigger Property="IsPressed" Value="True">
-                                <Setter TargetName="border" Property="Background" Value="#A0A0A0"/>
-                                <!-- ещё темнее -->
+                                <Setter TargetName="BorderContent" Property="Background" Value="#A0A0A0"/>
                             </Trigger>
+
+                            <!-- Включено (выше приоритет) -->
+                            <Trigger Property="IsChecked" Value="True">
+                                <Setter TargetName="HeartPath" Property="Fill" Value="White"/>
+                                <Setter TargetName="BorderContent" Property="Background" Value="#3F64A9"/>
+                                <Setter TargetName="BorderShadow" Property="Background" Value="#3F64A9"/>
+                                <Setter TargetName="YourFavourite" Property="Foreground" Value="White"/>
+                            </Trigger>
+
                         </ControlTemplate.Triggers>
                     </ControlTemplate>
-                </Button.Template>
-            </Button>
+                </ToggleButton.Template>
+            </ToggleButton>
 
         </StackPanel>
 
@@ -383,11 +410,11 @@
                     <RowDefinition Height="50"/>
                     <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
-                <Border Grid.Row="0" Background="Black"
+                <Border Grid.Row="0" Background="#2F2B2B"
                         CornerRadius="15 15 0 0"
                         Padding="10">
                     <!-- Верхняя панель -->
-                    <Grid Background="Black" Margin="15,0">
+                    <Grid  Margin="15,0">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="Auto"/>
                             <ColumnDefinition Width="*"/>

@@ -74,25 +74,6 @@ namespace PianoTrainerApp.Views
             }
         }
 
-        // В родительском окне (например, MainWindow.xaml.cs) подписываемся на событие при создании HomeView
-        /*        private void ShowHome()
-                {
-                    var home = new HomeView();
-
-                    // Подписываемся на события навигации
-                    home.NavigateRequested += page =>
-                    {
-                        ShowPage(page); // Используем универсальный метод из предыдущего шага
-                    };
-
-                    MainContent.Content = home;
-
-                    // Обновляем подсветку меню
-                    ResetMenuItems();
-                    HighlightMenuItem(HomeTextBlock);
-                }
-        */
-        // Сброс выделения всех пунктов
         private void ResetMenuItems()
         {
             ResetItem(HomeTextBlock);
