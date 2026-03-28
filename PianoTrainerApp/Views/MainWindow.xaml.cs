@@ -142,20 +142,22 @@ namespace PianoTrainerApp.Views
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Ошибка обновления профиля: " + ex.Message);
+                System.Diagnostics.Debug.WriteLine($"[ERROR] Ошибка обновления профиля: {ex.Message}");
+
+                CustomMessageBox.Show("Ошибка обновления статистики в профиле", null, CustomMessageBoxButton.OK, CustomMessageBoxImage.Error);
             }
         }
 
         private void ButtonExit_Click(object sender, RoutedEventArgs e)
         {
-            var result = MessageBox.Show(
+            var result = CustomMessageBox.Show(
                 "Вы точно хотите выйти?",
                 "Подтверждение выхода",
-                MessageBoxButton.YesNoCancel,
-                MessageBoxImage.Question
+                CustomMessageBoxButton.YesNoCancel,
+                CustomMessageBoxImage.Question
                 );
 
-            if (result == MessageBoxResult.Yes)
+            if (result == CustomMessageBoxResult.Yes)
             {
                 Application.Current.Shutdown();
             }
@@ -238,15 +240,18 @@ namespace PianoTrainerApp.Views
             }
             catch (System.Data.SqlClient.SqlException ex)
             {
-                MessageBox.Show("Ошибка автологина: не удалось подключиться к базе данных." + ex.InnerException.Message);
+                System.Diagnostics.Debug.WriteLine($"[ERROR] Ошибка автологина: не удалось подключиться к базе данных: {ex.InnerException.Message}");
+                CustomMessageBox.Show("Возникла ошибка при автологине: не удалось подключиться к базе данных.", "Ошибка автологина", CustomMessageBoxButton.OK, CustomMessageBoxImage.Error);
             }
             catch (System.Data.Entity.Core.EntityException ex)
             {
-                MessageBox.Show("Ошибка автологина: база данных недоступна." + ex.InnerException.Message);
+                System.Diagnostics.Debug.WriteLine($"[ERROR] Ошибка автологина: база данных недоступна: {ex.InnerException.Message}");
+                CustomMessageBox.Show("Возникла ошибка при автологине: не удалось подключиться к базе данных.", "Ошибка автологина", CustomMessageBoxButton.OK, CustomMessageBoxImage.Error);
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Неизвестная ошибка при автологине." + ex.InnerException.Message);
+                System.Diagnostics.Debug.WriteLine($"[ERROR] Неизвестная ошибка при автологине: {ex.InnerException.Message}");
+                CustomMessageBox.Show("Возникла неизвестная ошибка при автологинеа.", "Ошибка автологина", CustomMessageBoxButton.OK, CustomMessageBoxImage.Error);
             }
         }
 
@@ -277,14 +282,14 @@ namespace PianoTrainerApp.Views
 
         private void ButtonLogout_Click(object sender, RoutedEventArgs e)
         {
-            var result = MessageBox.Show(
+            var result = CustomMessageBox.Show(
                 "Вы точно хотите выйти из аккаунта?",
                 "Подтверждение выхода",
-                MessageBoxButton.YesNoCancel,
-                MessageBoxImage.Question
+                CustomMessageBoxButton.YesNoCancel,
+                CustomMessageBoxImage.Question
                 );
 
-            if (result == MessageBoxResult.Yes)
+            if (result == CustomMessageBoxResult.Yes)
             {
                 Properties.Settings.Default.CurrentUserId = 0;
                 Properties.Settings.Default.Save();
@@ -300,7 +305,7 @@ namespace PianoTrainerApp.Views
 
                 UserPanel.Visibility = Visibility.Collapsed;
                 AuthPanel.Visibility = Visibility.Visible;
-            }            
+            }
         }
 
         private bool showPassword = false;
@@ -465,7 +470,7 @@ namespace PianoTrainerApp.Views
             string realPassword = passwords.ContainsKey(tb.Name)
                     ? passwords[tb.Name]
                     : "";
-            
+
             tb.Text = realPassword;
             tb.SelectionStart = tb.Text.Length;
         }
@@ -482,7 +487,7 @@ namespace PianoTrainerApp.Views
             string realPassword = passwords.ContainsKey(tb.Name)
                     ? passwords[tb.Name]
                     : "";
-            
+
             tb.Text = new string('•', realPassword.Length);
             tb.SelectionStart = tb.Text.Length;
         }
@@ -555,10 +560,8 @@ namespace PianoTrainerApp.Views
         // ---------- Проверка пароля ----------
         private bool IsValidPassword(string password)
         {
-            if (password.Length < 6 || password.Length > 32) return false;
-            if (!password.Any(char.IsUpper)) return false;
-            if (!password.Any(char.IsLower)) return false;
-            if (!password.Any(char.IsDigit)) return false;
+            if (string.IsNullOrWhiteSpace(password)) return false;
+            if (password.Length > 32) return false;
             return true;
         }
 
@@ -577,25 +580,25 @@ namespace PianoTrainerApp.Views
 
                 if (string.IsNullOrWhiteSpace(username) || string.IsNullOrWhiteSpace(email) || string.IsNullOrWhiteSpace(password))
                 {
-                    MessageBox.Show("Все поля должны быть заполнены");
+                    CustomMessageBox.Show("Все поля должны быть заполнены", "Ошибка регистрации", CustomMessageBoxButton.OK, CustomMessageBoxImage.Warning);
                     return;
                 }
 
                 if (!IsValidUsername(username, out string errorUsername))
                 {
-                    MessageBox.Show(errorUsername, "Ошибка в логине");
+                    CustomMessageBox.Show(errorUsername, "Ошибка регистрации", CustomMessageBoxButton.OK, CustomMessageBoxImage.Warning);
                     return;
                 }
 
                 if (!IsValidEmail(email))
                 {
-                    MessageBox.Show("Ошибка в e-mail");
+                    CustomMessageBox.Show("Некорректный формат e-mail.", "Ошибка регистрации", CustomMessageBoxButton.OK, CustomMessageBoxImage.Warning);
                     return;
                 }
 
                 if (!IsValidPassword(password))
                 {
-                    MessageBox.Show("Пароль должен быть от 6 до 32 символов, содержать заглавную букву, строчную и цифру", "Ошибка в пароле");
+                    CustomMessageBox.Show("Пароль не должен быть более 32 символов, а также состоять из одного пробела", "Ошибка регистрации", CustomMessageBoxButton.OK, CustomMessageBoxImage.Warning);
                     return;
                 }
 
@@ -607,7 +610,7 @@ namespace PianoTrainerApp.Views
                     {
                         if (db.Users.Any(u => u.Username == username))
                         {
-                            MessageBox.Show("Пользователь с таким логином уже существует");
+                            CustomMessageBox.Show("Пользователь с таким логином уже существует", "Ошибка регистрации", CustomMessageBoxButton.OK, CustomMessageBoxImage.Warning);
                             return;
                         }
 
@@ -624,20 +627,21 @@ namespace PianoTrainerApp.Views
                 }
                 catch (System.Data.SqlClient.SqlException ex)
                 {
-                    MessageBox.Show("Ошибка SQL: " + ex.InnerException.Message);
-                    return;
+                    System.Diagnostics.Debug.WriteLine($"[ERROR] Ошибка регистрации: не удалось подключиться к базе данных: {ex.InnerException.Message}");
+                    CustomMessageBox.Show("Возникла ошибка при попытке регистрации: не удалось подключиться к базе данных.", "Ошибка регистрации", CustomMessageBoxButton.OK, CustomMessageBoxImage.Error);
                 }
                 catch (System.Data.Entity.Core.EntityException ex)
                 {
-                    MessageBox.Show("Ошибка подключения к БД: " + ex.InnerException.Message);
-                    return;
+                    System.Diagnostics.Debug.WriteLine($"[ERROR] Ошибка регистрации: база данных недоступна: {ex.InnerException.Message}");
+                    CustomMessageBox.Show("Возникла ошибка при попытке регистрации: не удалось подключиться к базе данных.", "Ошибка регистрации", CustomMessageBoxButton.OK, CustomMessageBoxImage.Error);
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show("Неизвестная ошибка: " + ex.InnerException.Message);
-                    return;
+                    System.Diagnostics.Debug.WriteLine($"[ERROR] Неизвестная ошибка при регистрации: {ex.InnerException.Message}");
+                    CustomMessageBox.Show("Возникла неизвестная ошибка при регистрации.", "Ошибка регистрации", CustomMessageBoxButton.OK, CustomMessageBoxImage.Error);
                 }
-                MessageBox.Show("Регистрация прошла успешно!");
+
+                CustomMessageBox.Show("Регистрация прошла успешно!", null, CustomMessageBoxButton.OK, CustomMessageBoxImage.Success);
 
                 // Обновляем лайки в библиотеке
                 if (MainContent.Content is LibraryView libraryView && libraryView.DataContext is LibraryViewModel vm)
@@ -661,7 +665,7 @@ namespace PianoTrainerApp.Views
 
                 if (string.IsNullOrWhiteSpace(username) || string.IsNullOrWhiteSpace(password))
                 {
-                    MessageBox.Show("Введите логин и пароль");
+                    CustomMessageBox.Show("Введите логин и пароль", "Ошибка авторизации", CustomMessageBoxButton.OK, CustomMessageBoxImage.Warning);
                     return;
                 }
 
@@ -676,27 +680,27 @@ namespace PianoTrainerApp.Views
                 }
                 catch (System.Data.SqlClient.SqlException ex)
                 {
-                    MessageBox.Show("Ошибка SQL: " + ex.InnerException.Message);
-                    return;
+                    System.Diagnostics.Debug.WriteLine($"[ERROR] Ошибка авторизации: не удалось подключиться к базе данных: {ex.InnerException.Message}");
+                    CustomMessageBox.Show("Возникла ошибка при попытке авторизации: не удалось подключиться к базе данных.", "Ошибка авторизации", CustomMessageBoxButton.OK, CustomMessageBoxImage.Error);
                 }
                 catch (System.Data.Entity.Core.EntityException ex)
                 {
-                    MessageBox.Show("Ошибка подключения к БД: " + ex.InnerException.Message);
-                    return;
+                    System.Diagnostics.Debug.WriteLine($"[ERROR] Ошибка авторизации: база данных недоступна: {ex.InnerException.Message}");
+                    CustomMessageBox.Show("Возникла ошибка при попытке авторизации: не удалось подключиться к базе данных.", "Ошибка авторизации", CustomMessageBoxButton.OK, CustomMessageBoxImage.Error);
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show("Неизвестная ошибка: " + ex.InnerException.Message);
-                    return;
+                    System.Diagnostics.Debug.WriteLine($"[ERROR] Неизвестная ошибка при авторизации: {ex.InnerException.Message}");
+                    CustomMessageBox.Show("Возникла неизвестная ошибка при попытке авторизации.", "Ошибка авторизации", CustomMessageBoxButton.OK, CustomMessageBoxImage.Error);
                 }
 
                 if (currentUser == null)
                 {
-                    MessageBox.Show("Неверный логин или пароль");
+                    CustomMessageBox.Show("Неверный логин или пароль", "Ошибка авторизации", CustomMessageBoxButton.OK, CustomMessageBoxImage.Warning);
                     return;
                 }
 
-                MessageBox.Show($"С возвращением, {currentUser.Username}!");
+                CustomMessageBox.Show($"С возвращением, {currentUser.Username}!", null, CustomMessageBoxButton.OK, CustomMessageBoxImage.Success);
 
                 // Обновляем лайки в библиотеке и статистику пользователя
                 if (MainContent.Content is LibraryView libraryView && libraryView.DataContext is LibraryViewModel vm)
@@ -712,7 +716,7 @@ namespace PianoTrainerApp.Views
             }
         }
 
-        // Обнволение даты последнего входа и стрика в БД
+        // Обновление даты последнего входа и стрика в БД
         private void UpdateUserLoginStats(int userId)
         {
             try
@@ -742,9 +746,37 @@ namespace PianoTrainerApp.Views
                     db.SaveChanges();
                 }
             }
+            catch (System.Data.SqlClient.SqlException ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"[ERROR] Ошибка обновления сеансов пользователя (SQL): {ex.Message}");
+                CustomMessageBox.Show(
+                    "Не удалось обновить сеансы пользователя: ошибка подключения к базе данных.",
+                    "Ошибка обновления сеансов",
+                    CustomMessageBoxButton.OK,
+                    CustomMessageBoxImage.Error
+                );
+            }
+            catch (System.Data.Entity.Core.EntityException ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"[ERROR] Ошибка обновления сеансов пользователя (Entity): {ex.Message}");
+
+                CustomMessageBox.Show(
+                    "Не удалось обновить сеансы пользователя: база данных недоступна.",
+                    "Ошибка обновления сеансов",
+                    CustomMessageBoxButton.OK,
+                    CustomMessageBoxImage.Error
+                );
+            }
             catch (Exception ex)
             {
-                MessageBox.Show("Не удалось обновить статистику пользователя: " + ex.Message);
+                System.Diagnostics.Debug.WriteLine($"[ERROR] Неизвестная ошибка при обновлении сеансов пользователя: {ex.Message}");
+
+                CustomMessageBox.Show(
+                    "Не удалось обновить сеансы пользователя: произошла неизвестная ошибка.",
+                    "Ошибка обновления сеансов",
+                    CustomMessageBoxButton.OK,
+                    CustomMessageBoxImage.Error
+                );
             }
         }
 
@@ -776,25 +808,25 @@ namespace PianoTrainerApp.Views
             // Проверки
             if (string.IsNullOrWhiteSpace(newUsername) || string.IsNullOrWhiteSpace(newEmail))
             {
-                MessageBox.Show("Все поля должны быть заполнены");
+                CustomMessageBox.Show("Все поля должны быть заполнены", "Ошибка сохранения изменений", CustomMessageBoxButton.OK, CustomMessageBoxImage.Warning);
                 return;
             }
 
             if (!IsValidUsername(newUsername, out string usernameError))
             {
-                MessageBox.Show(usernameError, "Ошибка в логине");
+                CustomMessageBox.Show(usernameError, "Ошибка сохранения изменений", CustomMessageBoxButton.OK, CustomMessageBoxImage.Warning);
                 return;
             }
 
             if (!IsValidEmail(newEmail))
             {
-                MessageBox.Show("Некорректный формат e-mail");
+                CustomMessageBox.Show("Некорректный формат e-mail", "Ошибка сохранения изменений", CustomMessageBoxButton.OK, CustomMessageBoxImage.Warning);
                 return;
             }
 
             // Подтверждение действия
-            var result = MessageBox.Show("Сохранить изменения профиля?", "Подтверждение", MessageBoxButton.YesNoCancel, MessageBoxImage.Question);
-            if (result != MessageBoxResult.Yes) return;
+            var result = CustomMessageBox.Show("Сохранить изменения профиля?", "Подтверждение", CustomMessageBoxButton.YesNoCancel, CustomMessageBoxImage.Question);
+            if (result != CustomMessageBoxResult.Yes) return;
 
             try
             {
@@ -803,14 +835,14 @@ namespace PianoTrainerApp.Views
                     var user = db.Users.FirstOrDefault(u => u.Id == currentUser.Id);
                     if (user == null)
                     {
-                        MessageBox.Show("Пользователь не найден в БД");
+                        CustomMessageBox.Show("Не удалось сохранить изменения профиля: пользователь не найден в БД", "Ошибка сохранения изменений", CustomMessageBoxButton.OK, CustomMessageBoxImage.Error);
                         return;
                     }
 
                     // Проверка уникальности логина
                     if (db.Users.Any(u => u.Username == newUsername && u.Id != currentUser.Id))
                     {
-                        MessageBox.Show("Пользователь с таким логином уже существует", "Ошибка");
+                        CustomMessageBox.Show("Пользователь с таким логином уже существует", "Ошибка сохранения изменений", CustomMessageBoxButton.OK, CustomMessageBoxImage.Error);
                         return;
                     }
 
@@ -822,7 +854,7 @@ namespace PianoTrainerApp.Views
                     currentUser.Username = newUsername;
                     currentUser.Email = newEmail;
 
-                    MessageBox.Show("Профиль успешно обновлён", "Успех", MessageBoxButton.OK, MessageBoxImage.Information);
+                    CustomMessageBox.Show("Профиль успешно обновлён", null, CustomMessageBoxButton.OK, CustomMessageBoxImage.Info);
 
                     // Обновляем отображение
                     ShowUserProfile(currentUser);
@@ -830,21 +862,21 @@ namespace PianoTrainerApp.Views
             }
             catch (System.Data.SqlClient.SqlException ex)
             {
-                MessageBox.Show("Ошибка SQL: " + ex.InnerException.Message, "Ошибка при сохранении профиля");
-                return;
+                System.Diagnostics.Debug.WriteLine($"[ERROR] Ошибка сохранения изменений профиля: не удалось подключиться к базе данных: {ex.InnerException.Message}");
+                CustomMessageBox.Show("Возникла ошибка при сохранении изменений профиля: не удалось подключиться к базе данных.", "Ошибка сохранения изменений", CustomMessageBoxButton.OK, CustomMessageBoxImage.Error);
             }
             catch (System.Data.Entity.Core.EntityException ex)
             {
-                MessageBox.Show("Ошибка подключения к БД: " + ex.InnerException.Message, "Ошибка при сохранении профиля");
-                return;
+                System.Diagnostics.Debug.WriteLine($"[ERROR] Ошибка сохранения изменений профиля: база данных недоступна: {ex.InnerException.Message}");
+                CustomMessageBox.Show("Возникла ошибка при сохранении изменений профиля: не удалось подключиться к базе данных.", "Ошибка сохранения изменений", CustomMessageBoxButton.OK, CustomMessageBoxImage.Error);
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Неизвестная ошибка: " + ex.InnerException.Message, "Ошибка при сохранении профиля");
-                return;
+                System.Diagnostics.Debug.WriteLine($"[ERROR] Неизвестная ошибка при сохранении изменений профиля: {ex.InnerException.Message}");
+                CustomMessageBox.Show("Возникла неизвестная ошибка при сохранении изменений профиля.", "Ошибка сохранения изменений", CustomMessageBoxButton.OK, CustomMessageBoxImage.Error);
             }
         }
-        
+
         // Обработчик кнопки сохранения изменененного пароля пользователя
         private void SavePassword_Click(object sender, RoutedEventArgs e)
         {
@@ -857,26 +889,36 @@ namespace PianoTrainerApp.Views
 
             if (string.IsNullOrWhiteSpace(currentPassword) || string.IsNullOrWhiteSpace(newPassword) || string.IsNullOrWhiteSpace(repeatPassword))
             {
-                MessageBox.Show("Заполните все поля пароля");
+                CustomMessageBox.Show("Заполните все поля пароля", "Ошибка сохранения изменений", CustomMessageBoxButton.OK, CustomMessageBoxImage.Warning);
                 return;
             }
 
             // Проверка нового пароля
             if (!IsValidPassword(newPassword))
             {
-                MessageBox.Show("Новый пароль должен быть от 6 до 32 символов, содержать заглавную, строчную букву и цифру", "Ошибка");
+                CustomMessageBox.Show(
+                    "Новый пароль не должен быть более 32 символов, а также состоять из одного пробела",
+                    "Ошибка сохранения изменений",
+                    CustomMessageBoxButton.OK,
+                    CustomMessageBoxImage.Warning
+                    );
                 return;
             }
 
             if (newPassword != repeatPassword)
             {
-                MessageBox.Show("Новый пароль и подтверждение не совпадают", "Ошибка");
+                CustomMessageBox.Show(
+                    "Новый пароль и подтверждение не совпадают",
+                    "Ошибка сохранения изменений",
+                    CustomMessageBoxButton.OK,
+                    CustomMessageBoxImage.Warning
+                    );
                 return;
             }
 
             // Подтверждение действия
-            var result = MessageBox.Show("Сменить пароль?", "Подтверждение", MessageBoxButton.YesNo, MessageBoxImage.Question);
-            if (result != MessageBoxResult.Yes) return;
+            var result = CustomMessageBox.Show("Сменить пароль?", "Подтверждение", CustomMessageBoxButton.YesNoCancel, CustomMessageBoxImage.Question);
+            if (result != CustomMessageBoxResult.Yes) return;
 
             try
             {
@@ -885,14 +927,14 @@ namespace PianoTrainerApp.Views
                     var user = db.Users.FirstOrDefault(u => u.Id == currentUser.Id);
                     if (user == null)
                     {
-                        MessageBox.Show("Пользователь не найден в БД");
+                        CustomMessageBox.Show("Не удалось сохранить изменения пароля: пользователь не найден в БД", "Ошибка сохранения изменений", CustomMessageBoxButton.OK, CustomMessageBoxImage.Error);
                         return;
                     }
 
                     string currentPasswordHash = PasswordHelper.HashPassword(currentPassword);
                     if (user.PasswordHash != currentPasswordHash)
                     {
-                        MessageBox.Show("Текущий пароль введён неверно", "Ошибка");
+                        CustomMessageBox.Show("Не удалось сохранить изменения пароля: текущий пароль введён неверно", "Ошибка сохранения изменений", CustomMessageBoxButton.OK, CustomMessageBoxImage.Error);
                         return;
                     }
 
@@ -904,23 +946,23 @@ namespace PianoTrainerApp.Views
                     passwords["NewPasswordBox"] = "";
                     passwords["RepeatPasswordBox"] = "";
 
-                    MessageBox.Show("Пароль успешно изменён", "Успех", MessageBoxButton.OK, MessageBoxImage.Information);
+                    CustomMessageBox.Show("Пароль успешно изменён", null, CustomMessageBoxButton.OK, CustomMessageBoxImage.Info);
                 }
             }
             catch (System.Data.SqlClient.SqlException ex)
             {
-                MessageBox.Show("Ошибка SQL: " + ex.InnerException.Message, "Ошибка при сохранении пароля");
-                return;
+                System.Diagnostics.Debug.WriteLine($"[ERROR] Ошибка сохранения пароля: не удалось подключиться к базе данных: {ex.InnerException.Message}");
+                CustomMessageBox.Show("Возникла ошибка при сохранении изменений пароля: не удалось подключиться к базе данных.", "Ошибка сохранения изменений", CustomMessageBoxButton.OK, CustomMessageBoxImage.Error);
             }
             catch (System.Data.Entity.Core.EntityException ex)
             {
-                MessageBox.Show("Ошибка подключения к БД: " + ex.InnerException.Message, "Ошибка при сохранении пароля");
-                return;
+                System.Diagnostics.Debug.WriteLine($"[ERROR] Ошибка сохранения пароля: база данных недоступна: {ex.InnerException.Message}");
+                CustomMessageBox.Show("Возникла ошибка при сохранении изменений пароля: не удалось подключиться к базе данных.", "Ошибка сохранения изменений", CustomMessageBoxButton.OK, CustomMessageBoxImage.Error);
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Неизвестная ошибка: " + ex.InnerException.Message, "Ошибка при сохранении пароля");
-                return;
+                System.Diagnostics.Debug.WriteLine($"[ERROR] Неизвестная ошибка при сохранении пароля: {ex.InnerException.Message}");
+                CustomMessageBox.Show("Возникла неизвестная ошибка при сохранении изменений пароля.", "Ошибка сохранения изменений", CustomMessageBoxButton.OK, CustomMessageBoxImage.Error);
             }
         }
     }

@@ -1,12 +1,12 @@
-﻿using System;
+﻿using PianoTrainerApp.Models;
+using PianoTrainerApp.Views;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Runtime.CompilerServices;
-using System.Linq; // для Cast и Select
 using System.Data.Entity;  // для новой версии Include с лямбдой
-
-using PianoTrainerApp.Models;
+using System.Linq; // для Cast и Select
+using System.Runtime.CompilerServices;
 using System.Windows;
 
 namespace PianoTrainerApp.ViewModels
@@ -100,15 +100,18 @@ namespace PianoTrainerApp.ViewModels
             }
             catch (System.Data.SqlClient.SqlException ex)
             {
-                MessageBox.Show("Ошибка SQL при автологине: " + ex.InnerException.Message);
+                System.Diagnostics.Debug.WriteLine($"[ERROR] Ошибка загрузки песен: не удалось подключиться к базе данных: {ex.InnerException.Message}");
+                CustomMessageBox.Show("Не удалось подключиться к базе данных.", "Ошибка загрузки песен", CustomMessageBoxButton.OK, CustomMessageBoxImage.Error);
             }
             catch (System.Data.Entity.Core.EntityException ex)
             {
-                MessageBox.Show("Ошибка подключения к БД: " + ex.InnerException.Message);
+                System.Diagnostics.Debug.WriteLine($"[ERROR] Ошибка загрузки песен: база данных недоступна: {ex.InnerException.Message}");
+                CustomMessageBox.Show("Не удалось подключиться к базе данных.", "Ошибка загрузки песен", CustomMessageBoxButton.OK, CustomMessageBoxImage.Error);
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Неизвестная ошибка: " + ex.InnerException.Message);
+                System.Diagnostics.Debug.WriteLine($"[ERROR] Неизвестная ошибка при загрузке песен: {ex.InnerException.Message}");
+                CustomMessageBox.Show("Неизвестная ошибка.", "Ошибка загрузки песен", CustomMessageBoxButton.OK, CustomMessageBoxImage.Error);
             }
 
             FilteredSongs = new ObservableCollection<Song>(Songs);
@@ -179,15 +182,18 @@ namespace PianoTrainerApp.ViewModels
             }
             catch (System.Data.SqlClient.SqlException ex)
             {
-                MessageBox.Show("Ошибка SQL при автологине: " + ex.InnerException.Message);
+                System.Diagnostics.Debug.WriteLine($"[ERROR] Ошибка отметки любимой песни: не удалось подключиться к базе данных: {ex.InnerException.Message}");
+                CustomMessageBox.Show("Не удалось подключиться к базе данных.", "Ошибка отметки любимой песни", CustomMessageBoxButton.OK, CustomMessageBoxImage.Error);
             }
             catch (System.Data.Entity.Core.EntityException ex)
             {
-                MessageBox.Show("Ошибка подключения к БД: " + ex.InnerException.Message);
+                System.Diagnostics.Debug.WriteLine($"[ERROR] Ошибка отметки любимой песни: база данных недоступна: {ex.InnerException.Message}");
+                CustomMessageBox.Show("Не удалось подключиться к базе данных.", "Ошибка отметки любимой песни", CustomMessageBoxButton.OK, CustomMessageBoxImage.Error);
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Неизвестная ошибка при автологине: " + ex.InnerException.Message);
+                System.Diagnostics.Debug.WriteLine($"[ERROR] Неизвестная ошибка при отметке любимой песнин: {ex.InnerException.Message}");
+                CustomMessageBox.Show("Неизвестная ошибка.", "Ошибка отметки любимой песни", CustomMessageBoxButton.OK, CustomMessageBoxImage.Error);
             }
 
             // вызов события

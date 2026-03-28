@@ -32,14 +32,6 @@
                         <Border.RenderTransform>
                             <ScaleTransform ScaleX="1" ScaleY="1"/>
                         </Border.RenderTransform>
-                        <Border.Effect>
-                            <DropShadowEffect
-                                    Color="#868686"
-                                    BlurRadius="50"
-                                    ShadowDepth="0"
-                                    Direction="0"
-                                    Opacity="0.5"/>
-                        </Border.Effect>
 
                         <!-- Внутренний контейнер для текста -->
                         <StackPanel Margin="34,38,70,15" VerticalAlignment="Top">
@@ -131,15 +123,6 @@
                         <Border.RenderTransform>
                             <ScaleTransform ScaleX="1" ScaleY="1"/>
                         </Border.RenderTransform>
-
-                        <Border.Effect>
-                            <DropShadowEffect
-                        Color="#868686"
-                        BlurRadius="50"
-                        ShadowDepth="0"
-                        Direction="0"
-                        Opacity="0.5"/>
-                        </Border.Effect>
 
                         <!-- Контент -->
                         <StackPanel Margin="34,38,15,38" VerticalAlignment="Top">

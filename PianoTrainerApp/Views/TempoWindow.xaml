@@ -5,96 +5,148 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:PianoTrainerApp.Views"
         mc:Ignorable="d"
-        Title="Выберите темп" Height="220" Width="300"
-        WindowStartupLocation="CenterScreen">
-    <StackPanel Margin="10" VerticalAlignment="Center">
-        <TextBlock Text="Выберите темп:"
+        Title="Выберите темп" Height="200" Width="300"
+        WindowStartupLocation="CenterScreen"
+        WindowStyle="None"
+        AllowsTransparency="True"
+        MouseDown="Window_MouseDown"
+        Background="Transparent">
+
+    <Border CornerRadius="15" 
+            BorderBrush="#3F64A9" 
+            BorderThickness="2" 
+            Background="#f9f9f9"
+            Padding="20">
+        <StackPanel VerticalAlignment="Center">
+            <TextBlock Text="Выберите темп:"
                    Margin="0,0,0,15"
                    FontWeight="Bold"
-                   FontSize="13"/>
+                   FontSize="13"
+                   Foreground="#1e1e1e"/>
 
-        <!-- Ползунок для выбора множителя скорости -->
-        <Slider x:Name="TempoSlider" Minimum="0" Maximum="3" Value="1" 
-                TickFrequency="0.05" IsSnapToTickEnabled="True"/>
+            <!-- Ползунок для выбора множителя скорости -->
+            <Slider x:Name="TempoSlider"
+        Minimum="0" Maximum="3"
+        Value="1"
+        TickFrequency="0.05"
+        IsSnapToTickEnabled="True"
+        Height="30"
+        HorizontalAlignment="Stretch"
+        Cursor="Hand">
 
-        <!-- Текст с текущим значением ползунка -->
-        <TextBlock Margin="0,10,0,20" FontWeight="Bold">
-            <TextBlock.Text>
-                <Binding ElementName="TempoSlider" Path="Value" StringFormat="{}{0:F2}x"/>
-            </TextBlock.Text>
-        </TextBlock>
+                <Slider.Template>
+                    <ControlTemplate TargetType="Slider">
+                        <Grid>
+                            <!-- Полоса слайдера -->
+                            <Border Height="6" 
+                        CornerRadius="3"
+                        Background="#993F64A9"
+                        VerticalAlignment="Center"/>
 
-        <StackPanel Orientation="Horizontal"
-                    HorizontalAlignment="Center">
-            <Button Content="Ок" Width="80"
+                            <!-- Заполненная часть -->
+                            <Border x:Name="PART_SelectionRange"
+                        Height="6"
+                        CornerRadius="3"
+                        Background="#3F64A9"
+                        VerticalAlignment="Center"/>
+
+                            <!-- Ручка с кастомным шаблоном -->
+                            <Track x:Name="PART_Track" 
+                       VerticalAlignment="Center">
+                                <Track.Thumb>
+                                    <Thumb Width="18" Height="18" Cursor="Hand">
+                                        <Thumb.Template>
+                                            <ControlTemplate TargetType="Thumb">
+                                                <Border Width="18" Height="18" 
+                                            Background="#3F64A9"
+                                            BorderBrush="White"
+                                            BorderThickness="2"
+                                            CornerRadius="9"/>
+                                            </ControlTemplate>
+                                        </Thumb.Template>
+                                    </Thumb>
+                                </Track.Thumb>
+                            </Track>
+                        </Grid>
+                    </ControlTemplate>
+                </Slider.Template>
+            </Slider>
+
+            <!-- Текст с текущим значением ползунка -->
+            <TextBlock Margin="0,10,0,20" FontWeight="Bold" Foreground="#1e1e1e">
+                <TextBlock.Text>
+                    <Binding ElementName="TempoSlider" Path="Value" StringFormat="{}{0:F2}x"/>
+                </TextBlock.Text>
+            </TextBlock>
+
+            <StackPanel Orientation="Horizontal"
+                    HorizontalAlignment="Right">
+                <Button Content="Ок" Width="80"
                     Height="30" Margin="0 0 10 0"
                     HorizontalAlignment="Center"
                     Click="ButtonOk_Click"
                     Cursor="Hand"
-                    Background="#252121"
-                    BorderBrush="#444444"
-                    BorderThickness="1">
-            <Button.Template>
-                <ControlTemplate TargetType="Button">
-                    <Border x:Name="border"
+                    Background="#3F64A9">
+                    <Button.Template>
+                        <ControlTemplate TargetType="Button">
+                            <Border x:Name="border"
         Background="{TemplateBinding Background}"
-        BorderBrush="{TemplateBinding BorderBrush}"
-        BorderThickness="{TemplateBinding BorderThickness}"
         CornerRadius="15">
-                        <TextBlock HorizontalAlignment="Center"
+                                <TextBlock HorizontalAlignment="Center"
                VerticalAlignment="Center"
                Text="Ок"
-               FontWeight="Medium"
+               FontWeight="SemiBold"
                Foreground="White"/>
-                    </Border>
-                    <ControlTemplate.Triggers>
-                        <!-- наведение -->
-                        <Trigger Property="IsMouseOver" Value="True">
-                                <Setter TargetName="border" Property="Background" Value="#3a3a3a"/>
-                            </Trigger>
-                        <!-- нажатие -->
-                        <Trigger Property="IsPressed" Value="True">
-                                <Setter TargetName="border" Property="Background" Value="#1f1f1f"/>
-                        </Trigger>
-                    </ControlTemplate.Triggers>
-                </ControlTemplate>
-            </Button.Template>
-        </Button>
-        <Button Width="80" Height="30"
+                            </Border>
+                            <ControlTemplate.Triggers>
+                                <!-- Изменение цвета при наведении -->
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter TargetName="border" Property="Background" Value="#5F84C9"/>
+                                    <!-- более тёмный -->
+                                </Trigger>
+                                <!-- нажатие -->
+                                <Trigger Property="IsPressed" Value="True">
+                                    <Setter TargetName="border" Property="Background" Value="#7FA4E9"/>
+                                    <!-- ещё темнее -->
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Button.Template>
+                </Button>
+                <Button Width="80" Height="30"
         HorizontalAlignment="Center"
         Click="ButtonCancel_Click"
         Cursor="Hand"
-        Background="#e0e0e0"
-        BorderBrush="#888888"
+        Background="Transparent"
+        BorderBrush="#3F64A9"
         BorderThickness="1">
-            <Button.Template>
-                <ControlTemplate TargetType="Button">
-                    <Border x:Name="border"
+                    <Button.Template>
+                        <ControlTemplate TargetType="Button">
+                            <Border x:Name="border"
 Background="{TemplateBinding Background}"
 BorderBrush="{TemplateBinding BorderBrush}"
 BorderThickness="{TemplateBinding BorderThickness}"
 CornerRadius="15">
-                        <TextBlock HorizontalAlignment="Center"
+                                <TextBlock HorizontalAlignment="Center"
        VerticalAlignment="Center"
        Text="Отмена"
-       FontWeight="Medium"
-       Foreground="#202020"/>
-                    </Border>
-                    <ControlTemplate.Triggers>
-                        <!-- Изменение цвета при наведении -->
-                        <Trigger Property="IsMouseOver" Value="True">
-                                <Setter TargetName="border" Property="Background" Value="#d0d0d0"/>
-                            <!-- более тёмный -->
-                        </Trigger>
-                        <!-- нажатие -->
-                        <Trigger Property="IsPressed" Value="True">
-                                <Setter TargetName="border" Property="Background" Value="#b0b0b0"/>
-                            <!-- ещё темнее -->
-                        </Trigger>
-                    </ControlTemplate.Triggers>
-                </ControlTemplate>
-            </Button.Template>
-        </Button>
-    </StackPanel>
-    </StackPanel>
+       FontWeight="SemiBold"
+       Foreground="#3F64A9"/>
+                            </Border>
+                            <ControlTemplate.Triggers>
+                                <!-- Наведение -->
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter TargetName="border" Property="Background" Value="#E0F0FF"/>
+                                </Trigger>
+                                <!-- Нажатие -->
+                                <Trigger Property="IsPressed" Value="True">
+                                    <Setter TargetName="border" Property="Background" Value="#C0E0FF"/>
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Button.Template>
+                </Button>
+            </StackPanel>
+        </StackPanel>
+    </Border>
 </Window>

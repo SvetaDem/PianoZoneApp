@@ -80,7 +80,7 @@ namespace PianoTrainerApp.Views
             // Пользователь не авторизован
             if (!vm.IsUserAuthorized)
             {
-                MessageBox.Show("Избранное доступно только для авторизованных пользователей");
+                CustomMessageBox.Show("Избранное доступно только для авторизованных пользователей", "Эй...", CustomMessageBoxButton.OK, CustomMessageBoxImage.Info);
 
                 // откатываем кнопку назад
                 if (toggleButton != null)
@@ -92,7 +92,11 @@ namespace PianoTrainerApp.Views
             // Нет избранных
             if (vm.FavoritesCount == 0)
             {
-                MessageBox.Show("Добавьте композиции в избранное ❤️");
+                CustomMessageBox.Show(
+                    "Похоже, вы ещё не добавили ни одной композиции в избранное.\nСамое время выбрать что-то по душе ❤️",
+                    "Хмм…",
+                    CustomMessageBoxButton.OK,
+                    CustomMessageBoxImage.Info);
 
                 if (toggleButton != null)
                     toggleButton.IsChecked = false;
@@ -115,11 +119,11 @@ namespace PianoTrainerApp.Views
                 if (currentUserId == 0)
                 {
                     // Показать сообщение
-                    MessageBox.Show(
-                        "Добавлять треки в избранное могут только избранные ♥\nХочешь быть одним из них?) Тогда регистрируйся!",
+                    CustomMessageBox.Show(
+                        "Добавлять треки в избранное могут только избранные ❤️\nХочешь быть одним из них?)\nТогда регистрируйся!",
                         "Псс…",
-                        MessageBoxButton.OK,
-                        MessageBoxImage.Information
+                        CustomMessageBoxButton.OK,
+                        CustomMessageBoxImage.Info
                     );
 
                     // Отменяем переключение ToggleButton
