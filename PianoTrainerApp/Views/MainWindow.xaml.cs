@@ -67,9 +67,9 @@ namespace PianoTrainerApp.Views
                     HighlightMenuItem(LibraryTextBlock);
                     break;
 
-                case PageType.Beginner:
-                    //MainContent.Content = new BeginnerView();
-                    HighlightMenuItem(BeginnerTextBlock);
+                case PageType.Lessons:
+                    MainContent.Content = new LessonsView();
+                    HighlightMenuItem(LessonsTextBlock);
                     break;
             }
         }
@@ -77,7 +77,7 @@ namespace PianoTrainerApp.Views
         private void ResetMenuItems()
         {
             ResetItem(HomeTextBlock);
-            ResetItem(BeginnerTextBlock);
+            ResetItem(LessonsTextBlock);
             ResetItem(LibraryTextBlock);
         }
 
@@ -112,7 +112,7 @@ namespace PianoTrainerApp.Views
         {
             if (sender == HomeTextBlock) ShowPage(PageType.Home);
             else if (sender == LibraryTextBlock) ShowPage(PageType.Library);
-            else if (sender == BeginnerTextBlock) ShowPage(PageType.Beginner);
+            else if (sender == LessonsTextBlock) ShowPage(PageType.Lessons);
         }
 
         // Обновление статистики профиля

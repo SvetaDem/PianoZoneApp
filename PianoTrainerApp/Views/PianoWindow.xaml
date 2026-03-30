@@ -8,9 +8,84 @@
         MinHeight="600" MinWidth="1000"
         WindowStartupLocation="CenterScreen">
 
-    <Grid Background="#605C5C">
+    <Grid Background="#1e1e1e">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="60"/>
+            <!-- верхняя панель -->
+            <RowDefinition Height="*"/>
+            <!-- основной контент -->
+        </Grid.RowDefinitions>
 
-        <ScrollViewer HorizontalScrollBarVisibility="Auto"
+        <!-- ВЕРХНЯЯ ПАНЕЛЬ -->
+        <Border Grid.Row="0"
+            Background="#111111"
+            BorderBrush="#3F64A9"
+            BorderThickness="0,0,0,3"
+            Padding="40,0">
+
+            <Grid Margin="0,0,0,-3">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <!-- Центр: обратный отсчёт -->
+                <TextBlock x:Name="CountdownText"
+                       Text="3"
+                       FontSize="40"
+                       FontWeight="Bold"
+                       Foreground="#e0e0e0"
+                       Visibility="Collapsed"
+                       HorizontalAlignment="Center"
+                       VerticalAlignment="Center"
+                       Grid.ColumnSpan="3"/>
+
+                <!-- Подсказка (скрытая) -->
+                <TextBlock x:Name="HintText"
+                       Text="Играй ноты на своем инструменте"
+                       Foreground="#e0e0e0"
+                       FontSize="13"
+                       Visibility="Collapsed"
+                       HorizontalAlignment="Center"
+                       VerticalAlignment="Center"
+                       Grid.Column="2"/>
+
+                <!-- Левая часть -->
+                <StackPanel x:Name="ProgressPanel"
+                        Grid.Column="0"
+                            Visibility="Collapsed"
+                        Orientation="Horizontal"
+                        VerticalAlignment="Center">
+
+                    <!-- Прогресс -->
+                    <Grid x:Name="ProgressSlider" Width="300" Height="10" Margin="0,0,10,0">
+                        <!-- фон -->
+                        <Border Background="#E0E0E0" CornerRadius="5"/>
+
+                        <!-- заполнение -->
+                        <Border x:Name="ProgressFill"
+                            Background="#3F64A9"
+                            CornerRadius="5"
+                            Width="0"
+                            HorizontalAlignment="Left"/>
+                    </Grid>
+
+                    <!-- Проценты -->
+                    <TextBlock x:Name="ProgressText"
+                           Text="0%"
+                           Foreground="White"
+                           FontWeight="SemiBold"
+                           VerticalAlignment="Center"/>
+                </StackPanel>
+            </Grid>
+        </Border>
+
+        
+
+        <!-- ОСНОВНОЙ КОНТЕНТ -->
+        <ScrollViewer Grid.Row="1"
+                      HorizontalScrollBarVisibility="Auto"
                       VerticalScrollBarVisibility="Hidden"
                       x:Name="NotesScrollViewer">
 
@@ -105,5 +180,15 @@
                 </Grid>
             </Grid>
         </ScrollViewer>
+        <!--<TextBlock x:Name="CountdownText"
+Text="3"
+FontSize="46"
+FontWeight="Bold"
+Foreground="#e0e0e0"
+            Margin="0,0,0,200"
+Visibility="Collapsed"
+HorizontalAlignment="Center"
+VerticalAlignment="Center"
+Grid.Row="1"/>-->
     </Grid>
 </Window>

@@ -40,7 +40,7 @@ namespace PianoTrainerApp.Views
         private void ButtonBeginner_Click(object sender, RoutedEventArgs e)
         {
             // Сообщаем родителю: открыть Beginner
-            NavigateRequested?.Invoke(PageType.Beginner);
+            NavigateRequested?.Invoke(PageType.Lessons);
         }
     }
 }

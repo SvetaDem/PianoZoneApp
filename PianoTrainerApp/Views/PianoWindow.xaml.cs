@@ -1,4 +1,5 @@
-﻿using PianoTrainerApp.Services;
+﻿using PianoTrainerApp.Models;
+using PianoTrainerApp.Services;
 using PianoTrainerApp.ViewModels;
 using System;
 using System.Collections.Generic;
@@ -11,9 +12,10 @@ using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
-using PianoTrainerApp.Models;
+using System.Windows.Threading;
 
 
 namespace PianoTrainerApp.Views
@@ -85,11 +87,16 @@ namespace PianoTrainerApp.Views
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Ошибка: {ex.Message}");
+                CustomMessageBox.Show($"Возникла ошибка:\n{ex.Message}", "Ошибка открытия файла", CustomMessageBoxButton.OK, CustomMessageBoxImage.Error);
                 IsInitialized = false;
             }
         }
 
+        private bool countdownStarted = false;
+
+        private double startTimeForProgress = -1;
+        private double endTimeForProgress = -1;
+        private bool progressInitialized = false;
         private void UpdateNotes(object sender, EventArgs e)
         {
             // Останавливаем падение нот
@@ -100,6 +107,62 @@ namespace PianoTrainerApp.Views
 
             // Сначала - отрисовка вертикальных линий (октав)
             DrawOctaveLines();
+
+            // ------------------------------------------------------
+            // ИНИЦИАЛИЗАЦИЯ ПРОГРЕССА (ОДИН РАЗ)
+            // ------------------------------------------------------
+            if (!progressInitialized && pianoVM.FallingNotes.Any())
+            {
+                double keyboardTopY = NotesCanvas.RenderSize.Height;
+                double startOffset = 100;
+
+                // защита: если canvas ещё не отрисован
+                if (keyboardTopY <= 0)
+                    return;
+
+                var firstNote = pianoVM.FallingNotes
+                    .OrderBy(n => n.StartTime)
+                    .First();
+
+                var lastNote = pianoVM.FallingNotes
+                    .OrderByDescending(n => n.StartTime + n.Duration)
+                    .First();
+
+                startTimeForProgress = firstNote.StartTime + (keyboardTopY + startOffset) / pixelsPerSecond;
+
+                endTimeForProgress = lastNote.StartTime +
+                    (keyboardTopY + startOffset + lastNote.Duration * pixelsPerSecond) / pixelsPerSecond;
+
+                progressInitialized = true;
+            }
+
+            // ------------------------------------------------------
+            // ОБНОВЛЕНИЕ ПРОГРЕССА
+            // ------------------------------------------------------
+            if (progressInitialized && endTimeForProgress > startTimeForProgress)
+            {
+                double progress = (pianoVM.CurrentTime - startTimeForProgress) /
+                                  (endTimeForProgress - startTimeForProgress);
+
+                progress = Math.Max(0, Math.Min(progress, 1));
+
+                UpdateProgress(progress);
+            }
+
+            // запуск countdown перед первой нотой
+            if (!countdownStarted)
+            {
+                var firstNote = pianoVM.FallingNotes
+                                      .Where(n => !n.HasCompleted)
+                                      .OrderBy(n => n.StartTime)
+                                      .FirstOrDefault();
+
+                if (firstNote != null)
+                {
+                    countdownStarted = true;
+                    _ = StartCountdown(firstNote);
+                }
+            }
 
             // допуск для группировки нот с одинаковым стартом
             var epsilon = 0.001;
@@ -310,10 +373,10 @@ namespace PianoTrainerApp.Views
                 if (!pianoVM.WaitingChord.Any() && isPaused && !pauseHandled)
                 {
                     pauseHandled = true; // срабатывает ТОЛЬКО ОДИН РАЗ
-                    
+
                     TimeSpan pauseDuration = DateTime.Now - pauseStartTime;
                     pianoVM.AdjustStartTimeForPause(pauseDuration);
-                    
+
                     isPaused = false;
                     waitingChordStartTime = null; // сброс
                 }
@@ -343,11 +406,16 @@ namespace PianoTrainerApp.Views
             waitingChordStartTime = null;
         }
 
-        private void OnSongFinished()
+        private async void OnSongFinished()
         {
             // остановка всего
             detector?.Stop();
             CompositionTarget.Rendering -= UpdateNotes;
+
+            // добиваем прогресс до 100%
+            UpdateProgress(1.0);
+
+            await Task.Delay(300); // даём анимации завершиться
 
             Dispatcher.Invoke(() =>
             {
@@ -369,6 +437,12 @@ namespace PianoTrainerApp.Views
 
         private void RestartSong()
         {
+            progressInitialized = false;
+            startTimeForProgress = -1;
+            endTimeForProgress = -1;
+
+            countdownStarted = false;
+
             finishHandled = false;
             pianoVM.Reset();
             pianoVM.StartAnimation(pianoVM.OriginalNotes);
@@ -384,6 +458,72 @@ namespace PianoTrainerApp.Views
             detector?.Stop();
         }
 
+        private void UpdateProgress(double progress) // progress от 0 до 1
+        {
+            double maxWidth = ProgressSlider.Width; // как в XAML
+            double targetWidth = maxWidth * progress;
+
+            var anim = new DoubleAnimation
+            {
+                To = targetWidth,
+                Duration = TimeSpan.FromMilliseconds(300), // плавность
+                EasingFunction = new QuadraticEase { EasingMode = EasingMode.EaseOut }
+            };
+
+            ProgressFill.BeginAnimation(FrameworkElement.WidthProperty, anim);
+
+            int percent = (int)(progress * 100);
+            ProgressText.Text = percent + "%";
+        }
+
+        private async Task StartCountdown(MidiNote firstNote)
+        {
+            // Считаем, через сколько секунд первая нота дойдет до клавиатуры
+            double noteHeight = firstNote.Duration * pixelsPerSecond;
+            double startOffset = 100; // как в UpdateNotes
+            double keyboardTopY = NotesCanvas.RenderSize.Height;
+
+            // время, когда нота коснется клавиатуры относительно её StartTime
+            double timeToKeyboard = (keyboardTopY + startOffset) / pixelsPerSecond;
+
+            // сколько ждать до показа countdown (чтобы 3 секунды отсчета)
+            double waitBeforeCountdown = timeToKeyboard - 3.0 - (pianoVM.CurrentTime - firstNote.StartTime);
+
+            // Плавное появление подсказки и слайдера с прогрессом прохождения
+            HintText.Visibility = Visibility.Visible;
+            ProgressPanel.Visibility = Visibility.Visible;
+
+            var fadeIn = new DoubleAnimation(0, 1, TimeSpan.FromMilliseconds(500));
+            HintText.BeginAnimation(UIElement.OpacityProperty, fadeIn);
+            ProgressPanel.BeginAnimation(UIElement.OpacityProperty, fadeIn);
+
+            // Ждём до момента начала обратного отсчёта
+            if (waitBeforeCountdown > 0)
+                await Task.Delay((int)(waitBeforeCountdown * 1000));
+
+            // Показываем сам countdown
+            CountdownText.Visibility = Visibility.Visible;
+
+            for (int i = 3; i > 0; i--)
+            {
+                CountdownText.Text = i.ToString();
+
+                // плавное затухание/появление текста
+                var fade = new DoubleAnimation(0, 1, TimeSpan.FromMilliseconds(300));
+                CountdownText.BeginAnimation(UIElement.OpacityProperty, fade);
+
+                await Task.Delay(1000);
+            }
+
+            // Скрываем countdown
+            CountdownText.Visibility = Visibility.Collapsed;
+
+            // Подсказку держим ещё 5 секунд после старта
+            await Task.Delay(5000);
+            var fadeOut = new DoubleAnimation(1, 0, TimeSpan.FromMilliseconds(500));
+            fadeOut.Completed += (s, e) => HintText.Visibility = Visibility.Collapsed;
+            HintText.BeginAnimation(UIElement.OpacityProperty, fadeOut);
+        }
     }
 }
 

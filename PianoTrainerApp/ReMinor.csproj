@@ -203,6 +203,9 @@
     <Compile Include="Views\HomeView.xaml.cs">
       <DependentUpon>HomeView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\LessonsView.xaml.cs">
+      <DependentUpon>LessonsView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\LibraryView.xaml.cs">
       <DependentUpon>LibraryView.xaml</DependentUpon>
     </Compile>
@@ -224,6 +227,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\HomeView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\LessonsView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -285,9 +292,9 @@
     <Content Include="Assets\Celine Dion - My Heart Will Go On - Titanic Theme - EASY.mid">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Resource Include="Images\repeat.png" />
     <Resource Include="Assets\covers\default.png" />
     <Resource Include="Images\cross.png" />
-    <Resource Include="Images\repeat.png" />
     <Resource Include="Assets\covers\umka.jpg" />
     <Resource Include="Assets\covers\In_the_name_of_love.jpg" />
     <Resource Include="Assets\covers\pirates_caribbean.jpg" />

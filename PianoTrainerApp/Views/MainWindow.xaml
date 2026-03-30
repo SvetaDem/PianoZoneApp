@@ -166,7 +166,7 @@
                            Margin="0,0,25,0"
                            VerticalAlignment="Bottom"/>
 
-                <TextBlock x:Name="BeginnerTextBlock"
+                <TextBlock x:Name="LessonsTextBlock"
                            Text="Обучение"
                            Foreground="#202020"
                            FontSize="16"

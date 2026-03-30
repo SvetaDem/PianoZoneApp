@@ -10,6 +10,6 @@ namespace PianoTrainerApp.Models
     {
         Home,
         Library,
-        Beginner
+        Lessons
     }
 }
