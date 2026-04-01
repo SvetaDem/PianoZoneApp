@@ -702,7 +702,7 @@
 
                                     <!-- Верх: иконка + число -->
                                     <StackPanel Orientation="Horizontal">
-                                        <TextBlock Text="⭐"
+                                        <TextBlock Text="❤"
                                                    FontSize="24"
                                                    Foreground="#E0E0E0"
                                                    Margin="0,0,12,0"/>
@@ -749,12 +749,12 @@
 
                                     <!-- Верх: иконка + число -->
                                     <StackPanel Orientation="Horizontal">
-                                        <TextBlock Text="📈"
+                                        <TextBlock Text="✨"
                            FontSize="24"
                            Foreground="#E0E0E0"
                            Margin="0,0,12,0"/>
                                         <TextBlock 
-                           Text="87%"
+                           Text="9"
                            Foreground="#E0E0E0"
                            FontSize="24"
                            FontWeight="Bold"/>
@@ -762,7 +762,7 @@
 
                                     <!-- Низ: описание -->
                                     <TextBlock Grid.Row="1"
-                       Text="Точность"
+                       Text="Получено звёзд"
                        Foreground="#9B9B9B"
                        TextWrapping="Wrap"
                        VerticalAlignment="Bottom"

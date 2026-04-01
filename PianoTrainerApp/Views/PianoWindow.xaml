@@ -74,9 +74,29 @@
                     <!-- Проценты -->
                     <TextBlock x:Name="ProgressText"
                            Text="0%"
-                           Foreground="White"
+                           Foreground="#e0e0e0"
                            FontWeight="SemiBold"
                            VerticalAlignment="Center"/>
+                </StackPanel>
+                
+                <!-- Точность -->
+                <StackPanel x:Name="AccuracyPanel"
+                            Grid.Column="2" Orientation="Horizontal"
+                            VerticalAlignment="Center"
+                            Visibility="Collapsed"
+                            Margin="0 0 -19 0">
+                    <TextBlock Text="Точность попаданий"
+                               Foreground="#e0e0e0"
+                               FontWeight="Regular"
+                               VerticalAlignment="Center"
+                               FontSize="13"
+                               Margin="0 0 10 0"/>
+                    <TextBlock x:Name="AccuracyText"
+                               Text="0%" Foreground="#4992FF"
+                               FontWeight="Bold"
+                               VerticalAlignment="Center"
+                               FontSize="24"
+                               Margin="5,0,0,0"/>
                 </StackPanel>
             </Grid>
         </Border>

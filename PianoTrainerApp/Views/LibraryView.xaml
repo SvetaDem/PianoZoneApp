@@ -168,12 +168,14 @@
                             <!-- Основная сетка -->
                             <Grid>
                                 <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="45"/>
                                     <!-- картинка -->
-                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="45"/>
                                     <!-- текст -->
-                                    <ColumnDefinition Width="35"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <!-- звёзды -->
+                                    <ColumnDefinition Width="120"/>
                                     <!-- сердечко -->
+                                    <ColumnDefinition Width="35"/>
                                 </Grid.ColumnDefinitions>
 
                                 <!-- Картинка -->
@@ -206,8 +208,87 @@
                                            Foreground="#202020"/>
                                 </StackPanel>
 
+                                <StackPanel Grid.Column="2"
+            Orientation="Horizontal"
+            VerticalAlignment="Center"
+            HorizontalAlignment="Center">
+
+                                    <!-- ⭐ 1 -->
+                                    <Path Width="16" Height="16" Margin="1"
+          Data="M12 17.27L18.18 21 16.54 13.97 22 9.24 
+                14.81 8.63 12 2 9.19 8.63 2 9.24 
+                7.46 13.97 5.82 21z"
+          Stretch="Uniform">
+                                        <Path.Style>
+                                            <Style TargetType="Path">
+                                                <Setter Property="Fill" Value="Transparent"/>
+                                                <Setter Property="Stroke" Value="#FFAF41"/>
+                                                <Setter Property="StrokeThickness" Value="1.5"/>
+
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding Stars}" Value="1">
+                                                        <Setter Property="Fill" Value="#FFAF41"/>
+                                                    </DataTrigger>
+                                                    <DataTrigger Binding="{Binding Stars}" Value="2">
+                                                        <Setter Property="Fill" Value="#FFAF41"/>
+                                                    </DataTrigger>
+                                                    <DataTrigger Binding="{Binding Stars}" Value="3">
+                                                        <Setter Property="Fill" Value="#FFAF41"/>
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </Path.Style>
+                                    </Path>
+
+                                    <!-- ⭐ 2 -->
+                                    <Path Width="16" Height="16" Margin="1"
+          Data="M12 17.27L18.18 21 16.54 13.97 22 9.24 
+                14.81 8.63 12 2 9.19 8.63 2 9.24 
+                7.46 13.97 5.82 21z"
+          Stretch="Uniform">
+                                        <Path.Style>
+                                            <Style TargetType="Path">
+                                                <Setter Property="Fill" Value="Transparent"/>
+                                                <Setter Property="Stroke" Value="#FFAF41"/>
+                                                <Setter Property="StrokeThickness" Value="1.5"/>
+
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding Stars}" Value="2">
+                                                        <Setter Property="Fill" Value="#FFAF41"/>
+                                                    </DataTrigger>
+                                                    <DataTrigger Binding="{Binding Stars}" Value="3">
+                                                        <Setter Property="Fill" Value="#FFAF41"/>
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </Path.Style>
+                                    </Path>
+
+                                    <!-- ⭐ 3 -->
+                                    <Path Width="16" Height="16" Margin="1"
+          Data="M12 17.27L18.18 21 16.54 13.97 22 9.24 
+                14.81 8.63 12 2 9.19 8.63 2 9.24 
+                7.46 13.97 5.82 21z"
+          Stretch="Uniform">
+                                        <Path.Style>
+                                            <Style TargetType="Path">
+                                                <Setter Property="Fill" Value="Transparent"/>
+                                                <Setter Property="Stroke" Value="#FFAF41"/>
+                                                <Setter Property="StrokeThickness" Value="1.5"/>
+
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding Stars}" Value="3">
+                                                        <Setter Property="Fill" Value="#FFAF41"/>
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </Path.Style>
+                                    </Path>
+
+                                </StackPanel>
+
                                 <!-- Сердечко -->
-                                <ToggleButton Grid.Column="2"
+                                <ToggleButton Grid.Column="3"
                                       Width="28" Height="28"
                                       Background="Transparent"
                                       BorderThickness="0"

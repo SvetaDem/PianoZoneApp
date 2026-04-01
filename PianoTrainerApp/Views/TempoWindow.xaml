@@ -4,8 +4,9 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:PianoTrainerApp.Views"
+        xmlns:svgc="http://sharpvectors.codeplex.com/svgc/"
         mc:Ignorable="d"
-        Title="Выберите темп" Height="200" Width="300"
+        Title="Выберите темп" Height="304" Width="343"
         WindowStartupLocation="CenterScreen"
         WindowStyle="None"
         AllowsTransparency="True"
@@ -16,16 +17,103 @@
             BorderBrush="#3F64A9" 
             BorderThickness="2" 
             Background="#f9f9f9"
-            Padding="20">
-        <StackPanel VerticalAlignment="Center">
-            <TextBlock Text="Выберите темп:"
+            Padding="29,29,29,22">
+
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="31"/>
+                <!-- вкладки -->
+                <RowDefinition Height="Auto"/>
+                <!-- текст -->
+                <RowDefinition Height="*"/>
+                <!-- контент -->
+                <RowDefinition Height="Auto"/>
+                <!-- кнопки -->
+            </Grid.RowDefinitions>
+            <!-- ПЕРЕКЛЮЧАТЕЛЬ -->
+            <Grid Grid.Row="0" Width="257">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition/>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
+
+                <!-- Продвинутый -->
+                <Border x:Name="AdvancedTab"
+                        Grid.Column="0"
+                        Background="#3F64A9"
+                        CornerRadius="15,0,0,15"
+                        Cursor="Hand"
+                        MouseDown="AdvancedTab_Click">
+                    <TextBlock x:Name="AdvancedTabText"
+                               Text="Продвинутый"
+                               Foreground="White"
+                               FontSize="12"
+                               HorizontalAlignment="Center"
+                               VerticalAlignment="Center"
+                               FontWeight="SemiBold"/>
+                </Border>
+
+                <!-- Практика -->
+                <Border x:Name="PracticeTab"
+                        Grid.Column="1"
+                        Background="Transparent"
+                        CornerRadius="0,15,15,0"
+                        BorderBrush="#3f649a"
+                        BorderThickness="0 1 1 1" 
+                        Cursor="Hand"
+                        MouseDown="PracticeTab_Click">
+                    <TextBlock x:Name="PracticeTabText"
+                               Text="Практика"
+                               Foreground="#3f649a"
+                               HorizontalAlignment="Center"
+                               VerticalAlignment="Center"
+                               FontWeight="SemiBold"
+                               FontSize="12"/>
+                </Border>
+            </Grid>
+
+            <!-- ТЕКСТ -->
+            <TextBlock x:Name="ModeText"
+                       Grid.Row="1"
+                       TextAlignment="Center"
+                       TextWrapping="Wrap"
+                       FontSize="14"
+                       Foreground="#1e1e1e"
+                       Margin="0,18,0,0"/>
+
+            <!-- КОНТЕНТ -->
+            <Grid Grid.Row="2">
+
+                <!-- КАРТИНКА -->
+
+                <svgc:SvgViewbox x:Name="AdvancedImage"
+                                Source="/Images/piano_hands_vector.svg"
+                                Width="144" Height="144"
+                                Visibility="Visible"/>
+
+                <!--<Image x:Name="AdvancedImage"
+                       Height="154" Width="154"
+                       Source="{svgc:SvgImage Source=/Images/piano_hands_vector.svg}"
+                       Visibility="Visible"/>-->
+
+                <!--<Image x:Name="AdvancedImage"
+                       Source="/Images/piano_hands.png"
+                       Height="154" Width="154"
+                       Margin="0 -10 0 0"
+                       Visibility="Visible"/>-->
+
+                <StackPanel x:Name="PracticePanel"
+                            Visibility="Collapsed"
+                            HorizontalAlignment="Stretch"
+                            Margin="0,29,0,0">
+                    <TextBlock Text="Выберите темп:"
                    Margin="0,0,0,15"
                    FontWeight="Bold"
                    FontSize="13"
                    Foreground="#1e1e1e"/>
 
-            <!-- Ползунок для выбора множителя скорости -->
-            <Slider x:Name="TempoSlider"
+                    <!-- Ползунок для выбора множителя скорости -->
+                    <Slider x:Name="TempoSlider"
         Minimum="0" Maximum="3"
         Value="1"
         TickFrequency="0.05"
@@ -34,52 +122,56 @@
         HorizontalAlignment="Stretch"
         Cursor="Hand">
 
-                <Slider.Template>
-                    <ControlTemplate TargetType="Slider">
-                        <Grid>
-                            <!-- Полоса слайдера -->
-                            <Border Height="6" 
+                        <Slider.Template>
+                            <ControlTemplate TargetType="Slider">
+                                <Grid>
+                                    <!-- Полоса слайдера -->
+                                    <Border Height="6" 
                         CornerRadius="3"
                         Background="#993F64A9"
                         VerticalAlignment="Center"/>
 
-                            <!-- Заполненная часть -->
-                            <Border x:Name="PART_SelectionRange"
+                                    <!-- Заполненная часть -->
+                                    <Border x:Name="PART_SelectionRange"
                         Height="6"
                         CornerRadius="3"
                         Background="#3F64A9"
                         VerticalAlignment="Center"/>
 
-                            <!-- Ручка с кастомным шаблоном -->
-                            <Track x:Name="PART_Track" 
+                                    <!-- Ручка с кастомным шаблоном -->
+                                    <Track x:Name="PART_Track" 
                        VerticalAlignment="Center">
-                                <Track.Thumb>
-                                    <Thumb Width="18" Height="18" Cursor="Hand">
-                                        <Thumb.Template>
-                                            <ControlTemplate TargetType="Thumb">
-                                                <Border Width="18" Height="18" 
+                                        <Track.Thumb>
+                                            <Thumb Width="18" Height="18" Cursor="Hand">
+                                                <Thumb.Template>
+                                                    <ControlTemplate TargetType="Thumb">
+                                                        <Border Width="18" Height="18" 
                                             Background="#3F64A9"
                                             BorderBrush="White"
                                             BorderThickness="2"
                                             CornerRadius="9"/>
-                                            </ControlTemplate>
-                                        </Thumb.Template>
-                                    </Thumb>
-                                </Track.Thumb>
-                            </Track>
-                        </Grid>
-                    </ControlTemplate>
-                </Slider.Template>
-            </Slider>
+                                                    </ControlTemplate>
+                                                </Thumb.Template>
+                                            </Thumb>
+                                        </Track.Thumb>
+                                    </Track>
+                                </Grid>
+                            </ControlTemplate>
+                        </Slider.Template>
+                    </Slider>
 
-            <!-- Текст с текущим значением ползунка -->
-            <TextBlock Margin="0,10,0,20" FontWeight="Bold" Foreground="#1e1e1e">
-                <TextBlock.Text>
-                    <Binding ElementName="TempoSlider" Path="Value" StringFormat="{}{0:F2}x"/>
-                </TextBlock.Text>
-            </TextBlock>
+                    <!-- Текст с текущим значением ползунка -->
+                    <TextBlock Margin="0,10,0,20" FontWeight="Bold" Foreground="#1e1e1e">
+                        <TextBlock.Text>
+                            <Binding ElementName="TempoSlider" Path="Value" StringFormat="{}{0:F2}x"/>
+                        </TextBlock.Text>
+                    </TextBlock>
 
-            <StackPanel Orientation="Horizontal"
+                </StackPanel>
+            </Grid>
+
+
+            <StackPanel Grid.Row="3" Orientation="Horizontal"
                     HorizontalAlignment="Right">
                 <Button Content="Ок" Width="80"
                     Height="30" Margin="0 0 10 0"
@@ -147,6 +239,6 @@ CornerRadius="15">
                     </Button.Template>
                 </Button>
             </StackPanel>
-        </StackPanel>
+        </Grid>
     </Border>
 </Window>

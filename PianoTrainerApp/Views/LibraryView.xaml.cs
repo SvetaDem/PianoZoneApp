@@ -41,7 +41,9 @@ namespace PianoTrainerApp.Views
                 var tempoDialog = new TempoWindow();
                 if (tempoDialog.ShowDialog() != true)
                     return;
-                var pianoWindow = new PianoWindow(vm.SelectedSong, tempoDialog.SelectedMultiplier);
+                var pianoWindow = new PianoWindow(vm.SelectedSong, tempoDialog.SelectedMultiplier,
+                    tempoDialog.SelectedMode == PlayMode.Advanced ? PlayMode.Advanced : PlayMode.Practice
+    );
                 if (!pianoWindow.IsInitialized)
                 {
                     pianoWindow.Close();

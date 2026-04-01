@@ -19,6 +19,7 @@ namespace PianoTrainerApp.ViewModels
         public List<MidiNote> OriginalNotes { get; private set; }
 
         public double SpeedMultiplier { get; set; } = 1.0; // 1x по умолчанию
+        public PlayMode Mode { get; set; } = PlayMode.Practice;
 
         public List<MidiNote> WaitingChord { get; set; } = new List<MidiNote>();
 
@@ -27,8 +28,22 @@ namespace PianoTrainerApp.ViewModels
         private DateTime startTime;
         public double CurrentTime => (DateTime.Now - startTime).TotalSeconds;
 
-        public bool IsSongFinished => !FallingNotes.Any(n => !n.HasCompleted) && !WaitingChord.Any();
-
+        public bool IsSongFinished
+        {
+            get
+            {
+                if (Mode == PlayMode.Advanced)
+                {
+                    // В Advanced — просто проверяем, все ли ноты дошли до конца (HasCompleted)
+                    return FallingNotes.All(n => n.HasCompleted);
+                }
+                else
+                {
+                    // В Practice — проверяем ноты + WaitingChord
+                    return !FallingNotes.Any(n => !n.HasCompleted) && !WaitingChord.Any();
+                }
+            }
+        }
         public PianoViewModel()
         {
             WhiteKeys = new ObservableCollection<PianoKey>();

@@ -26,6 +26,7 @@ namespace PianoTrainerApp.Views
     public partial class PianoWindow : Window
     {
         private PianoViewModel pianoVM;
+        private PlayMode Mode;
         private double pixelsPerSecond = 100; // масштаб падения
 
         private PitchDetector detector;
@@ -47,12 +48,16 @@ namespace PianoTrainerApp.Views
 
         private bool finishHandled = false;
 
-        public PianoWindow(Song song, double speedMultiplier = 1.0)
+        public PianoWindow(Song song, double speedMultiplier = 1.0, PlayMode mode = PlayMode.Practice)
         {
             InitializeComponent();
+
+            Mode = mode;
+
             pianoVM = new PianoViewModel
             {
-                SpeedMultiplier = speedMultiplier
+                SpeedMultiplier = speedMultiplier,
+                Mode = mode
             };
             DataContext = pianoVM;
 
@@ -211,28 +216,52 @@ namespace PianoTrainerApp.Views
                     double keyboardTopY = NotesCanvas.RenderSize.Height;  // видимая высота элемента в текущем layout,
                                                                           // а не его растянутая высота в ScrollViewer
 
+                    // В режиме Advanced: если нота уже ушла за клавиатуру — считаем её завершённой
+                    if (Mode == PlayMode.Advanced && !note.HasCompleted && noteTop > keyboardTopY)
+                    {
+                        note.HasCompleted = true;
+
+                        if (!note.IsCounted)
+                        {
+                            totalNotes++;
+                            note.IsCounted = true;
+                        }
+                    }
+
                     // касание клавиатуры
                     if (!note.HasPressed && noteBottom >= keyboardTopY)
                     {
-                        if (!isPaused)
+                        if (Mode == PlayMode.Practice)
                         {
-                            // текущие ноты на клавиатуре
-                            var notesTouchingKeyboard = group
-                                .Where(n => !n.HasPressed && !n.HasCompleted && (delta * pixelsPerSecond - noteHeight - startOffset + noteHeight) >= keyboardTopY)
-                                .ToList();
-
-                            if (notesTouchingKeyboard.Any())
+                            if (!isPaused)
                             {
-                                isPaused = true;
-                                pauseHandled = false;
-                                pauseStartTime = DateTime.Now;
-                                pianoVM.WaitingChord = notesTouchingKeyboard;
+                                // текущие ноты на клавиатуре
+                                var notesTouchingKeyboard = group
+                                    .Where(n => !n.HasPressed && !n.HasCompleted && (delta * pixelsPerSecond - noteHeight - startOffset + noteHeight) >= keyboardTopY)
+                                    .ToList();
 
-                                foreach (var n in notesTouchingKeyboard)
+                                if (notesTouchingKeyboard.Any())
                                 {
-                                    pianoVM.PressKey(n.NoteName);
-                                    n.HasPressed = true;
+                                    isPaused = true;
+                                    pauseHandled = false;
+                                    pauseStartTime = DateTime.Now;
+                                    pianoVM.WaitingChord = notesTouchingKeyboard;
+
+                                    foreach (var n in notesTouchingKeyboard)
+                                    {
+                                        pianoVM.PressKey(n.NoteName);
+                                        n.HasPressed = true;
+                                    }
                                 }
+                            }
+                        }
+                        else if (Mode == PlayMode.Advanced)
+                        {
+                            // В режиме точности просто фиксируем ноты как "нажатые", но не ставим паузу
+                            if (!note.HasPressed)
+                            {
+                                pianoVM.PressKey(note.NoteName);
+                                note.HasPressed = true;
                             }
                         }
                     }
@@ -325,6 +354,10 @@ namespace PianoTrainerApp.Views
             }
         }
 
+        // счетчики для точности
+        private int totalNotes = 0;
+        private int correctNotes = 0;
+
         // Метод получения нот с микрофона
         private void OnNotesDetected(List<string> notes)
         {
@@ -367,6 +400,30 @@ namespace PianoTrainerApp.Views
                     n.HasPressed = false;
                     pianoVM.ReleaseKey(n.NoteName);
                     pianoVM.WaitingChord.Remove(n);
+
+                    // Подсчет точности только в режиме Advanced
+                    if (Mode == PlayMode.Advanced)
+                    {
+                        if (!n.IsCounted)
+                        {
+                            totalNotes++;
+                            correctNotes++;
+                            n.IsCounted = true;
+                        }
+                    }
+                }
+
+                // Пропущенные ноты считаем неправильными
+                if (Mode == PlayMode.Advanced)
+                {
+                    totalNotes += pianoVM.WaitingChord.Count;
+                }
+
+                // Обновляем текст
+                if (Mode == PlayMode.Advanced && totalNotes > 0)
+                {
+                    double accuracy = (double)correctNotes / totalNotes * 100;
+                    AccuracyText.Text = $"{accuracy:F0}%";
                 }
 
                 // без этого не работает :)
@@ -518,10 +575,24 @@ namespace PianoTrainerApp.Views
             // Скрываем countdown
             CountdownText.Visibility = Visibility.Collapsed;
 
-            // Подсказку держим ещё 5 секунд после старта
-            await Task.Delay(5000);
+            // Подсказку держим ещё 3 секунды после старта
+            await Task.Delay(3000);
             var fadeOut = new DoubleAnimation(1, 0, TimeSpan.FromMilliseconds(500));
-            fadeOut.Completed += (s, e) => HintText.Visibility = Visibility.Collapsed;
+            fadeOut.Completed += (s, e) =>
+            {
+                HintText.Visibility = Visibility.Collapsed;
+
+                // Показываем панель точности только в Advanced
+                if (Mode == PlayMode.Advanced)
+                {
+                    AccuracyPanel.Opacity = 0;
+                    AccuracyPanel.Visibility = Visibility.Visible;
+
+                    var fadeInAccuracy = new DoubleAnimation(0, 1, TimeSpan.FromMilliseconds(500));
+                    AccuracyPanel.BeginAnimation(UIElement.OpacityProperty, fadeInAccuracy);
+                }
+            };
+
             HintText.BeginAnimation(UIElement.OpacityProperty, fadeOut);
         }
     }
