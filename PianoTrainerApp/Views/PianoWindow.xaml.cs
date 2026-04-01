@@ -363,79 +363,127 @@ namespace PianoTrainerApp.Views
         {
             Dispatcher.Invoke(() =>
             {
-                // если ждём аккорд — фиксируем старт
-                if (pianoVM.WaitingChord.Any() && waitingChordStartTime == null)
+                if (Mode == PlayMode.Practice)
                 {
-                    waitingChordStartTime = DateTime.Now;
-                }
-
-                // ПРОВЕРКА ТАЙМАУТА
-                if (pianoVM.WaitingChord.Any()
-                    && waitingChordStartTime != null
-                    && DateTime.Now - waitingChordStartTime >= chordTimeout)
-                {
-                    // ❌ таймаут — считаем аккорд пропущенным
-                    SkipWaitingChord();
-                    return;
-                }
-
-                // красим ТОЛЬКО текущие клавиши
-                foreach (var key in pianoVM.WhiteKeys.Concat(pianoVM.BlackKeys))
-                    key.IsCorrectlyPlayed = null;
-
-                foreach (var n in pianoVM.WaitingChord)
-                {
-                    var key = pianoVM.WhiteKeys.Concat(pianoVM.BlackKeys)
-                                .FirstOrDefault(k => k.Note == n.NoteName);
-                    if (key != null)
-                        key.IsCorrectlyPlayed = notes.Contains(n.NoteName);
-                }
-
-                // снимаем сыгранные ноты
-                foreach (var n in pianoVM.WaitingChord
-                             .Where(n => notes.Contains(n.NoteName))
-                             .ToList())
-                {
-                    n.HasCompleted = true;
-                    n.HasPressed = false;
-                    pianoVM.ReleaseKey(n.NoteName);
-                    pianoVM.WaitingChord.Remove(n);
-
-                    // Подсчет точности только в режиме Advanced
-                    if (Mode == PlayMode.Advanced)
+                    // если ждём аккорд — фиксируем старт
+                    if (pianoVM.WaitingChord.Any() && waitingChordStartTime == null)
                     {
-                        if (!n.IsCounted)
+                        waitingChordStartTime = DateTime.Now;
+                    }
+
+                    // ПРОВЕРКА ТАЙМАУТА
+                    if (pianoVM.WaitingChord.Any()
+                        && waitingChordStartTime != null
+                        && DateTime.Now - waitingChordStartTime >= chordTimeout)
+                    {
+                        // ❌ таймаут — считаем аккорд пропущенным
+                        SkipWaitingChord();
+                        return;
+                    }
+
+                    // красим ТОЛЬКО текущие клавиши
+                    foreach (var key in pianoVM.WhiteKeys.Concat(pianoVM.BlackKeys))
+                        key.IsCorrectlyPlayed = null;
+
+                    foreach (var n in pianoVM.WaitingChord)
+                    {
+                        var key = pianoVM.WhiteKeys.Concat(pianoVM.BlackKeys)
+                                    .FirstOrDefault(k => k.Note == n.NoteName);
+                        if (key != null)
+                            key.IsCorrectlyPlayed = notes.Contains(n.NoteName);
+                    }
+
+                    // снимаем сыгранные ноты
+                    foreach (var n in pianoVM.WaitingChord
+                                 .Where(n => notes.Contains(n.NoteName))
+                                 .ToList())
+                    {
+                        n.HasCompleted = true;
+                        n.HasPressed = false;
+                        pianoVM.ReleaseKey(n.NoteName);
+                        pianoVM.WaitingChord.Remove(n);
+
+                        // Подсчет точности только в режиме Advanced
+                        if (Mode == PlayMode.Advanced)
                         {
-                            totalNotes++;
-                            correctNotes++;
-                            n.IsCounted = true;
+                            if (!n.IsCounted)
+                            {
+                                totalNotes++;
+                                correctNotes++;
+                                n.IsCounted = true;
+                            }
                         }
                     }
+
+                    // Пропущенные ноты считаем неправильными
+                    if (Mode == PlayMode.Advanced)
+                    {
+                        totalNotes += pianoVM.WaitingChord.Count;
+                    }
+
+                    // Обновляем текст
+                    if (Mode == PlayMode.Advanced && totalNotes > 0)
+                    {
+                        double accuracy = (double)correctNotes / totalNotes * 100;
+                        AccuracyText.Text = $"{accuracy:F0}%";
+                    }
+
+                    // без этого не работает :)
+                    if (!pianoVM.WaitingChord.Any() && isPaused && !pauseHandled)
+                    {
+                        pauseHandled = true; // срабатывает ТОЛЬКО ОДИН РАЗ
+
+                        TimeSpan pauseDuration = DateTime.Now - pauseStartTime;
+                        pianoVM.AdjustStartTimeForPause(pauseDuration);
+
+                        isPaused = false;
+                        waitingChordStartTime = null; // сброс
+                    }
                 }
-
-                // Пропущенные ноты считаем неправильными
-                if (Mode == PlayMode.Advanced)
+                else if (Mode == PlayMode.Advanced)
                 {
-                    totalNotes += pianoVM.WaitingChord.Count;
-                }
+                    // сброс подсветки
+                    foreach (var key in pianoVM.WhiteKeys.Concat(pianoVM.BlackKeys))
+                        key.IsCorrectlyPlayed = null;
 
-                // Обновляем текст
-                if (Mode == PlayMode.Advanced && totalNotes > 0)
-                {
-                    double accuracy = (double)correctNotes / totalNotes * 100;
-                    AccuracyText.Text = $"{accuracy:F0}%";
-                }
+                    // 🔥 берём активные ноты (которые сейчас на клавиатуре)
+                    var activeNotes = pianoVM.FallingNotes
+                        .Where(n => !n.HasCompleted && n.HasPressed)
+                        .ToList();
 
-                // без этого не работает :)
-                if (!pianoVM.WaitingChord.Any() && isPaused && !pauseHandled)
-                {
-                    pauseHandled = true; // срабатывает ТОЛЬКО ОДИН РАЗ
+                    foreach (var note in activeNotes)
+                    {
+                        // подсветка клавиши
+                        var key = pianoVM.WhiteKeys.Concat(pianoVM.BlackKeys)
+                                    .FirstOrDefault(k => k.Note == note.NoteName);
 
-                    TimeSpan pauseDuration = DateTime.Now - pauseStartTime;
-                    pianoVM.AdjustStartTimeForPause(pauseDuration);
+                        if (key != null)
+                            key.IsCorrectlyPlayed = notes.Contains(note.NoteName);
 
-                    isPaused = false;
-                    waitingChordStartTime = null; // сброс
+                        // считаем только один раз
+                        if (note.IsCounted)
+                            continue;
+
+                        // 🎯 считаем попытку
+                        totalNotes++;
+
+                        if (notes.Contains(note.NoteName))
+                        {
+                            correctNotes++;
+                            note.HasCompleted = true;
+                            pianoVM.ReleaseKey(note.NoteName);
+                        }
+
+                        note.IsCounted = true;
+                    }
+
+                    // 📊 обновляем точность
+                    if (totalNotes > 0)
+                    {
+                        double accuracy = (double)correctNotes / totalNotes * 100;
+                        AccuracyText.Text = $"{accuracy:F0}%";
+                    }
+
                 }
             });
         }
@@ -494,6 +542,9 @@ namespace PianoTrainerApp.Views
 
         private void RestartSong()
         {
+            AccuracyPanel.Visibility = Visibility.Collapsed;
+            ProgressPanel.Visibility = Visibility.Collapsed;
+
             progressInitialized = false;
             startTimeForProgress = -1;
             endTimeForProgress = -1;
@@ -572,28 +623,20 @@ namespace PianoTrainerApp.Views
                 await Task.Delay(1000);
             }
 
-            // Скрываем countdown
+            // Скрываем countdown и hint
             CountdownText.Visibility = Visibility.Collapsed;
+            if (Mode == PlayMode.Advanced) await Task.Delay(3000);
 
-            // Подсказку держим ещё 3 секунды после старта
-            await Task.Delay(3000);
+            // Исчезновение подсказки
             var fadeOut = new DoubleAnimation(1, 0, TimeSpan.FromMilliseconds(500));
-            fadeOut.Completed += (s, e) =>
-            {
-                HintText.Visibility = Visibility.Collapsed;
-
-                // Показываем панель точности только в Advanced
-                if (Mode == PlayMode.Advanced)
-                {
-                    AccuracyPanel.Opacity = 0;
-                    AccuracyPanel.Visibility = Visibility.Visible;
-
-                    var fadeInAccuracy = new DoubleAnimation(0, 1, TimeSpan.FromMilliseconds(500));
-                    AccuracyPanel.BeginAnimation(UIElement.OpacityProperty, fadeInAccuracy);
-                }
-            };
-
+            fadeOut.Completed += (s, e) => HintText.Visibility = Visibility.Collapsed;
             HintText.BeginAnimation(UIElement.OpacityProperty, fadeOut);
+
+            if (Mode == PlayMode.Advanced)
+            {
+                AccuracyPanel.Visibility = Visibility.Visible;
+                AccuracyPanel.BeginAnimation(UIElement.OpacityProperty, fadeIn);
+            }
         }
     }
 }
