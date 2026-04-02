@@ -25,17 +25,5 @@ namespace PianoTrainerApp.Models
 
         [ForeignKey("UserId")]
         public virtual User User { get; set; }
-
-        [NotMapped]
-        public int Stars
-        {
-            get
-            {
-                if (BestAccuracy < 0.5) return 0;
-                if (BestAccuracy < 0.7) return 1;
-                if (BestAccuracy < 0.9) return 2;
-                return 3;
-            }
-        }
     }
 }

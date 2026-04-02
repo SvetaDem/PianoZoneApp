@@ -660,7 +660,8 @@
                                                    FontSize="24"
                                                    Foreground="#E0E0E0"
                                                    Margin="0,0,12,0"/>
-                                        <TextBlock Text="24"
+                                        <TextBlock x:Name="TracksCountText"
+                                                   Text="24"
                                                    Foreground="#E0E0E0"
                                                    FontSize="24"
                                                    FontWeight="Bold"/>
@@ -750,22 +751,22 @@
                                     <!-- Верх: иконка + число -->
                                     <StackPanel Orientation="Horizontal">
                                         <TextBlock Text="✨"
-                           FontSize="24"
-                           Foreground="#E0E0E0"
-                           Margin="0,0,12,0"/>
-                                        <TextBlock 
-                           Text="9"
-                           Foreground="#E0E0E0"
-                           FontSize="24"
-                           FontWeight="Bold"/>
+                                                   FontSize="24"
+                                                   Foreground="#E0E0E0"
+                                                   Margin="0,0,12,0"/>
+                                        <TextBlock x:Name="StarsCountText"
+                                                   Text="9"
+                                                   Foreground="#E0E0E0"
+                                                   FontSize="24"
+                                                   FontWeight="Bold"/>
                                     </StackPanel>
 
                                     <!-- Низ: описание -->
                                     <TextBlock Grid.Row="1"
-                       Text="Получено звёзд"
-                       Foreground="#9B9B9B"
-                       TextWrapping="Wrap"
-                       VerticalAlignment="Bottom"
+                                               Text="Получено звёзд"
+                                               Foreground="#9B9B9B"
+                                               TextWrapping="Wrap"
+                                               VerticalAlignment="Bottom"
                                                FontSize="13"/>
                                 </Grid>
                             </Border>

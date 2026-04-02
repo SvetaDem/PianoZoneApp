@@ -38,6 +38,19 @@ namespace PianoTrainerApp.Views
             }
             else
             {
+                // Проверяем авторизацию для Advanced режима
+                int currentUserId = Properties.Settings.Default.CurrentUserId;
+                if (currentUserId == 0)
+                {
+                    CustomMessageBox.Show(
+                        "Режим Продвинутый доступен только для зарегистрированных пользователей\nАвторизуйся, чтобы можно было играть на точность попаданий!",
+                        "Эй…",
+                        CustomMessageBoxButton.OK,
+                        CustomMessageBoxImage.Info
+                    );
+                    return; // Не закрываем окно
+                }
+
                 SelectedMultiplier = 1.0;
                 SelectedMode = PlayMode.Advanced;
             }

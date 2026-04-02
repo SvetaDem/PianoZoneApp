@@ -64,6 +64,9 @@ namespace PianoTrainerApp.Views
                         vm.FavoritesChanged += () => RefreshUserStats(includeStreak: false);
                     }
 
+                    // подписка на событие завершения песни из PianoWindow
+                    libraryView.SongFinishedInPiano += () => RefreshUserStats(includeStreak: false);
+
                     HighlightMenuItem(LibraryTextBlock);
                     break;
 
@@ -128,6 +131,29 @@ namespace PianoTrainerApp.Views
                     int favoritesCount = db.SongsUsers
                         .Count(su => su.UserId == currentUser.Id && su.IsFavorite);
                     FavouritesCountText.Text = favoritesCount.ToString();
+
+                    // Получаем все записи пользователя
+                    var userSongs = db.SongsUsers
+                        .Where(su => su.UserId == currentUser.Id)
+                        .ToList();
+
+                    // Считаем количество сыгранных композиций
+                    int tracksPlayedCount = userSongs
+                        .Count(su => su.Accuracy >= 0 || su.BestAccuracy >= 0);
+                    TracksCountText.Text = tracksPlayedCount.ToString();
+
+                    // Считаем количество звёзд
+                    int totalStars = userSongs
+                        .Select(su =>
+                        {
+                            if (su.BestAccuracy < 50) return 0;
+                            if (su.BestAccuracy < 70) return 1;
+                            if (su.BestAccuracy < 90) return 2;
+                            return 3;
+                        })
+                        .Sum();
+
+                    StarsCountText.Text = totalStars.ToString();
 
                     // Стрик обновляем только при входе/автологине/регистрации
                     if (includeStreak)
@@ -300,7 +326,7 @@ namespace PianoTrainerApp.Views
                 if (MainContent.Content is LibraryView libraryView &&
                     libraryView.DataContext is LibraryViewModel vm)
                 {
-                    vm.ResetFavorites();
+                    vm.ResetSongs();
                 }
 
                 UserPanel.Visibility = Visibility.Collapsed;
@@ -641,7 +667,7 @@ namespace PianoTrainerApp.Views
                     CustomMessageBox.Show("Возникла неизвестная ошибка при регистрации.", "Ошибка регистрации", CustomMessageBoxButton.OK, CustomMessageBoxImage.Error);
                 }
 
-                CustomMessageBox.Show("Регистрация прошла успешно!", null, CustomMessageBoxButton.OK, CustomMessageBoxImage.Success);
+                CustomMessageBox.Show("Регистрация прошла успешно!", "Добро пожаловать!", CustomMessageBoxButton.OK, CustomMessageBoxImage.Success);
 
                 // Обновляем лайки в библиотеке
                 if (MainContent.Content is LibraryView libraryView && libraryView.DataContext is LibraryViewModel vm)
@@ -700,7 +726,7 @@ namespace PianoTrainerApp.Views
                     return;
                 }
 
-                CustomMessageBox.Show($"С возвращением, {currentUser.Username}!", null, CustomMessageBoxButton.OK, CustomMessageBoxImage.Success);
+                CustomMessageBox.Show($"Рады видеть вас снова, {currentUser.Username}!\nГотовы улучшать своё мастерство?)", "Добро пожаловать!", CustomMessageBoxButton.OK, CustomMessageBoxImage.Success);
 
                 // Обновляем лайки в библиотеке и статистику пользователя
                 if (MainContent.Content is LibraryView libraryView && libraryView.DataContext is LibraryViewModel vm)

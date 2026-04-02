@@ -92,8 +92,15 @@ namespace PianoTrainerApp.ViewModels
                         // Выставляем лайки пользователя
                         foreach (var song in Songs)
                         {
-                            song.IsFavorite = song.SongUsers?
-                                .Any(su => su.UserId == CurrentUserId && su.IsFavorite) ?? false;
+                            var songUser = song.SongUsers?
+                        .FirstOrDefault(su => su.UserId == CurrentUserId);
+
+                            // лайк
+                            song.IsFavorite = songUser?.IsFavorite ?? false;
+
+                            // точность и звёзды
+                            song.CurrentAccuracy = songUser?.Accuracy ?? 0;
+                            song.BestAccuracy = songUser?.BestAccuracy ?? 0;
                         }
                     }
                 }
@@ -122,14 +129,18 @@ namespace PianoTrainerApp.ViewModels
         }
 
         // Сброс любимых песен (вызывается при logout)
-        public void ResetFavorites()
+        public void ResetSongs()
         {
             CurrentUserId = 0;
             Properties.Settings.Default.CurrentUserId = 0;
             Properties.Settings.Default.Save();
 
             foreach (var song in Songs)
+            {
                 song.IsFavorite = false;
+                song.CurrentAccuracy = 0;
+                song.BestAccuracy = 0;
+            }
 
             FilteredSongs = new ObservableCollection<Song>(Songs);
             SelectedGenre = "Все жанры";

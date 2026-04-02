@@ -1,4 +1,5 @@
-﻿using System;
+﻿using PianoTrainerApp.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -49,28 +50,34 @@ namespace PianoTrainerApp.Views
             AdvancedPanel.Visibility = Visibility.Collapsed;
         }
 
-        public void SetAdvancedMode(double accuracy)
+        public void SetAdvancedMode(double accuracy, double bestAccuracy = 0)
         {
             AdvancedPanel.Visibility = Visibility.Visible;
             PracticeText.Visibility = Visibility.Collapsed;
 
-            double maxWidth = 200; // ширина полоски
+            double maxWidth = 268; // ширина полоски
+            
             double targetWidth = maxWidth * (accuracy / 100);
+            var anim = new DoubleAnimation
+            {
+                To = targetWidth,
+                Duration = TimeSpan.FromMilliseconds(800)
+            };
 
-            var anim = new DoubleAnimation(0, targetWidth, TimeSpan.FromMilliseconds(800));
             AccuracyFill.BeginAnimation(FrameworkElement.WidthProperty, anim);
 
+            // текущая точность
             AccuracyResultText.Text = $"{accuracy:F0}%";
 
+            // лучшая точность
+            BestAccuracyResultText.Text = $"Ваш лучший результат: {bestAccuracy:F0}%";
+
             // звезды
-            if (accuracy >= 3)
-                FillStar(Star50);
+            if (accuracy >= 50) FillStar(Star50);
 
-            if (accuracy >= 70)
-                FillStar(Star70);
+            if (accuracy >= 70) FillStar(Star70);
 
-            if (accuracy >= 90)
-                FillStar(Star90);
+            if (accuracy >= 90) FillStar(Star90);
         }
 
         private void FillStar(Path star)
@@ -86,5 +93,6 @@ namespace PianoTrainerApp.Views
 
             brush.BeginAnimation(SolidColorBrush.ColorProperty, anim);
         }
+
     }
 }

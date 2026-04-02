@@ -3,6 +3,7 @@ using PianoTrainerApp.Services;
 using PianoTrainerApp.ViewModels;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -48,6 +49,8 @@ namespace PianoTrainerApp.Views
 
         private bool finishHandled = false;
 
+        private Song CurrentSong; // поле для текущей песни
+
         // счетчики для точности
         private int totalNotes = 0;
         private int correctNotes = 0;
@@ -61,11 +64,18 @@ namespace PianoTrainerApp.Views
             }
         }
 
+        // Событие завершения мелодии
+        public event Action SongCompleted;
+
         public PianoWindow(Song song, double speedMultiplier = 1.0, PlayMode mode = PlayMode.Practice)
         {
             InitializeComponent();
 
             Mode = mode;
+            CurrentSong = song; // сохраняем песню
+
+            // Устанавливаем заголовок окна
+            this.Title = $"{song.Title}";
 
             pianoVM = new PianoViewModel
             {
@@ -516,7 +526,13 @@ namespace PianoTrainerApp.Views
 
                 if (Mode == PlayMode.Advanced)
                 {
-                    resultWindow.SetAdvancedMode(Accuracy);
+                    // Сохраняем и получаем актуальный лучший результат
+                    double bestAccuracy = SaveSongAccuracy(CurrentSong, Accuracy);
+
+                    // Вызов события
+                    SongCompleted?.Invoke();
+
+                    resultWindow.SetAdvancedMode(Accuracy, bestAccuracy);
                 }
                 else if (Mode == PlayMode.Practice)
                 {
@@ -534,6 +550,51 @@ namespace PianoTrainerApp.Views
                     this.Close();
                 }
             });
+        }
+
+        private double SaveSongAccuracy(Song song, double accuracy)
+        {
+            try
+            {
+                int userId = Properties.Settings.Default.CurrentUserId;
+                using (var db = new ReMinorContext())
+                {
+                    var songUser = db.SongsUsers
+                        .FirstOrDefault(su => su.SongId == song.Id && su.UserId == userId);
+
+                    if (songUser == null)
+                    {
+                        songUser = new SongUser
+                        {
+                            SongId = song.Id,
+                            UserId = userId,
+                            Accuracy = accuracy,
+                            BestAccuracy = accuracy
+                        };
+                        db.SongsUsers.Add(songUser);
+                    }
+                    else
+                    {
+                        songUser.Accuracy = accuracy;
+
+                        if (accuracy > songUser.BestAccuracy)
+                            songUser.BestAccuracy = accuracy;
+                    }
+
+                    db.SaveChanges();
+
+                    // Обновляем текущий объект Song
+                    CurrentSong.CurrentAccuracy = accuracy;
+                    CurrentSong.BestAccuracy = songUser.BestAccuracy;
+
+                    return songUser.BestAccuracy;
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"[ERROR] SaveSongAccuracy: {ex.Message}");
+                return 0;
+            }
         }
 
         private void RestartSong()
@@ -558,7 +619,6 @@ namespace PianoTrainerApp.Views
             detector?.Start();
             CompositionTarget.Rendering += UpdateNotes;
         }
-
 
         protected override void OnClosing(System.ComponentModel.CancelEventArgs e)
         {

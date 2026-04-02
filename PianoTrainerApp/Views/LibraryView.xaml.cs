@@ -24,6 +24,7 @@ namespace PianoTrainerApp.Views
     /// </summary>
     public partial class LibraryView : UserControl
     {
+        public event Action SongFinishedInPiano;
         public LibraryView()
         {
             InitializeComponent();
@@ -60,6 +61,12 @@ namespace PianoTrainerApp.Views
                 pianoWindow.Top = parentWindow.Top;
 
                 parentWindow.Hide(); // скрываем текущее окно
+
+                // прокидываем событие закрытия песни в MainWindow (для обновления статистики звезд)
+                pianoWindow.SongCompleted += () =>
+                {                    
+                    SongFinishedInPiano?.Invoke();
+                };
 
                 pianoWindow.Show();
 
