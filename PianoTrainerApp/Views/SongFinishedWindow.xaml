@@ -2,83 +2,184 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="Готово"
-        SizeToContent="WidthAndHeight"
+        SizeToContent="Height"
         WindowStartupLocation="CenterOwner"
-        WindowStyle="None"
+        WindowStyle="None" Width="342"
         AllowsTransparency="True"
         Background="Transparent"
         MouseDown="Window_MouseDown">
-
-    <Window.Resources>
-        <!-- Универсальный стиль кнопки-иконки (profile/settings/exit) -->
-        <Style x:Key="IconButtonStyle" TargetType="Button">
-            <Setter Property="Cursor" Value="Hand"/>
-            <Setter Property="Background" Value="Transparent"/>
-            <Setter Property="BorderThickness" Value="0"/>
-            <Setter Property="RenderTransformOrigin" Value="0.5,0.5"/>
-            <Setter Property="RenderTransform">
-                <Setter.Value>
-                    <ScaleTransform ScaleX="1" ScaleY="1"/>
-                </Setter.Value>
-            </Setter>
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="Button">
-                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                        <ControlTemplate.Triggers>
-                            <Trigger Property="IsMouseOver" Value="True">
-                                <Trigger.EnterActions>
-                                    <BeginStoryboard>
-                                        <Storyboard>
-                                            <DoubleAnimation Storyboard.TargetProperty="RenderTransform.(ScaleTransform.ScaleX)" To="1.1" Duration="0:0:0.15"/>
-                                            <DoubleAnimation Storyboard.TargetProperty="RenderTransform.(ScaleTransform.ScaleY)" To="1.1" Duration="0:0:0.15"/>
-                                        </Storyboard>
-                                    </BeginStoryboard>
-                                </Trigger.EnterActions>
-                                <Trigger.ExitActions>
-                                    <BeginStoryboard>
-                                        <Storyboard>
-                                            <DoubleAnimation Storyboard.TargetProperty="RenderTransform.(ScaleTransform.ScaleX)" To="1" Duration="0:0:0.15"/>
-                                            <DoubleAnimation Storyboard.TargetProperty="RenderTransform.(ScaleTransform.ScaleY)" To="1" Duration="0:0:0.15"/>
-                                        </Storyboard>
-                                    </BeginStoryboard>
-                                </Trigger.ExitActions>
-                            </Trigger>
-                        </ControlTemplate.Triggers>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
-    </Window.Resources>
 
     <Border CornerRadius="15"
             BorderBrush="#3F64A9"
             BorderThickness="2"
             Background="#f9f9f9"
-            Padding="25">
+            Padding="20">
 
         <StackPanel>
 
+            <!-- Украшения окна -->
+            <Image Source="/Images/window_decorations.png"
+                   Margin="0 -5 0 17" Width="224"/>
+
             <!-- Заголовок -->
-            <TextBlock Text="🎉 Трек завершён!"
-                       FontSize="24"
+            <TextBlock x:Name="TitleText"
+                       Text="Отлично сыграно!"
+                       FontSize="20"
                        FontWeight="Bold"
+                       Foreground="#3f649a"
+                       HorizontalAlignment="Center"/>
+
+            <!-- Текст для Practice -->
+            <TextBlock x:Name="PracticeText"
+                       FontSize="15"
+                       FontWeight="Regular"
                        Foreground="#1e1e1e"
                        HorizontalAlignment="Center"
-                       Margin="0,0,0,20"/>
+                       VerticalAlignment="Center"
+                       Margin="0,16,0,32"
+                       TextAlignment="Center"
+                       Visibility="Collapsed">
+                <Run Text="Продолжай в том же духе —"/>
+                <LineBreak/>
+                <Run Text="и станешь мастером 🎹!"/>
+            </TextBlock>
 
+            <!-- Панель для Advanced -->
+            <Grid x:Name="AdvancedPanel"
+                  Visibility="Visible" Margin="15 25 15 38">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="auto"/>
+                </Grid.RowDefinitions>
+
+                <TextBlock Grid.Row="0"
+                           Text="Точность:"
+                           FontSize="13"
+                           FontWeight="Regular"
+                           Foreground="#1e1e1e"
+                           HorizontalAlignment="Left"
+                           VerticalAlignment="Center"/>
+
+                <TextBlock x:Name="AccuracyResultText"
+                           Grid.Row="0"
+                           Text="0%"
+                           FontSize="24"
+                           FontWeight="Bold"
+                           Foreground="#1e1e1e"
+                           HorizontalAlignment="Center"
+                           VerticalAlignment="Bottom"/>
+
+                <!-- Прогресс-бар точности -->
+                <Grid x:Name="AccuracyBlock"
+                      Margin="0 20 0 25"
+                      Visibility="Visible"
+                      Grid.Row="1">
+
+                    <!-- Фон -->
+                    <Border Height="10"
+                            Background="#E0E0E0"
+                            CornerRadius="5"/>
+
+                    <!-- Заполнение -->
+                    <Border x:Name="AccuracyFill"
+                            Height="10"
+                            Background="#3F64A9"
+                            CornerRadius="5"
+                            Width="0"
+                            HorizontalAlignment="Left"/>
+
+                    <!-- Звезды -->
+                    <Canvas Height="21" Width="135"
+                            VerticalAlignment="Center"
+                            HorizontalAlignment="Right"
+                            Margin="0 0 15 0">
+
+                        <!-- ⭐ 50% -->
+                        <Path x:Name="Star50"
+                              Width="21" Height="21"
+                              Data="M12 17.27L18.18 21 16.54 13.97 22 9.24 
+                                    14.81 8.63 12 2 9.19 8.63 2 9.24 
+                                    7.46 13.97 5.82 21z"
+                              Stretch="Uniform"
+                              Fill="#f9f9f9"
+                              Stroke="#3f649a"
+                              StrokeThickness="1"
+                              Canvas.Left="0"/>
+
+                        <!-- ⭐ 75% -->
+                        <Path x:Name="Star70"
+                              Width="21" Height="21"
+                              Data="M12 17.27L18.18 21 16.54 13.97 22 9.24 
+                                    14.81 8.63 12 2 9.19 8.63 2 9.24 
+                                    7.46 13.97 5.82 21z"
+                              Stretch="Uniform"
+                              Fill="#f9f9f9"
+                              Stroke="#3f649a"
+                              StrokeThickness="1"
+                              Canvas.Left="57"
+                              VerticalAlignment="Center"/>
+
+                        <!-- ⭐ 90% -->
+                        <Path x:Name="Star90"
+                              Width="21" Height="21"
+                              Data="M12 17.27L18.18 21 16.54 13.97 22 9.24 
+                                    14.81 8.63 12 2 9.19 8.63 2 9.24 
+                                    7.46 13.97 5.82 21z"
+                              Stretch="Uniform"
+                              Fill="#f9f9f9"
+                              Stroke="#3f649a"
+                              StrokeThickness="1"
+                              Canvas.Right="0"/>
+
+                    </Canvas>
+                </Grid>
+                <TextBlock x:Name="AccuracyBestResultText"
+                            Grid.Row="2"
+                            Text="Ваш лучший результат: 19%"
+                            FontSize="15"
+                            FontWeight="Bold"
+                            Foreground="#3f649a"
+                            HorizontalAlignment="Left"
+                            VerticalAlignment="Bottom"/>
+            </Grid>
             <!-- Кнопки -->
             <StackPanel Orientation="Horizontal"
                         HorizontalAlignment="Center">
 
                 <!-- Повтор -->
-                <Button Width="35" Height="35" Margin="0 0 10 0" Style="{StaticResource IconButtonStyle}" Click="Repeat_Click">
-                    <Image Source="/Images/repeat.png"/>
+                <Button Width="120"
+                        Height="36"
+                        Margin="0 0 10 0"
+                        Click="Repeat_Click"
+                        Cursor="Hand"
+                        Background="#3F64A9">
+                    <Button.Template>
+                        <ControlTemplate TargetType="Button">
+                            <Border x:Name="border"
+                                    Background="{TemplateBinding Background}"
+                                    CornerRadius="20">
+                                <TextBlock Text="Сыграть ещё"
+                                           HorizontalAlignment="Center"
+                                           VerticalAlignment="Center"
+                                           Foreground="White"
+                                           FontWeight="SemiBold"/>
+                            </Border>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter TargetName="border" Property="Background" Value="#5F84C9"/>
+                                </Trigger>
+                                <Trigger Property="IsPressed" Value="True">
+                                    <Setter TargetName="border" Property="Background" Value="#7FA4E9"/>
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Button.Template>
                 </Button>
 
                 <!-- В библиотеку -->
-                <Button Width="130"
-                        Height="32"
+                <Button Width="120"
+                        Height="36"
                         Click="Library_Click"
                         Cursor="Hand"
                         Background="Transparent"
@@ -90,20 +191,16 @@
                                     Background="{TemplateBinding Background}"
                                     BorderBrush="{TemplateBinding BorderBrush}"
                                     BorderThickness="{TemplateBinding BorderThickness}"
-                                    CornerRadius="15">
+                                    CornerRadius="20">
                                 <TextBlock Text="В библиотеку"
                                            HorizontalAlignment="Center"
                                            VerticalAlignment="Center"
                                            Foreground="#3F64A9"
-                                           FontSize="13"
-                                           FontWeight="Medium"/>
+                                           FontWeight="SemiBold"/>
                             </Border>
                             <ControlTemplate.Triggers>
                                 <Trigger Property="IsMouseOver" Value="True">
                                     <Setter TargetName="border" Property="Background" Value="#E0F0FF"/>
-                                </Trigger>
-                                <Trigger Property="IsPressed" Value="True">
-                                    <Setter TargetName="border" Property="Background" Value="#C0E0FF"/>
                                 </Trigger>
                             </ControlTemplate.Triggers>
                         </ControlTemplate>

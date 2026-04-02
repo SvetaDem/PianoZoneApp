@@ -9,6 +9,7 @@ using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 
@@ -40,6 +41,50 @@ namespace PianoTrainerApp.Views
         {
             if (e.LeftButton == MouseButtonState.Pressed)
                 this.DragMove();
+        }
+
+        public void SetPracticeMode()
+        {
+            PracticeText.Visibility = Visibility.Visible;
+            AdvancedPanel.Visibility = Visibility.Collapsed;
+        }
+
+        public void SetAdvancedMode(double accuracy)
+        {
+            AdvancedPanel.Visibility = Visibility.Visible;
+            PracticeText.Visibility = Visibility.Collapsed;
+
+            double maxWidth = 200; // ширина полоски
+            double targetWidth = maxWidth * (accuracy / 100);
+
+            var anim = new DoubleAnimation(0, targetWidth, TimeSpan.FromMilliseconds(800));
+            AccuracyFill.BeginAnimation(FrameworkElement.WidthProperty, anim);
+
+            AccuracyResultText.Text = $"{accuracy:F0}%";
+
+            // звезды
+            if (accuracy >= 3)
+                FillStar(Star50);
+
+            if (accuracy >= 70)
+                FillStar(Star70);
+
+            if (accuracy >= 90)
+                FillStar(Star90);
+        }
+
+        private void FillStar(Path star)
+        {
+            var anim = new ColorAnimation
+            {
+                To = (Color)ColorConverter.ConvertFromString("#FFB879"),
+                Duration = TimeSpan.FromMilliseconds(300)
+            };
+
+            var brush = new SolidColorBrush(Colors.Transparent);
+            star.Fill = brush;
+
+            brush.BeginAnimation(SolidColorBrush.ColorProperty, anim);
         }
     }
 }
