@@ -4,6 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:PianoTrainerApp.Views"
+        xmlns:svgc="http://sharpvectors.codeplex.com/svgc/"
         mc:Ignorable="d"
         Title="Планета Ре-минор" Height="650" Width="1050"
         MinHeight="600" MinWidth="1000"
@@ -216,13 +217,20 @@
             <Button Width="32" Height="32" Margin="0,0,0,10"
                     Style="{StaticResource IconButtonStyle}"
                     Click="ProfileButton_Click">
-                <Image Source="/Images/profile.png"/>
+                <!--<Image Source="/Images/profile.png"/>-->
+                <svgc:SvgViewbox Source="/Images/profile.svg"/>
             </Button>
+            
+
+            <!--<Image x:Name="AdvancedImage"
+       Height="154" Width="154"
+       Source="{svgc:SvgImage Source=/Images/piano_hands_vector.svg}"
+       Visibility="Visible"/>-->
 
             <Button Width="32" Height="32"
-                    Style="{StaticResource IconButtonStyle}"
-                    >
-                <Image Source="/Images/settings.png"/>
+                    Style="{StaticResource IconButtonStyle}">
+                <!--<Image Source="/Images/settings.png"/>-->
+                <svgc:SvgViewbox Source="/Images/settings.svg"/>
             </Button>
         </StackPanel>
 
@@ -1276,7 +1284,8 @@
             VerticalAlignment="Bottom"
             Click="ButtonExit_Click"
             Style="{StaticResource IconButtonStyle}">
-            <Image Source="/Images/exit.png"/>
+            <!--<Image Source="/Images/exit.png"/>-->
+            <svgc:SvgViewbox Source="/Images/exit.svg"/>
         </Button>
 
 

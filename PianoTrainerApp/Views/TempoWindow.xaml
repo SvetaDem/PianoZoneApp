@@ -87,7 +87,7 @@
                 <!-- КАРТИНКА -->
 
                 <svgc:SvgViewbox x:Name="AdvancedImage"
-                                Source="/Images/piano_hands_vector.svg"
+                                Source="/Images/piano_hands.svg"
                                 Width="144" Height="144"
                                 Visibility="Visible"/>
 
