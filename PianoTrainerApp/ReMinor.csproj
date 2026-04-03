@@ -314,6 +314,8 @@
     <Content Include="Assets\Celine Dion - My Heart Will Go On - Titanic Theme - EASY.mid">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Resource Include="Images\playback.svg" />
+    <Resource Include="Images\treble_clef.svg" />
     <Resource Include="Images\exit.svg" />
     <Resource Include="Images\settings.svg" />
     <Resource Include="Images\profile.svg" />

@@ -7,7 +7,7 @@
         xmlns:svgc="http://sharpvectors.codeplex.com/svgc/"
         mc:Ignorable="d"
         Title="Планета Ре-минор" Height="650" Width="1050"
-        MinHeight="600" MinWidth="1000"
+        MinHeight="650" MinWidth="1050"
         WindowStartupLocation="CenterScreen">
 
     <Window.Resources>

@@ -4,50 +4,317 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:PianoTrainerApp.Views"
+             xmlns:svgc="http://sharpvectors.codeplex.com/svgc/"
              mc:Ignorable="d" 
              Width="Auto" Height="Auto">
-    <Grid Margin="10">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="*"/>
-        </Grid.RowDefinitions>
 
-        <!-- Вкладки категории -->
-        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,0,0,10">
-            <Button Content="Новичок" Width="100" Margin="5" Click="CategoryButton_Click"/>
-            <Button Content="Средний" Width="100" Margin="5" Click="CategoryButton_Click"/>
-            <Button Content="Продвинутый" Width="100" Margin="5" Click="CategoryButton_Click"/>
-        </StackPanel>
+    <UserControl.Resources>
+        <!-- Универсальный стиль кнопки-иконки (profile/settings/exit) -->
+        <Style x:Key="IconButtonStyle" TargetType="Button">
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="RenderTransformOrigin" Value="0.5,0.5"/>
+            <Setter Property="RenderTransform">
+                <Setter.Value>
+                    <ScaleTransform ScaleX="1" ScaleY="1"/>
+                </Setter.Value>
+            </Setter>
 
-        <!-- Горизонтальный ListView с видео -->
-        <ListView x:Name="LessonsListView"
-                  Grid.Row="1"
-                  ScrollViewer.HorizontalScrollBarVisibility="Auto"
-                  ScrollViewer.VerticalScrollBarVisibility="Disabled"
-                  ItemsSource="{Binding CurrentLessons}"
-                  HorizontalAlignment="Stretch"
-                  Height="350"
-                  Background="Transparent"
-                  BorderThickness="0">
-            <ListView.ItemsPanel>
-                <ItemsPanelTemplate>
-                    <StackPanel Orientation="Horizontal"/>
-                </ItemsPanelTemplate>
-            </ListView.ItemsPanel>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <ContentPresenter HorizontalAlignment="Center"
+                                      VerticalAlignment="Center"/>
 
-            <ListView.ItemTemplate>
-                <DataTemplate>
-                    <Border Width="300" Height="320" Margin="5" CornerRadius="15" BorderBrush="#3F64A9" BorderThickness="1" Background="#f9f9f9">
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Trigger.EnterActions>
+                                    <BeginStoryboard>
+                                        <Storyboard>
+                                            <DoubleAnimation Storyboard.TargetProperty="RenderTransform.(ScaleTransform.ScaleX)"
+                                                         To="1.1" Duration="0:0:0.15"/>
+                                            <DoubleAnimation Storyboard.TargetProperty="RenderTransform.(ScaleTransform.ScaleY)"
+                                                         To="1.1" Duration="0:0:0.15"/>
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </Trigger.EnterActions>
+
+                                <Trigger.ExitActions>
+                                    <BeginStoryboard>
+                                        <Storyboard>
+                                            <DoubleAnimation Storyboard.TargetProperty="RenderTransform.(ScaleTransform.ScaleX)"
+                                                         To="1" Duration="0:0:0.15"/>
+                                            <DoubleAnimation Storyboard.TargetProperty="RenderTransform.(ScaleTransform.ScaleY)"
+                                                         To="1" Duration="0:0:0.15"/>
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </Trigger.ExitActions>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+    </UserControl.Resources>
+
+    <Border Background="#d9d9d9" CornerRadius="15"
+            Margin="70 30 70 75">
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="220"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <!-- Левая панель -->
+            <Border Grid.Column="0" Background="#2e2e2e"
+                    Padding="0" HorizontalAlignment="Left"
+                    CornerRadius="15 0 0 15" Margin="-1">
+
+                <ScrollViewer VerticalScrollBarVisibility="Hidden"
+                  HorizontalScrollBarVisibility="Disabled">
+
+                    <StackPanel HorizontalAlignment="Left" Margin="25">
+
+                        <!-- Ноты -->
+                        <TextBlock Text="Ноты" Foreground="#4992FF" FontWeight="SemiBold" FontSize="18" Margin="0,0,0,12"/>
+
+                        <!-- Белые клавиши -->
+                        <Expander Margin="0,0,0,20">
+
+                            <Expander.Header>
+                                <StackPanel Orientation="Horizontal">
+                                    <!-- Заголовок -->
+                                    <TextBlock Text="Белые клавиши"
+                                           Foreground="#e0e0e0"
+                                           FontWeight="SemiBold"
+                                           FontSize="16" Margin="8 0 0 0"/>
+                                </StackPanel>
+                            </Expander.Header>
+
+                            <Grid Width="110" Margin="0 12 0 0">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition/>
+                                    <ColumnDefinition/>
+                                </Grid.ColumnDefinitions>
+                                <!-- Первая колонка -->
+                                <StackPanel Grid.Column="0">
+                                    <TextBlock Text="До" Margin="0,0,0,8" Cursor="Hand" FontSize="13" FontWeight="SemiBold" Foreground="#f9f9f9"/>
+                                    <TextBlock Text="Ре" Margin="0,0,0,8" Cursor="Hand" FontSize="13" FontWeight="Medium" Foreground="#9f9f9f"/>
+                                    <TextBlock Text="Ми" Margin="0,0,0,8" Cursor="Hand" FontSize="13" FontWeight="Medium" Foreground="#9f9f9f"/>
+                                    <TextBlock Text="Фа" Margin="0,0,0,0" Cursor="Hand" FontSize="13" FontWeight="Medium" Foreground="#9f9f9f"/>
+                                </StackPanel>
+                                <!-- Вторая колонка -->
+                                <StackPanel Grid.Column="1" Margin="10,0,0,0">
+                                    <TextBlock Text="Соль" Margin="0,0,0,8" Cursor="Hand" FontSize="13" FontWeight="Medium" Foreground="#9f9f9f"/>
+                                    <TextBlock Text="Ля" Margin="0,0,0,8" Cursor="Hand" FontSize="13" FontWeight="Medium" Foreground="#9f9f9f"/>
+                                    <TextBlock Text="Си" Margin="0,0,0,0" Cursor="Hand" FontSize="13" FontWeight="Medium" Foreground="#9f9f9f"/>
+                                </StackPanel>
+                            </Grid>
+                        </Expander>
+
+                        <!-- Черные клавиши -->
+                        <Expander>
+
+                            <Expander.Header>
+                                <StackPanel Orientation="Horizontal">
+                                    <!-- Заголовок -->
+                                    <TextBlock Text="Чёрные клавиши"
+                                           Foreground="#e0e0e0"
+                                           FontWeight="SemiBold"
+                                           FontSize="16" Margin="8 0 0 0"/>
+                                </StackPanel>
+                            </Expander.Header>
+
+                            <Grid Width="110" Margin="0 12 0 0">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition/>
+                                    <ColumnDefinition/>
+                                </Grid.ColumnDefinitions>
+                                <StackPanel Grid.Column="0">
+                                    <TextBlock Text="До#" Margin="0,0,0,8" Cursor="Hand" FontSize="13" FontWeight="Medium" Foreground="#9f9f9f"/>
+                                    <TextBlock Text="Ре#" Margin="0,0,0,8" Cursor="Hand" FontSize="13" FontWeight="Medium" Foreground="#9f9f9f"/>
+                                    <TextBlock Text="Фа#" Margin="0,0,0,0" Cursor="Hand" FontSize="13" FontWeight="Medium" Foreground="#9f9f9f"/>
+                                </StackPanel>
+                                <StackPanel Grid.Column="1" Margin="10,0,0,0">
+                                    <TextBlock Text="Соль#" Margin="0,0,0,8" Cursor="Hand" FontSize="13" FontWeight="Medium" Foreground="#9f9f9f"/>
+                                    <TextBlock Text="Ля#" Margin="0,0,0,0" Cursor="Hand" FontSize="13" FontWeight="Medium" Foreground="#9f9f9f"/>
+                                </StackPanel>
+                            </Grid>
+                        </Expander>
+
+                        <!-- Сепаратор -->
+                        <Separator Margin="-25,20" Width="220" Background="#242424"/>
+
+                        <!-- Челленджи -->
+                        <TextBlock Text="Челленджи"
+                               Foreground="#4992FF"
+                               FontWeight="SemiBold"
+                               FontSize="18" Margin="0,0,0,16"/>
                         <StackPanel>
-                            <!-- Заголовок урока -->
-                            <TextBlock Text="{Binding Title}" FontWeight="Bold" FontSize="14" Margin="10,10,10,5" TextWrapping="Wrap"/>
-
-                            <!-- Видео через WebBrowser -->
-                            <WebBrowser x:Name="LessonWebBrowser" Margin="10,0,10,10" Loaded="WebBrowser_Loaded"/>
+                            <TextBlock Text="Тренировка на слух"
+                                   Cursor="Hand" Margin="0,0,0,5"
+                                   Foreground="#9f9f9f"
+                                   FontSize="13"
+                                   FontWeight="Medium"/>
+                            <TextBlock Text="Тренировка на чтение"
+                                   Cursor="Hand"
+                                   Foreground="#9f9f9f"
+                                   FontSize="13"
+                                   FontWeight="Medium"/>
                         </StackPanel>
-                    </Border>
-                </DataTemplate>
-            </ListView.ItemTemplate>
-        </ListView>
-    </Grid>
+
+                    </StackPanel>
+                </ScrollViewer>
+            </Border>
+
+            <Grid Grid.Column="1" Margin="50,25,50,50">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="auto"/>
+                    <!-- 1 row: название ноты -->
+                    <RowDefinition Height="2*"/>
+                    <!-- 2 row: нотный стан -->
+                    <RowDefinition Height="2*"/>
+                    <!-- 3 row: клавиатура -->
+                    <RowDefinition Height="*"/>
+                    <!-- 4 row: подпись -->
+                </Grid.RowDefinitions>
+
+                <!-- 1 row: Название ноты -->
+                <TextBlock Grid.Row="0" Text="До 1 октавы"
+                           FontSize="20"
+                           FontWeight="SemiBold"
+                           Foreground="#2e2e2e"/>
+
+                <Line Grid.Row="0" X1="0" Y1="-0.5" X2="36" Y2="60"
+                      Stroke="#2e2e2e" StrokeThickness="1"
+                      HorizontalAlignment="Right"
+                      Margin="-25 -25 -51 0"/>
+                
+                <Line Grid.Row="0" X1="0" Y1="-0.5" X2="44" Y2="44"
+                      Stroke="#2e2e2e" StrokeThickness="1"
+                      HorizontalAlignment="Right"
+                      Margin="-25 -25 -50.7 0"/>
+
+                <!-- 2 row: Скрипичный ключ + нотный стан + кнопка звука + текст -->
+                <Grid Grid.Row="1"
+                      HorizontalAlignment="Center" VerticalAlignment="Center">
+                    <Grid.ColumnDefinitions>
+                        <!-- Блок с нотным станом -->
+                        <ColumnDefinition Width="Auto"/>
+                        <!-- Текст -->
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <!-- Блок с нотным станом -->
+                    <StackPanel Grid.Column="0"
+                                Orientation="Horizontal">
+
+                        <!-- Скрипичный ключ -->
+                        <svgc:SvgViewbox Source="/Images/treble_clef.svg"
+                                     Margin="0,0,8,13"
+                                     Height="41"/>
+
+                        <!-- Нотный стан с линиями -->
+                        <Canvas Grid.Column="1" Width="151" Height="65" Margin="24,0,0,0">
+                            <!-- Линии нотного стана -->
+                            <Line X1="0" Y1="0" X2="151" Y2="0" Stroke="#1e1e1e" StrokeThickness="1"/>
+                            <Line X1="0" Y1="13" X2="151" Y2="13" Stroke="#1e1e1e" StrokeThickness="1"/>
+                            <Line X1="0" Y1="26" X2="151" Y2="26" Stroke="#1e1e1e" StrokeThickness="1"/>
+                            <Line X1="0" Y1="39" X2="151" Y2="39" Stroke="#1e1e1e" StrokeThickness="1"/>
+                            <Line X1="0" Y1="52" X2="151" Y2="52" Stroke="#1e1e1e" StrokeThickness="1"/>
+
+                            <!-- Пример нот: до 1 октавы под станом с доп. линией -->
+                            <Ellipse Width="12" Height="12" StrokeThickness="1" Stroke="#1e1e1e" Canvas.Left="40" Canvas.Top="52"/>
+                            <!-- До -->
+                        </Canvas>
+
+                        <!-- Кнопка звука и текст -->
+                        <Button Width="32" Height="32" Margin="24,0,0,13"
+                                Style="{StaticResource IconButtonStyle}">
+                            <svgc:SvgViewbox Source="/Images/playback.svg"/>
+                        </Button>
+                    </StackPanel>
+
+                    <TextBlock Grid.Column="1"
+                               TextWrapping="Wrap"
+                               FontSize="15"
+                               Foreground="#2e2e2e"
+                               Margin="90 0 0 19"
+                               LineHeight="15.3"
+                               TextAlignment="Center"
+                               HorizontalAlignment="Right"
+                               VerticalAlignment="Center">
+                        <Run Text="Сыграйте ноту самостоятельно,"/>
+                        <LineBreak/>
+                        <Run Text="чтобы лучше её почувствовать!"/>
+                    </TextBlock>
+                </Grid>
+
+                <!-- 3 row: клавиатура пианино -->
+                <Grid Grid.Row="2"
+                      Width="323" Height="130"
+                      VerticalAlignment="Bottom">
+                    <Grid.ColumnDefinitions>
+                        <!-- 8 белых клавиш -->
+                        <ColumnDefinition/>
+                        <ColumnDefinition/>
+                        <ColumnDefinition/>
+                        <ColumnDefinition/>
+                        <ColumnDefinition/>
+                        <ColumnDefinition/>
+                        <ColumnDefinition/>
+                        <ColumnDefinition/>
+                    </Grid.ColumnDefinitions>
+
+                    <!-- Белые клавиши -->
+                    <Button Grid.Column="0" Background="#9f9f9f" Content="C" Foreground="#2e2e2e" FontSize="15" BorderBrush="#2e2e2e" BorderThickness="0.4"/>
+                    <Button Grid.Column="1" Background="White" Content="D" Foreground="#2e2e2e" FontSize="15" BorderBrush="#2e2e2e" BorderThickness="0.4"/>
+                    <Button Grid.Column="2" Background="White" Content="E" Foreground="#2e2e2e" FontSize="15" BorderBrush="#2e2e2e" BorderThickness="0.4"/>
+                    <Button Grid.Column="3" Background="White" Content="F" Foreground="#2e2e2e" FontSize="15" BorderBrush="#2e2e2e" BorderThickness="0.4"/>
+                    <Button Grid.Column="4" Background="White" Content="G" Foreground="#2e2e2e" FontSize="15" BorderBrush="#2e2e2e" BorderThickness="0.4"/>
+                    <Button Grid.Column="5" Background="White" Content="A" Foreground="#2e2e2e" FontSize="15" BorderBrush="#2e2e2e" BorderThickness="0.4"/>
+                    <Button Grid.Column="6" Background="White" Content="B" Foreground="#2e2e2e" FontSize="15" BorderBrush="#2e2e2e" BorderThickness="0.4"/>
+                    <Button Grid.Column="7" Background="White" Content="C" Foreground="#2e2e2e" FontSize="15" BorderBrush="#2e2e2e" BorderThickness="0.4"/>
+
+                    <!-- Черные клавиши поверх белых (используем Canvas или Grid) -->
+                    <Canvas Grid.ColumnSpan="8" HorizontalAlignment="Left" Margin="24,0,0,0">
+                        <Button Width="20" Height="40" Background="Black" Content="" Canvas.Left="30" Canvas.Top="0"/>
+                        <Button Width="20" Height="40" Background="Black" Content="" Canvas.Left="70" Canvas.Top="0"/>
+                        <Button Width="20" Height="40" Background="Black" Content="" Canvas.Left="110" Canvas.Top="0"/>
+                        <Button Width="20" Height="40" Background="Black" Content="" Canvas.Left="150" Canvas.Top="0"/>
+                        <Button Width="20" Height="40" Background="Black" Content="" Canvas.Left="190" Canvas.Top="0"/>
+                    </Canvas>
+                </Grid>
+
+                <!-- 4 row: подпись -->
+                <StackPanel Grid.Row="3" Orientation="Horizontal"
+                            Margin="0 25 0 0"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Bottom">
+                    <TextBlock FontFamily="Segoe UI Symbol"
+                               FontSize="16"
+                               Foreground="#1e1e1e"
+                               Text="🎵"/>
+                    
+                    <TextBlock TextWrapping="Wrap"
+                               FontSize="16"
+                               Foreground="#1e1e1e"
+                               Margin="3 0 3 0"
+                               LineHeight="15.3"
+                               TextAlignment="Center">
+                        <Run Text="Запоминайте названия нот, их звучание, а также расположение"/>
+                        <LineBreak/>
+                        <Run Text="на нотном стане и на клавиатуре инструмента"/>
+                    </TextBlock>
+                    
+                    <TextBlock FontFamily="Segoe UI Symbol"
+                               FontSize="16"
+                               Foreground="#1e1e1e"
+                               Text="🎵"/>
+                </StackPanel>
+            </Grid>
+
+        </Grid>
+    </Border>
 </UserControl>
