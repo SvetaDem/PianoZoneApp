@@ -252,40 +252,90 @@
                 </Grid>
 
                 <!-- 3 row: клавиатура пианино -->
-                <Grid Grid.Row="2"
-                      Width="323" Height="130"
-                      VerticalAlignment="Bottom">
-                    <Grid.ColumnDefinitions>
-                        <!-- 8 белых клавиш -->
-                        <ColumnDefinition/>
-                        <ColumnDefinition/>
-                        <ColumnDefinition/>
-                        <ColumnDefinition/>
-                        <ColumnDefinition/>
-                        <ColumnDefinition/>
-                        <ColumnDefinition/>
-                        <ColumnDefinition/>
-                    </Grid.ColumnDefinitions>
+                <Border Grid.Row="2"
+                        Width="283"
+                        Height="130"
+                        CornerRadius="15"
+                        BorderBrush="#662e2e2e"
+                        BorderThickness="2"
+                        Background="Transparent">
 
-                    <!-- Белые клавиши -->
-                    <Button Grid.Column="0" Background="#9f9f9f" Content="C" Foreground="#2e2e2e" FontSize="15" BorderBrush="#2e2e2e" BorderThickness="0.4"/>
-                    <Button Grid.Column="1" Background="White" Content="D" Foreground="#2e2e2e" FontSize="15" BorderBrush="#2e2e2e" BorderThickness="0.4"/>
-                    <Button Grid.Column="2" Background="White" Content="E" Foreground="#2e2e2e" FontSize="15" BorderBrush="#2e2e2e" BorderThickness="0.4"/>
-                    <Button Grid.Column="3" Background="White" Content="F" Foreground="#2e2e2e" FontSize="15" BorderBrush="#2e2e2e" BorderThickness="0.4"/>
-                    <Button Grid.Column="4" Background="White" Content="G" Foreground="#2e2e2e" FontSize="15" BorderBrush="#2e2e2e" BorderThickness="0.4"/>
-                    <Button Grid.Column="5" Background="White" Content="A" Foreground="#2e2e2e" FontSize="15" BorderBrush="#2e2e2e" BorderThickness="0.4"/>
-                    <Button Grid.Column="6" Background="White" Content="B" Foreground="#2e2e2e" FontSize="15" BorderBrush="#2e2e2e" BorderThickness="0.4"/>
-                    <Button Grid.Column="7" Background="White" Content="C" Foreground="#2e2e2e" FontSize="15" BorderBrush="#2e2e2e" BorderThickness="0.4"/>
+                    <Grid x:Name="PianoGrid" Loaded="PianoGrid_Loaded">
+                        <!-- Белые клавиши -->
+                        <ItemsControl ItemsSource="{Binding WhiteKeys}">
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <StackPanel Orientation="Horizontal"/>
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
 
-                    <!-- Черные клавиши поверх белых (используем Canvas или Grid) -->
-                    <Canvas Grid.ColumnSpan="8" HorizontalAlignment="Left" Margin="24,0,0,0">
-                        <Button Width="20" Height="40" Background="Black" Content="" Canvas.Left="30" Canvas.Top="0"/>
-                        <Button Width="20" Height="40" Background="Black" Content="" Canvas.Left="70" Canvas.Top="0"/>
-                        <Button Width="20" Height="40" Background="Black" Content="" Canvas.Left="110" Canvas.Top="0"/>
-                        <Button Width="20" Height="40" Background="Black" Content="" Canvas.Left="150" Canvas.Top="0"/>
-                        <Button Width="20" Height="40" Background="Black" Content="" Canvas.Left="190" Canvas.Top="0"/>
-                    </Canvas>
-                </Grid>
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Border Width="40"
+                            Height="130"
+                            BorderBrush="#66000000"
+                            BorderThickness="1">
+
+                                        <Border.Style>
+                                            <Style TargetType="Border">
+                                                <Setter Property="Background" Value="White"/>
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding IsPressed}" Value="True">
+                                                        <Setter Property="Background" Value="#9f9f9f"/>
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </Border.Style>
+
+                                        <TextBlock Text="{Binding Note}"
+                                   VerticalAlignment="Bottom"
+                                   HorizontalAlignment="Center"
+                                   Margin="0,0,0,6"
+                                   FontSize="15"
+                                   Foreground="#2e2e2e"/>
+                                    </Border>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+
+                        <!-- Чёрные клавиши -->
+                        <ItemsControl ItemsSource="{Binding BlackKeys}">
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <Canvas/>
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Border Width="25"
+                            Height="70"
+                            BorderBrush="#66000000"
+                            BorderThickness="1">
+
+                                        <Border.Style>
+                                            <Style TargetType="Border">
+                                                <Setter Property="Background" Value="Black"/>
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding IsPressed}" Value="True">
+                                                        <Setter Property="Background" Value="#9f9f9f"/>
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </Border.Style>
+                                    </Border>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+
+                            <ItemsControl.ItemContainerStyle>
+                                <Style TargetType="ContentPresenter">
+                                    <Setter Property="Canvas.Left" Value="{Binding PositionX}"/>
+                                    <Setter Property="Canvas.Top" Value="0"/>
+                                </Style>
+                            </ItemsControl.ItemContainerStyle>
+                        </ItemsControl>
+                    </Grid>
+                </Border>
 
                 <!-- 4 row: подпись -->
                 <StackPanel Grid.Row="3" Orientation="Horizontal"

@@ -203,7 +203,6 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="Converters\KeyColorConverter.cs" />
     <Compile Include="Models\CustomMessageBoxButton.cs" />
     <Compile Include="Models\CustomMessageBoxResult.cs" />
     <Compile Include="Models\CustomMessageBoxImage.cs" />
@@ -217,6 +216,7 @@
     <Compile Include="Models\User.cs" />
     <Compile Include="Services\MidiParser.cs" />
     <Compile Include="Services\PitchDetector.cs" />
+    <Compile Include="ViewModels\LessonsViewModel.cs" />
     <Compile Include="ViewModels\LibraryViewModel.cs" />
     <Compile Include="ViewModels\PianoViewModel.cs" />
     <Compile Include="Views\CustomMessageBox.xaml.cs">
