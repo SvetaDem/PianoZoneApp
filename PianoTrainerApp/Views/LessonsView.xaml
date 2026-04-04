@@ -424,7 +424,8 @@
 
                         <!-- Кнопка звука и текст -->
                         <Button Width="32" Height="32" Margin="24,0,0,13"
-                                Style="{StaticResource IconButtonStyle}">
+                                Style="{StaticResource IconButtonStyle}"
+                                Click="PlayNote_Click">
                             <svgc:SvgViewbox Source="/Images/playback.svg"/>
                         </Button>
                     </StackPanel>
