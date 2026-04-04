@@ -34,6 +34,9 @@ namespace PianoTrainerApp.ViewModels
                     OnPropertyChanged(nameof(ShowSoundButton));
                     OnPropertyChanged(nameof(ShowNextButton));
                     OnPropertyChanged(nameof(ShowLine));
+
+                    // Обновляем текст
+                    UpdateBottomText();
                 }
             }
         }
@@ -165,7 +168,32 @@ namespace PianoTrainerApp.ViewModels
             }
         }
 
-        
+        // Флаг, можно ли сейчас отвечать
+        private bool _canAnswer = true;
+        public bool CanAnswer
+        {
+            get => _canAnswer;
+            set { _canAnswer = value; OnPropertyChanged(nameof(CanAnswer)); }
+        }
+
+        // Последняя сгенерированная нота
+        private string _lastGeneratedNote;
+
+        // Текст под клавиатурой пианино
+        private string _bottomText;
+        public string BottomText
+        {
+            get => _bottomText;
+            set
+            {
+                if (_bottomText != value)
+                {
+                    _bottomText = value;
+                    OnPropertyChanged(nameof(BottomText));
+                }
+            }
+        }
+
         public LessonsViewModel()
         {
             WhiteKeys = new ObservableCollection<PianoKey>();
@@ -174,14 +202,10 @@ namespace PianoTrainerApp.ViewModels
             GenerateKeys();
 
             CurrentMode = LearningMode.Theory; // по умолчанию теория
+            UpdateBottomText();                // // сразу показываем текст снизу
 
             SelectedNote = "C";
             Header = "До 1 октавы";
-        }
-
-        public bool IsNoteSelected(string note)
-        {
-            return SelectedNote == note;
         }
 
         private void GenerateKeys()
@@ -217,12 +241,6 @@ namespace PianoTrainerApp.ViewModels
             }
         }
 
-        public void SelectNote(string note)
-        {
-            foreach (var key in WhiteKeys.Concat(BlackKeys))
-                key.IsPressed = key.Note == note;
-        }
-
         // Метод обновления пианино
         private void UpdatePiano()
         {
@@ -230,6 +248,16 @@ namespace PianoTrainerApp.ViewModels
             {
                 foreach (var key in WhiteKeys.Concat(BlackKeys))
                     key.IsPressed = key.Note == SelectedNote;
+            }
+        }
+
+        // Сброс выделений клавиш пианино
+        public void ResetKeys()
+        {
+            foreach (var key in WhiteKeys.Concat(BlackKeys))
+            {
+                key.IsPressed = false;
+                key.IsCorrectlyPlayed = null;
             }
         }
 
@@ -291,17 +319,18 @@ namespace PianoTrainerApp.ViewModels
             }
 
             // Меняем тексты подсказок
-            if (ShowFlatNote)
-            {
-                Instruction = "Энгармонически равные звуки\n- звучат одинаково, а пишутся по-разному";
-            }
-            else
-            {
-                Instruction = "Сыграйте ноту самостоятельно,\nчтобы лучше её почувствовать!";
-            }
-
+            Instruction = ShowFlatNote
+                ? "Энгармонически равные звуки\n- звучат одинаково, а пишутся по-разному"
+                : "Сыграй ноту самостоятельно,\nчтобы лучше её почувствовать!";
         }
 
+        // Метод обновления текста под пианино
+        private void UpdateBottomText()
+        {
+            BottomText = IsTheory
+                    ? "Запоминай названия нот, их звучание, а также расположение\nна нотном стане и на клавиатуре инструмента"
+                    : "Смелее, проверь себя"; // пока пусто, ждем ответ
+        }
         // Метод для смены режима
         public void SetMode(LearningMode mode)
         {
@@ -330,24 +359,30 @@ namespace PianoTrainerApp.ViewModels
         {
             string[] notes = { "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B" };
 
-            // Сбрасываем выделение на пианино и текстах
-            foreach (var key in WhiteKeys.Concat(BlackKeys))
-                key.IsPressed = false;
+            CanAnswer = true;
+            ResetKeys();
 
-            SelectedNote = notes[_random.Next(notes.Length)];
+            string newNote;
 
-            // Заголовок и текст инструкции
+            do
+            {
+                newNote = notes[_random.Next(notes.Length)];
+            }
+            while (newNote == _lastGeneratedNote); // не даём повторяться
+
+            _lastGeneratedNote = newNote;
+            SelectedNote = newNote;
+
+            // сбрасываем текст до выбора клавиши
+            BottomText = "Смелее, проверь себя";
+
+            // Заголовок и текст
             if (CurrentMode == LearningMode.Reading)
             {
                 Header = "Чтение нот";
-                if (ShowFlatNote)
-                {
-                    Instruction = "Определите ноты слева и нажмите\nсоответствующую клавишу ниже";
-                }
-                else
-                {
-                    Instruction = "Определите ноту слева и нажмите\nсоответствующую клавишу ниже";
-                }
+                Instruction = ShowFlatNote
+                    ? "Определи ноты слева и нажмите\nсоответствующую клавишу ниже"
+                    : "Определи ноту слева и нажмите\nсоответствующую клавишу ниже";
             }
             else if (CurrentMode == LearningMode.Hearing)
             {

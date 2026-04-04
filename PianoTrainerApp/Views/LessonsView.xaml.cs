@@ -77,9 +77,11 @@ namespace PianoTrainerApp.Views
             var vm = DataContext as LessonsViewModel;
             if (vm != null)
             {
-                vm.SelectedNote = note;
-                vm.Header = header; // сразу обновляем заголовок
                 vm.SetMode(LearningMode.Theory);
+                vm.ResetKeys();
+
+                vm.SelectedNote = note;
+                vm.Header = header; // сразу обновляем заголовок            
             }
         }
 
@@ -189,10 +191,60 @@ namespace PianoTrainerApp.Views
             var vm = DataContext as LessonsViewModel;
             if (vm == null) return;
 
-            // Генерируем новую ноту только если сейчас челлендж (Reading или Hearing)
-            if (vm.CurrentMode == LearningMode.Reading || vm.CurrentMode == LearningMode.Hearing)
+            // Генерация новой ноты челленджа
+            vm.GenerateRandomNoteForChallenge();
+        }
+
+        // Наведение мыши
+        private void PianoKey_MouseEnter(object sender, MouseEventArgs e)
+        {
+            if (DataContext is LessonsViewModel vm && vm.CurrentMode != LearningMode.Theory)
             {
-                vm.GenerateRandomNoteForChallenge();
+                if (sender is Border border && border.DataContext is PianoKey key)
+                    key.IsPressed = true;
+            }
+        }
+
+        private void PianoKey_MouseLeave(object sender, MouseEventArgs e)
+        {
+            if (DataContext is LessonsViewModel vm && vm.CurrentMode != LearningMode.Theory)
+            {
+                if (sender is Border border && border.DataContext is PianoKey key)
+                    key.IsPressed = false;
+            }
+        }
+
+        // Клик по клавише
+        private void PianoKey_Click(object sender, MouseButtonEventArgs e)
+        {
+            if (!(DataContext is LessonsViewModel vm)
+                || vm.CurrentMode == LearningMode.Theory
+                || !vm.CanAnswer) return;  // Блокируем, если ответ уже дан
+
+            if (sender is Border border && border.DataContext is PianoKey key)
+            {
+                string correctNote = vm.SelectedNote;
+
+                if (key.Note == correctNote)
+                {
+                    key.IsCorrectlyPlayed = true;
+                    vm.BottomText = "Отлично, так держать!";
+                }
+                else
+                {
+                    key.IsCorrectlyPlayed = false;
+
+                    // Показываем верную клавишу
+                    var correctKey = vm.WhiteKeys.Concat(vm.BlackKeys)
+                                                 .FirstOrDefault(k => k.Note == correctNote);
+                    if (correctKey != null)
+                        correctKey.IsCorrectlyPlayed = true;
+
+                    vm.BottomText = "Ну ничего, в следующий раз получится!";
+                }
+
+                // Блокируем последующие клики
+                vm.CanAnswer = false;
             }
         }
     }

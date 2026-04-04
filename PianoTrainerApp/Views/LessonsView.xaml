@@ -612,16 +612,28 @@
                             <ItemsControl.ItemTemplate>
                                 <DataTemplate>
                                     <Border Width="40"
-                            Height="130"
-                            BorderBrush="#66000000"
-                            BorderThickness="1">
+                                            Height="130"
+                                            BorderBrush="#66000000"
+                                            BorderThickness="1"
+                                            MouseEnter="PianoKey_MouseEnter"
+                                            MouseLeave="PianoKey_MouseLeave"
+                                            MouseLeftButtonDown="PianoKey_Click">
 
                                         <Border.Style>
                                             <Style TargetType="Border">
                                                 <Setter Property="Background" Value="White"/>
                                                 <Style.Triggers>
+                                                    <!-- Наведение -->
                                                     <DataTrigger Binding="{Binding IsPressed}" Value="True">
                                                         <Setter Property="Background" Value="#9f9f9f"/>
+                                                    </DataTrigger>
+                                                    <!-- Правильная клавиша -->
+                                                    <DataTrigger Binding="{Binding IsCorrectlyPlayed}" Value="True">
+                                                        <Setter Property="Background" Value="#83CC7A"/>
+                                                    </DataTrigger>
+                                                    <!-- Неправильная клавиша -->
+                                                    <DataTrigger Binding="{Binding IsCorrectlyPlayed}" Value="False">
+                                                        <Setter Property="Background" Value="#E44143"/>
                                                     </DataTrigger>
                                                 </Style.Triggers>
                                             </Style>
@@ -649,16 +661,28 @@
                             <ItemsControl.ItemTemplate>
                                 <DataTemplate>
                                     <Border Width="25"
-                            Height="70"
-                            BorderBrush="#66000000"
-                            BorderThickness="1">
+                                            Height="70"
+                                            BorderBrush="#66000000"
+                                            BorderThickness="1"
+                                            MouseEnter="PianoKey_MouseEnter"
+                                            MouseLeave="PianoKey_MouseLeave"
+                                            MouseLeftButtonDown="PianoKey_Click">
 
                                         <Border.Style>
                                             <Style TargetType="Border">
                                                 <Setter Property="Background" Value="Black"/>
                                                 <Style.Triggers>
+                                                    <!-- Наведение -->
                                                     <DataTrigger Binding="{Binding IsPressed}" Value="True">
                                                         <Setter Property="Background" Value="#9f9f9f"/>
+                                                    </DataTrigger>
+                                                    <!-- Правильная клавиша -->
+                                                    <DataTrigger Binding="{Binding IsCorrectlyPlayed}" Value="True">
+                                                        <Setter Property="Background" Value="#83CC7A"/>
+                                                    </DataTrigger>
+                                                    <!-- Неправильная клавиша -->
+                                                    <DataTrigger Binding="{Binding IsCorrectlyPlayed}" Value="False">
+                                                        <Setter Property="Background" Value="#E44143"/>
                                                     </DataTrigger>
                                                 </Style.Triggers>
                                             </Style>
@@ -692,12 +716,9 @@
                                Foreground="#1e1e1e"
                                Margin="3 0 3 0"
                                LineHeight="15.3"
-                               TextAlignment="Center">
-                        <Run Text="Запоминайте названия нот, их звучание, а также расположение"/>
-                        <LineBreak/>
-                        <Run Text="на нотном стане и на клавиатуре инструмента"/>
-                    </TextBlock>
-
+                               TextAlignment="Center"
+                               Text="{Binding BottomText}"/>
+                    
                     <TextBlock FontFamily="Segoe UI Symbol"
                                FontSize="16"
                                Foreground="#1e1e1e"
