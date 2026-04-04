@@ -57,6 +57,9 @@
             </Setter>
         </Style>
 
+        <!-- Конвертер bool значений для visibility -->
+        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
+
     </UserControl.Resources>
 
     <Border Background="#d9d9d9" CornerRadius="15"
@@ -80,7 +83,7 @@
                         <TextBlock Text="Ноты" Foreground="#4992FF" FontWeight="SemiBold" FontSize="18" Margin="0,0,0,12"/>
 
                         <!-- Белые клавиши -->
-                        <Expander Margin="0,0,0,20">
+                        <Expander Margin="0,0,0,20" IsExpanded="True">
 
                             <Expander.Header>
                                 <StackPanel Orientation="Horizontal">
@@ -99,16 +102,114 @@
                                 </Grid.ColumnDefinitions>
                                 <!-- Первая колонка -->
                                 <StackPanel Grid.Column="0">
-                                    <TextBlock Text="До" Margin="0,0,0,8" Cursor="Hand" FontSize="13" FontWeight="SemiBold" Foreground="#f9f9f9"/>
-                                    <TextBlock Text="Ре" Margin="0,0,0,8" Cursor="Hand" FontSize="13" FontWeight="Medium" Foreground="#9f9f9f"/>
-                                    <TextBlock Text="Ми" Margin="0,0,0,8" Cursor="Hand" FontSize="13" FontWeight="Medium" Foreground="#9f9f9f"/>
-                                    <TextBlock Text="Фа" Margin="0,0,0,0" Cursor="Hand" FontSize="13" FontWeight="Medium" Foreground="#9f9f9f"/>
+                                    <TextBlock Text="До" Margin="0,0,0,8" Cursor="Hand" FontSize="13" MouseLeftButtonDown="Note_Click">
+                                        <TextBlock.Style>
+                                            <Style TargetType="TextBlock">
+                                                <Setter Property="Foreground" Value="#9f9f9f"/>
+                                                <Setter Property="FontWeight" Value="Medium"/>
+
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding SelectedNote}" Value="C">
+                                                        <Setter Property="Foreground" Value="#f9f9f9"/>
+                                                        <Setter Property="FontWeight" Value="SemiBold"/>
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </TextBlock.Style>
+                                    </TextBlock>
+                                    <TextBlock Text="Ре" Margin="0,0,0,8" Cursor="Hand" FontSize="13" MouseLeftButtonDown="Note_Click">
+                                        <TextBlock.Style>
+                                            <Style TargetType="TextBlock">
+                                                <Setter Property="Foreground" Value="#9f9f9f"/>
+                                                <Setter Property="FontWeight" Value="Medium"/>
+
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding SelectedNote}" Value="D">
+                                                        <Setter Property="Foreground" Value="#f9f9f9"/>
+                                                        <Setter Property="FontWeight" Value="SemiBold"/>
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </TextBlock.Style>
+                                    </TextBlock>
+                                    <TextBlock Text="Ми" Margin="0,0,0,8" Cursor="Hand" FontSize="13" MouseLeftButtonDown="Note_Click">
+                                        <TextBlock.Style>
+                                            <Style TargetType="TextBlock">
+                                                <Setter Property="Foreground" Value="#9f9f9f"/>
+                                                <Setter Property="FontWeight" Value="Medium"/>
+
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding SelectedNote}" Value="E">
+                                                        <Setter Property="Foreground" Value="#f9f9f9"/>
+                                                        <Setter Property="FontWeight" Value="SemiBold"/>
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </TextBlock.Style>
+                                    </TextBlock>
+                                    <TextBlock Text="Фа" Margin="0,0,0,0" Cursor="Hand" FontSize="13" MouseLeftButtonDown="Note_Click">
+                                        <TextBlock.Style>
+                                            <Style TargetType="TextBlock">
+                                                <Setter Property="Foreground" Value="#9f9f9f"/>
+                                                <Setter Property="FontWeight" Value="Medium"/>
+
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding SelectedNote}" Value="F">
+                                                        <Setter Property="Foreground" Value="#f9f9f9"/>
+                                                        <Setter Property="FontWeight" Value="SemiBold"/>
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </TextBlock.Style>
+                                    </TextBlock>
                                 </StackPanel>
                                 <!-- Вторая колонка -->
                                 <StackPanel Grid.Column="1" Margin="10,0,0,0">
-                                    <TextBlock Text="Соль" Margin="0,0,0,8" Cursor="Hand" FontSize="13" FontWeight="Medium" Foreground="#9f9f9f"/>
-                                    <TextBlock Text="Ля" Margin="0,0,0,8" Cursor="Hand" FontSize="13" FontWeight="Medium" Foreground="#9f9f9f"/>
-                                    <TextBlock Text="Си" Margin="0,0,0,0" Cursor="Hand" FontSize="13" FontWeight="Medium" Foreground="#9f9f9f"/>
+                                    <TextBlock Text="Соль" Margin="0,0,0,8" Cursor="Hand" FontSize="13" MouseLeftButtonDown="Note_Click">
+                                        <TextBlock.Style>
+                                            <Style TargetType="TextBlock">
+                                                <Setter Property="Foreground" Value="#9f9f9f"/>
+                                                <Setter Property="FontWeight" Value="Medium"/>
+
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding SelectedNote}" Value="G">
+                                                        <Setter Property="Foreground" Value="#f9f9f9"/>
+                                                        <Setter Property="FontWeight" Value="SemiBold"/>
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </TextBlock.Style>
+                                    </TextBlock>
+                                    <TextBlock Text="Ля" Margin="0,0,0,8" Cursor="Hand" FontSize="13" MouseLeftButtonDown="Note_Click">
+                                        <TextBlock.Style>
+                                            <Style TargetType="TextBlock">
+                                                <Setter Property="Foreground" Value="#9f9f9f"/>
+                                                <Setter Property="FontWeight" Value="Medium"/>
+
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding SelectedNote}" Value="A">
+                                                        <Setter Property="Foreground" Value="#f9f9f9"/>
+                                                        <Setter Property="FontWeight" Value="SemiBold"/>
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </TextBlock.Style>
+                                    </TextBlock>
+                                    <TextBlock Text="Си" Margin="0,0,0,0" Cursor="Hand" FontSize="13" MouseLeftButtonDown="Note_Click">
+                                        <TextBlock.Style>
+                                            <Style TargetType="TextBlock">
+                                                <Setter Property="Foreground" Value="#9f9f9f"/>
+                                                <Setter Property="FontWeight" Value="Medium"/>
+
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding SelectedNote}" Value="B">
+                                                        <Setter Property="Foreground" Value="#f9f9f9"/>
+                                                        <Setter Property="FontWeight" Value="SemiBold"/>
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </TextBlock.Style>
+                                    </TextBlock>
                                 </StackPanel>
                             </Grid>
                         </Expander>
@@ -132,13 +233,83 @@
                                     <ColumnDefinition/>
                                 </Grid.ColumnDefinitions>
                                 <StackPanel Grid.Column="0">
-                                    <TextBlock Text="До#" Margin="0,0,0,8" Cursor="Hand" FontSize="13" FontWeight="Medium" Foreground="#9f9f9f"/>
-                                    <TextBlock Text="Ре#" Margin="0,0,0,8" Cursor="Hand" FontSize="13" FontWeight="Medium" Foreground="#9f9f9f"/>
-                                    <TextBlock Text="Фа#" Margin="0,0,0,0" Cursor="Hand" FontSize="13" FontWeight="Medium" Foreground="#9f9f9f"/>
+                                    <TextBlock Text="До#" Margin="0,0,0,8" Cursor="Hand" FontSize="13" MouseLeftButtonDown="Note_Click">
+                                        <TextBlock.Style>
+                                            <Style TargetType="TextBlock">
+                                                <Setter Property="Foreground" Value="#9f9f9f"/>
+                                                <Setter Property="FontWeight" Value="Medium"/>
+
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding SelectedNote}" Value="C#">
+                                                        <Setter Property="Foreground" Value="#f9f9f9"/>
+                                                        <Setter Property="FontWeight" Value="SemiBold"/>
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </TextBlock.Style>
+                                    </TextBlock>
+                                    <TextBlock Text="Ре#" Margin="0,0,0,8" Cursor="Hand" FontSize="13" MouseLeftButtonDown="Note_Click">
+                                        <TextBlock.Style>
+                                            <Style TargetType="TextBlock">
+                                                <Setter Property="Foreground" Value="#9f9f9f"/>
+                                                <Setter Property="FontWeight" Value="Medium"/>
+
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding SelectedNote}" Value="D#">
+                                                        <Setter Property="Foreground" Value="#f9f9f9"/>
+                                                        <Setter Property="FontWeight" Value="SemiBold"/>
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </TextBlock.Style>
+                                    </TextBlock>
+                                    <TextBlock Text="Фа#" Margin="0,0,0,0" Cursor="Hand" FontSize="13" MouseLeftButtonDown="Note_Click">
+                                        <TextBlock.Style>
+                                            <Style TargetType="TextBlock">
+                                                <Setter Property="Foreground" Value="#9f9f9f"/>
+                                                <Setter Property="FontWeight" Value="Medium"/>
+
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding SelectedNote}" Value="F#">
+                                                        <Setter Property="Foreground" Value="#f9f9f9"/>
+                                                        <Setter Property="FontWeight" Value="SemiBold"/>
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </TextBlock.Style>
+                                    </TextBlock>
                                 </StackPanel>
                                 <StackPanel Grid.Column="1" Margin="10,0,0,0">
-                                    <TextBlock Text="Соль#" Margin="0,0,0,8" Cursor="Hand" FontSize="13" FontWeight="Medium" Foreground="#9f9f9f"/>
-                                    <TextBlock Text="Ля#" Margin="0,0,0,0" Cursor="Hand" FontSize="13" FontWeight="Medium" Foreground="#9f9f9f"/>
+                                    <TextBlock Text="Соль#" Margin="0,0,0,8" Cursor="Hand" FontSize="13" MouseLeftButtonDown="Note_Click">
+                                        <TextBlock.Style>
+                                            <Style TargetType="TextBlock">
+                                                <Setter Property="Foreground" Value="#9f9f9f"/>
+                                                <Setter Property="FontWeight" Value="Medium"/>
+
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding SelectedNote}" Value="G#">
+                                                        <Setter Property="Foreground" Value="#f9f9f9"/>
+                                                        <Setter Property="FontWeight" Value="SemiBold"/>
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </TextBlock.Style>
+                                    </TextBlock>
+                                    <TextBlock Text="Ля#" Margin="0,0,0,0" Cursor="Hand" FontSize="13" MouseLeftButtonDown="Note_Click">
+                                        <TextBlock.Style>
+                                            <Style TargetType="TextBlock">
+                                                <Setter Property="Foreground" Value="#9f9f9f"/>
+                                                <Setter Property="FontWeight" Value="Medium"/>
+
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding SelectedNote}" Value="A#">
+                                                        <Setter Property="Foreground" Value="#f9f9f9"/>
+                                                        <Setter Property="FontWeight" Value="SemiBold"/>
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </TextBlock.Style>
+                                    </TextBlock>
                                 </StackPanel>
                             </Grid>
                         </Expander>
@@ -181,7 +352,8 @@
                 </Grid.RowDefinitions>
 
                 <!-- 1 row: Название ноты -->
-                <TextBlock Grid.Row="0" Text="До 1 октавы"
+                <TextBlock Grid.Row="0"
+                           Text="{Binding NoteHeader}"
                            FontSize="20"
                            FontWeight="SemiBold"
                            Foreground="#2e2e2e"/>
@@ -190,7 +362,7 @@
                       Stroke="#2e2e2e" StrokeThickness="1"
                       HorizontalAlignment="Right"
                       Margin="-25 -25 -51 0"/>
-                
+
                 <Line Grid.Row="0" X1="0" Y1="-0.5" X2="44" Y2="44"
                       Stroke="#2e2e2e" StrokeThickness="1"
                       HorizontalAlignment="Right"
@@ -224,9 +396,30 @@
                             <Line X1="0" Y1="39" X2="151" Y2="39" Stroke="#1e1e1e" StrokeThickness="1"/>
                             <Line X1="0" Y1="52" X2="151" Y2="52" Stroke="#1e1e1e" StrokeThickness="1"/>
 
-                            <!-- Пример нот: до 1 октавы под станом с доп. линией -->
-                            <Ellipse Width="12" Height="12" StrokeThickness="1" Stroke="#1e1e1e" Canvas.Left="40" Canvas.Top="52"/>
-                            <!-- До -->
+                            <!-- Основная нота или диез -->
+                            <Ellipse Width="12" Height="12"
+                                     StrokeThickness="1"
+                                     Stroke="#1e1e1e"
+                                     Canvas.Left="40"
+                                     Canvas.Top="{Binding NoteY}"/>
+
+                            <TextBlock Text="{Binding NotePrefixSharp}"
+                                       FontSize="20"
+                                       Canvas.Left="30"
+                                       Canvas.Top="{Binding NoteTextY}"/>
+                            <!-- Бемоль для энгармонических нот -->
+                            <Ellipse Width="12" Height="12"
+                                     StrokeThickness="1"
+                                     Stroke="#1e1e1e"
+                                     Canvas.Left="100"
+                                     Canvas.Top="{Binding FlatNoteY}"
+                                     Visibility="{Binding ShowFlatNote, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+
+                            <TextBlock Text="{Binding NotePrefixFlat}"
+                                       FontSize="20"
+                                       Canvas.Left="90"
+                                       Canvas.Top="{Binding FlatNoteTextY}"
+                                       Visibility="{Binding ShowFlatNote, Converter={StaticResource BooleanToVisibilityConverter}}"/>
                         </Canvas>
 
                         <!-- Кнопка звука и текст -->
@@ -237,6 +430,7 @@
                     </StackPanel>
 
                     <TextBlock Grid.Column="1"
+                               Text="{Binding NoteInstruction}"
                                TextWrapping="Wrap"
                                FontSize="15"
                                Foreground="#2e2e2e"
@@ -244,11 +438,7 @@
                                LineHeight="15.3"
                                TextAlignment="Center"
                                HorizontalAlignment="Right"
-                               VerticalAlignment="Center">
-                        <Run Text="Сыграйте ноту самостоятельно,"/>
-                        <LineBreak/>
-                        <Run Text="чтобы лучше её почувствовать!"/>
-                    </TextBlock>
+                               VerticalAlignment="Center"/>
                 </Grid>
 
                 <!-- 3 row: клавиатура пианино -->
@@ -346,7 +536,7 @@
                                FontSize="16"
                                Foreground="#1e1e1e"
                                Text="🎵"/>
-                    
+
                     <TextBlock TextWrapping="Wrap"
                                FontSize="16"
                                Foreground="#1e1e1e"
@@ -357,7 +547,7 @@
                         <LineBreak/>
                         <Run Text="на нотном стане и на клавиатуре инструмента"/>
                     </TextBlock>
-                    
+
                     <TextBlock FontFamily="Segoe UI Symbol"
                                FontSize="16"
                                Foreground="#1e1e1e"
