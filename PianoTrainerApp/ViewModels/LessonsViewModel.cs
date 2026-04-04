@@ -99,6 +99,16 @@ namespace PianoTrainerApp.ViewModels
             set { _noteInstruction = value; OnPropertyChanged(nameof(NoteInstruction)); }
         }
 
+        // Для отображения горизонтальной линии на ноте
+        private bool _showLine;
+        public bool ShowLine
+        {
+            get => _showLine;
+            set { _showLine = value; OnPropertyChanged(nameof(ShowLine)); }
+        }
+        // Y позиция линии на ноте
+        public double LineY => NoteY + 6;
+
         public bool IsNoteSelected(string note)
         {
             return SelectedNote == note;
@@ -226,6 +236,8 @@ namespace PianoTrainerApp.ViewModels
             {
                 NoteInstruction = "Сыграйте ноту самостоятельно,\nчтобы лучше её почувствовать!";
             }
+
+            ShowLine = SelectedNote == "C" || SelectedNote == "C#";
 
             // Уведомляем UI о всех свойствах сразу
             OnPropertyChanged(nameof(NoteY));

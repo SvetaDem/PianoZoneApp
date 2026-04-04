@@ -90,12 +90,12 @@
                                     <!-- Заголовок -->
                                     <TextBlock Text="Белые клавиши"
                                            Foreground="#e0e0e0"
-                                           FontWeight="SemiBold"
+                                           FontWeight="Medium"
                                            FontSize="16" Margin="8 0 0 0"/>
                                 </StackPanel>
                             </Expander.Header>
 
-                            <Grid Width="110" Margin="0 12 0 0">
+                            <Grid Width="110" Margin="5 12 0 0">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition/>
                                     <ColumnDefinition/>
@@ -106,12 +106,12 @@
                                         <TextBlock.Style>
                                             <Style TargetType="TextBlock">
                                                 <Setter Property="Foreground" Value="#9f9f9f"/>
-                                                <Setter Property="FontWeight" Value="Medium"/>
+                                                <Setter Property="FontWeight" Value="Normal"/>
 
                                                 <Style.Triggers>
                                                     <DataTrigger Binding="{Binding SelectedNote}" Value="C">
                                                         <Setter Property="Foreground" Value="#f9f9f9"/>
-                                                        <Setter Property="FontWeight" Value="SemiBold"/>
+                                                        <Setter Property="FontWeight" Value="Medium"/>
                                                     </DataTrigger>
                                                 </Style.Triggers>
                                             </Style>
@@ -121,12 +121,12 @@
                                         <TextBlock.Style>
                                             <Style TargetType="TextBlock">
                                                 <Setter Property="Foreground" Value="#9f9f9f"/>
-                                                <Setter Property="FontWeight" Value="Medium"/>
+                                                <Setter Property="FontWeight" Value="Normal"/>
 
                                                 <Style.Triggers>
                                                     <DataTrigger Binding="{Binding SelectedNote}" Value="D">
                                                         <Setter Property="Foreground" Value="#f9f9f9"/>
-                                                        <Setter Property="FontWeight" Value="SemiBold"/>
+                                                        <Setter Property="FontWeight" Value="Medium"/>
                                                     </DataTrigger>
                                                 </Style.Triggers>
                                             </Style>
@@ -136,12 +136,12 @@
                                         <TextBlock.Style>
                                             <Style TargetType="TextBlock">
                                                 <Setter Property="Foreground" Value="#9f9f9f"/>
-                                                <Setter Property="FontWeight" Value="Medium"/>
+                                                <Setter Property="FontWeight" Value="Normal"/>
 
                                                 <Style.Triggers>
                                                     <DataTrigger Binding="{Binding SelectedNote}" Value="E">
                                                         <Setter Property="Foreground" Value="#f9f9f9"/>
-                                                        <Setter Property="FontWeight" Value="SemiBold"/>
+                                                        <Setter Property="FontWeight" Value="Medium"/>
                                                     </DataTrigger>
                                                 </Style.Triggers>
                                             </Style>
@@ -151,12 +151,12 @@
                                         <TextBlock.Style>
                                             <Style TargetType="TextBlock">
                                                 <Setter Property="Foreground" Value="#9f9f9f"/>
-                                                <Setter Property="FontWeight" Value="Medium"/>
+                                                <Setter Property="FontWeight" Value="Normal"/>
 
                                                 <Style.Triggers>
                                                     <DataTrigger Binding="{Binding SelectedNote}" Value="F">
                                                         <Setter Property="Foreground" Value="#f9f9f9"/>
-                                                        <Setter Property="FontWeight" Value="SemiBold"/>
+                                                        <Setter Property="FontWeight" Value="Medium"/>
                                                     </DataTrigger>
                                                 </Style.Triggers>
                                             </Style>
@@ -169,12 +169,12 @@
                                         <TextBlock.Style>
                                             <Style TargetType="TextBlock">
                                                 <Setter Property="Foreground" Value="#9f9f9f"/>
-                                                <Setter Property="FontWeight" Value="Medium"/>
+                                                <Setter Property="FontWeight" Value="Normal"/>
 
                                                 <Style.Triggers>
                                                     <DataTrigger Binding="{Binding SelectedNote}" Value="G">
                                                         <Setter Property="Foreground" Value="#f9f9f9"/>
-                                                        <Setter Property="FontWeight" Value="SemiBold"/>
+                                                        <Setter Property="FontWeight" Value="Medium"/>
                                                     </DataTrigger>
                                                 </Style.Triggers>
                                             </Style>
@@ -184,12 +184,12 @@
                                         <TextBlock.Style>
                                             <Style TargetType="TextBlock">
                                                 <Setter Property="Foreground" Value="#9f9f9f"/>
-                                                <Setter Property="FontWeight" Value="Medium"/>
+                                                <Setter Property="FontWeight" Value="Normal"/>
 
                                                 <Style.Triggers>
                                                     <DataTrigger Binding="{Binding SelectedNote}" Value="A">
                                                         <Setter Property="Foreground" Value="#f9f9f9"/>
-                                                        <Setter Property="FontWeight" Value="SemiBold"/>
+                                                        <Setter Property="FontWeight" Value="Medium"/>
                                                     </DataTrigger>
                                                 </Style.Triggers>
                                             </Style>
@@ -199,12 +199,12 @@
                                         <TextBlock.Style>
                                             <Style TargetType="TextBlock">
                                                 <Setter Property="Foreground" Value="#9f9f9f"/>
-                                                <Setter Property="FontWeight" Value="Medium"/>
+                                                <Setter Property="FontWeight" Value="Normal"/>
 
                                                 <Style.Triggers>
                                                     <DataTrigger Binding="{Binding SelectedNote}" Value="B">
                                                         <Setter Property="Foreground" Value="#f9f9f9"/>
-                                                        <Setter Property="FontWeight" Value="SemiBold"/>
+                                                        <Setter Property="FontWeight" Value="Medium"/>
                                                     </DataTrigger>
                                                 </Style.Triggers>
                                             </Style>
@@ -222,12 +222,12 @@
                                     <!-- Заголовок -->
                                     <TextBlock Text="Чёрные клавиши"
                                            Foreground="#e0e0e0"
-                                           FontWeight="SemiBold"
+                                           FontWeight="Medium"
                                            FontSize="16" Margin="8 0 0 0"/>
                                 </StackPanel>
                             </Expander.Header>
 
-                            <Grid Width="110" Margin="0 12 0 0">
+                            <Grid Width="110" Margin="5 12 0 0">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition/>
                                     <ColumnDefinition/>
@@ -237,12 +237,12 @@
                                         <TextBlock.Style>
                                             <Style TargetType="TextBlock">
                                                 <Setter Property="Foreground" Value="#9f9f9f"/>
-                                                <Setter Property="FontWeight" Value="Medium"/>
+                                                <Setter Property="FontWeight" Value="Normal"/>
 
                                                 <Style.Triggers>
                                                     <DataTrigger Binding="{Binding SelectedNote}" Value="C#">
                                                         <Setter Property="Foreground" Value="#f9f9f9"/>
-                                                        <Setter Property="FontWeight" Value="SemiBold"/>
+                                                        <Setter Property="FontWeight" Value="Medium"/>
                                                     </DataTrigger>
                                                 </Style.Triggers>
                                             </Style>
@@ -252,12 +252,12 @@
                                         <TextBlock.Style>
                                             <Style TargetType="TextBlock">
                                                 <Setter Property="Foreground" Value="#9f9f9f"/>
-                                                <Setter Property="FontWeight" Value="Medium"/>
+                                                <Setter Property="FontWeight" Value="Normal"/>
 
                                                 <Style.Triggers>
                                                     <DataTrigger Binding="{Binding SelectedNote}" Value="D#">
                                                         <Setter Property="Foreground" Value="#f9f9f9"/>
-                                                        <Setter Property="FontWeight" Value="SemiBold"/>
+                                                        <Setter Property="FontWeight" Value="Medium"/>
                                                     </DataTrigger>
                                                 </Style.Triggers>
                                             </Style>
@@ -267,12 +267,12 @@
                                         <TextBlock.Style>
                                             <Style TargetType="TextBlock">
                                                 <Setter Property="Foreground" Value="#9f9f9f"/>
-                                                <Setter Property="FontWeight" Value="Medium"/>
+                                                <Setter Property="FontWeight" Value="Normal"/>
 
                                                 <Style.Triggers>
                                                     <DataTrigger Binding="{Binding SelectedNote}" Value="F#">
                                                         <Setter Property="Foreground" Value="#f9f9f9"/>
-                                                        <Setter Property="FontWeight" Value="SemiBold"/>
+                                                        <Setter Property="FontWeight" Value="Medium"/>
                                                     </DataTrigger>
                                                 </Style.Triggers>
                                             </Style>
@@ -284,12 +284,12 @@
                                         <TextBlock.Style>
                                             <Style TargetType="TextBlock">
                                                 <Setter Property="Foreground" Value="#9f9f9f"/>
-                                                <Setter Property="FontWeight" Value="Medium"/>
+                                                <Setter Property="FontWeight" Value="Normal"/>
 
                                                 <Style.Triggers>
                                                     <DataTrigger Binding="{Binding SelectedNote}" Value="G#">
                                                         <Setter Property="Foreground" Value="#f9f9f9"/>
-                                                        <Setter Property="FontWeight" Value="SemiBold"/>
+                                                        <Setter Property="FontWeight" Value="Medium"/>
                                                     </DataTrigger>
                                                 </Style.Triggers>
                                             </Style>
@@ -299,12 +299,12 @@
                                         <TextBlock.Style>
                                             <Style TargetType="TextBlock">
                                                 <Setter Property="Foreground" Value="#9f9f9f"/>
-                                                <Setter Property="FontWeight" Value="Medium"/>
+                                                <Setter Property="FontWeight" Value="Normal"/>
 
                                                 <Style.Triggers>
                                                     <DataTrigger Binding="{Binding SelectedNote}" Value="A#">
                                                         <Setter Property="Foreground" Value="#f9f9f9"/>
-                                                        <Setter Property="FontWeight" Value="SemiBold"/>
+                                                        <Setter Property="FontWeight" Value="Medium"/>
                                                     </DataTrigger>
                                                 </Style.Triggers>
                                             </Style>
@@ -327,12 +327,12 @@
                                    Cursor="Hand" Margin="0,0,0,5"
                                    Foreground="#9f9f9f"
                                    FontSize="13"
-                                   FontWeight="Medium"/>
+                                   FontWeight="Normal"/>
                             <TextBlock Text="Тренировка на чтение"
                                    Cursor="Hand"
                                    Foreground="#9f9f9f"
                                    FontSize="13"
-                                   FontWeight="Medium"/>
+                                   FontWeight="Normal"/>
                         </StackPanel>
 
                     </StackPanel>
@@ -402,8 +402,14 @@
                                      Stroke="#1e1e1e"
                                      Canvas.Left="40"
                                      Canvas.Top="{Binding NoteY}"/>
-
-                            <TextBlock Text="{Binding NotePrefixSharp}"
+                            <!-- Горизонтальная линия для До и До# -->
+                            <Rectangle Width="16" Height="1"
+                                       Fill="#1e1e1e"
+                                       Canvas.Left="38"    
+                                       Canvas.Top="{Binding LineY}" 
+                                       Visibility="{Binding ShowLine, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+                                
+                                <TextBlock Text="{Binding NotePrefixSharp}"
                                        FontSize="20"
                                        Canvas.Left="30"
                                        Canvas.Top="{Binding NoteTextY}"/>
