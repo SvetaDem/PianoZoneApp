@@ -14,7 +14,46 @@ namespace PianoTrainerApp.ViewModels
     public class LessonsViewModel : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
- 
+        private LearningMode _currentMode;
+        public LearningMode CurrentMode
+        {
+            get => _currentMode;
+            set
+            {
+                if (_currentMode != value)
+                {
+                    _currentMode = value;
+                    OnPropertyChanged(nameof(CurrentMode));
+
+                    // Обновляем все зависящие свойства
+                    OnPropertyChanged(nameof(IsTheory));
+                    OnPropertyChanged(nameof(IsReading));
+                    OnPropertyChanged(nameof(IsHearing));
+                    OnPropertyChanged(nameof(ShowNote));
+                    OnPropertyChanged(nameof(ShowQuestionMark));
+                    OnPropertyChanged(nameof(ShowSoundButton));
+                    OnPropertyChanged(nameof(ShowNextButton));
+                    OnPropertyChanged(nameof(ShowLine));
+                }
+            }
+        }
+
+        // ---------------------------
+        // Режимы для XAML
+        // ---------------------------
+        public bool IsTheory => CurrentMode == LearningMode.Theory;
+        public bool IsReading => CurrentMode == LearningMode.Reading;
+        public bool IsHearing => CurrentMode == LearningMode.Hearing;
+
+        // ---------------------------
+        // Visibility для элементов
+        // ---------------------------
+        public bool ShowNote => IsTheory || IsReading;               // ноты на нотном стане
+        public bool ShowQuestionMark => IsHearing;                  // знак вопроса при слухе
+        public bool ShowSoundButton => !IsReading;  // кнопка звука: теория + слух
+        public bool ShowNextButton => !IsTheory;  // кнопка далее в челленджах
+
+
         public ObservableCollection<PianoKey> WhiteKeys { get; set; }
         public ObservableCollection<PianoKey> BlackKeys { get; set; }
 
@@ -30,6 +69,13 @@ namespace PianoTrainerApp.ViewModels
 
                 UpdatePiano();
                 UpdateNotePosition();
+
+                // Обновляем все зависящие свойства
+                OnPropertyChanged(nameof(NoteY));
+                OnPropertyChanged(nameof(FlatNoteY));
+                OnPropertyChanged(nameof(NoteTextY));
+                OnPropertyChanged(nameof(FlatNoteTextY));
+                OnPropertyChanged(nameof(ShowLine));
             }
         }
 
@@ -80,39 +126,46 @@ namespace PianoTrainerApp.ViewModels
         public double FlatNoteTextY => FlatNoteY - 12;
 
         // Заголовок ноты для отображения справа
-        private string _noteHeader;
-        public string NoteHeader
+        private string _header;
+        public string Header
         {
-            get => _noteHeader;
+            get => _header;
             set
             {
-                _noteHeader = value;
+                _header = value;
                 OnPropertyChanged();
             }
         }
 
         // Фраза рядом с нотным станом
-        private string _noteInstruction;
-        public string NoteInstruction
+        private string _instruction;
+        public string Instruction
         {
-            get => _noteInstruction;
-            set { _noteInstruction = value; OnPropertyChanged(nameof(NoteInstruction)); }
+            get => _instruction;
+            set { _instruction = value; OnPropertyChanged(nameof(Instruction)); }
         }
 
         // Для отображения горизонтальной линии на ноте
-        private bool _showLine;
-        public bool ShowLine
-        {
-            get => _showLine;
-            set { _showLine = value; OnPropertyChanged(nameof(ShowLine)); }
-        }
+        public bool ShowLine => !IsHearing && (SelectedNote == "C" || SelectedNote == "C#");
         // Y позиция линии на ноте
         public double LineY => NoteY + 6;
 
-        public bool IsNoteSelected(string note)
+        // Выбранный челлендж
+
+        private LearningMode _selectedChallenge;
+        public LearningMode SelectedChallenge
         {
-            return SelectedNote == note;
+            get => _selectedChallenge;
+            set
+            {
+                _selectedChallenge = value;
+                OnPropertyChanged(nameof(SelectedChallenge));
+
+                UpdateChallenge();
+            }
         }
+
+        
         public LessonsViewModel()
         {
             WhiteKeys = new ObservableCollection<PianoKey>();
@@ -120,8 +173,15 @@ namespace PianoTrainerApp.ViewModels
 
             GenerateKeys();
 
+            CurrentMode = LearningMode.Theory; // по умолчанию теория
+
             SelectedNote = "C";
-            NoteHeader = "До 1 октавы";
+            Header = "До 1 октавы";
+        }
+
+        public bool IsNoteSelected(string note)
+        {
+            return SelectedNote == note;
         }
 
         private void GenerateKeys()
@@ -166,8 +226,11 @@ namespace PianoTrainerApp.ViewModels
         // Метод обновления пианино
         private void UpdatePiano()
         {
-            foreach (var key in WhiteKeys.Concat(BlackKeys))
-                key.IsPressed = key.Note == SelectedNote;
+            if (IsTheory) // подсветка только в теории
+            {
+                foreach (var key in WhiteKeys.Concat(BlackKeys))
+                    key.IsPressed = key.Note == SelectedNote;
+            }
         }
 
         // Метод обновления позиции ноты
@@ -193,35 +256,35 @@ namespace PianoTrainerApp.ViewModels
                 case "C#":
                     NoteY = 60;
                     NotePrefixSharp = "♯";
-                    ShowFlatNote = true;
+                    ShowFlatNote = !IsHearing ? true : false;
                     NotePrefixFlat = "♭";
                     FlatNoteY = 52;
                     break;
                 case "D#":
                     NoteY = 52;
                     NotePrefixSharp = "♯";
-                    ShowFlatNote = true;
+                    ShowFlatNote = !IsHearing ? true : false;
                     NotePrefixFlat = "♭";
                     FlatNoteY = 46;
                     break;
                 case "F#":
                     NoteY = 39;
                     NotePrefixSharp = "♯";
-                    ShowFlatNote = true;
+                    ShowFlatNote = !IsHearing ? true : false;
                     NotePrefixFlat = "♭";
                     FlatNoteY = 33;
                     break;
                 case "G#":
                     NoteY = 33;
                     NotePrefixSharp = "♯";
-                    ShowFlatNote = true;
+                    ShowFlatNote = !IsHearing ? true : false;
                     NotePrefixFlat = "♭";
                     FlatNoteY = 26;
                     break;
                 case "A#":
                     NoteY = 26;
                     NotePrefixSharp = "♯";
-                    ShowFlatNote = true;
+                    ShowFlatNote = !IsHearing ? true : false;
                     NotePrefixFlat = "♭";
                     FlatNoteY = 20;
                     break;
@@ -230,24 +293,72 @@ namespace PianoTrainerApp.ViewModels
             // Меняем тексты подсказок
             if (ShowFlatNote)
             {
-                NoteInstruction = "Энгармонически равные звуки\n- звучат одинаково, а пишутся по-разному";
+                Instruction = "Энгармонически равные звуки\n- звучат одинаково, а пишутся по-разному";
             }
             else
             {
-                NoteInstruction = "Сыграйте ноту самостоятельно,\nчтобы лучше её почувствовать!";
+                Instruction = "Сыграйте ноту самостоятельно,\nчтобы лучше её почувствовать!";
             }
 
-            ShowLine = SelectedNote == "C" || SelectedNote == "C#";
-
-            // Уведомляем UI о всех свойствах сразу
-            OnPropertyChanged(nameof(NoteY));
-            OnPropertyChanged(nameof(FlatNoteY));
-            OnPropertyChanged(nameof(NotePrefixSharp));
-            OnPropertyChanged(nameof(NotePrefixFlat));
-            OnPropertyChanged(nameof(ShowFlatNote));
-            OnPropertyChanged(nameof(NoteTextY));
-            OnPropertyChanged(nameof(FlatNoteTextY));
         }
+
+        // Метод для смены режима
+        public void SetMode(LearningMode mode)
+        {
+            CurrentMode = mode;
+
+            // если это челлендж, обновляем SelectedChallenge
+            if (mode == LearningMode.Reading || mode == LearningMode.Hearing)
+                SelectedChallenge = mode;
+
+            // для теории SelectedChallenge = null
+            if (mode == LearningMode.Theory)
+                SelectedChallenge = LearningMode.Theory;
+        }
+
+        private void UpdateChallenge()
+        {
+            if (SelectedChallenge == LearningMode.Reading || SelectedChallenge == LearningMode.Hearing)
+            {
+                GenerateRandomNoteForChallenge();
+            }
+        }
+
+        private Random _random = new Random();
+
+        public void GenerateRandomNoteForChallenge()
+        {
+            string[] notes = { "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B" };
+
+            // Сбрасываем выделение на пианино и текстах
+            foreach (var key in WhiteKeys.Concat(BlackKeys))
+                key.IsPressed = false;
+
+            SelectedNote = notes[_random.Next(notes.Length)];
+
+            // Заголовок и текст инструкции
+            if (CurrentMode == LearningMode.Reading)
+            {
+                Header = "Чтение нот";
+                if (ShowFlatNote)
+                {
+                    Instruction = "Определите ноты слева и нажмите\nсоответствующую клавишу ниже";
+                }
+                else
+                {
+                    Instruction = "Определите ноту слева и нажмите\nсоответствующую клавишу ниже";
+                }
+            }
+            else if (CurrentMode == LearningMode.Hearing)
+            {
+                Header = "Музыкальный слух";
+                Instruction = "Определи ноту по звуку и нажми\nсоответствующую клавишу ниже";
+            }
+
+            OnPropertyChanged(nameof(Header));
+            OnPropertyChanged(nameof(Instruction));
+        }
+
         protected void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));

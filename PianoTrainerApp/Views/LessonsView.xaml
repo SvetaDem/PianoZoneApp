@@ -109,10 +109,16 @@
                                                 <Setter Property="FontWeight" Value="Normal"/>
 
                                                 <Style.Triggers>
-                                                    <DataTrigger Binding="{Binding SelectedNote}" Value="C">
+                                                    <MultiDataTrigger>
+                                                        <MultiDataTrigger.Conditions>
+                                                            <!-- Срабатывает только если выбранная нота C -->
+                                                            <Condition Binding="{Binding SelectedNote}" Value="C"/>
+                                                            <!-- И текущий режим — теория -->
+                                                            <Condition Binding="{Binding IsTheory}" Value="True"/>
+                                                        </MultiDataTrigger.Conditions>
                                                         <Setter Property="Foreground" Value="#f9f9f9"/>
                                                         <Setter Property="FontWeight" Value="Medium"/>
-                                                    </DataTrigger>
+                                                    </MultiDataTrigger>
                                                 </Style.Triggers>
                                             </Style>
                                         </TextBlock.Style>
@@ -124,10 +130,16 @@
                                                 <Setter Property="FontWeight" Value="Normal"/>
 
                                                 <Style.Triggers>
-                                                    <DataTrigger Binding="{Binding SelectedNote}" Value="D">
+                                                    <MultiDataTrigger>
+                                                        <MultiDataTrigger.Conditions>
+                                                            <!-- Срабатывает только если выбранная нота D -->
+                                                            <Condition Binding="{Binding SelectedNote}" Value="D"/>
+                                                            <!-- И текущий режим — теория -->
+                                                            <Condition Binding="{Binding IsTheory}" Value="True"/>
+                                                        </MultiDataTrigger.Conditions>
                                                         <Setter Property="Foreground" Value="#f9f9f9"/>
                                                         <Setter Property="FontWeight" Value="Medium"/>
-                                                    </DataTrigger>
+                                                    </MultiDataTrigger>
                                                 </Style.Triggers>
                                             </Style>
                                         </TextBlock.Style>
@@ -139,10 +151,16 @@
                                                 <Setter Property="FontWeight" Value="Normal"/>
 
                                                 <Style.Triggers>
-                                                    <DataTrigger Binding="{Binding SelectedNote}" Value="E">
+                                                    <MultiDataTrigger>
+                                                        <MultiDataTrigger.Conditions>
+                                                            <!-- Срабатывает только если выбранная нота E -->
+                                                            <Condition Binding="{Binding SelectedNote}" Value="E"/>
+                                                            <!-- И текущий режим — теория -->
+                                                            <Condition Binding="{Binding IsTheory}" Value="True"/>
+                                                        </MultiDataTrigger.Conditions>
                                                         <Setter Property="Foreground" Value="#f9f9f9"/>
                                                         <Setter Property="FontWeight" Value="Medium"/>
-                                                    </DataTrigger>
+                                                    </MultiDataTrigger>
                                                 </Style.Triggers>
                                             </Style>
                                         </TextBlock.Style>
@@ -154,10 +172,16 @@
                                                 <Setter Property="FontWeight" Value="Normal"/>
 
                                                 <Style.Triggers>
-                                                    <DataTrigger Binding="{Binding SelectedNote}" Value="F">
+                                                    <MultiDataTrigger>
+                                                        <MultiDataTrigger.Conditions>
+                                                            <!-- Срабатывает только если выбранная нота F -->
+                                                            <Condition Binding="{Binding SelectedNote}" Value="F"/>
+                                                            <!-- И текущий режим — теория -->
+                                                            <Condition Binding="{Binding IsTheory}" Value="True"/>
+                                                        </MultiDataTrigger.Conditions>
                                                         <Setter Property="Foreground" Value="#f9f9f9"/>
                                                         <Setter Property="FontWeight" Value="Medium"/>
-                                                    </DataTrigger>
+                                                    </MultiDataTrigger>
                                                 </Style.Triggers>
                                             </Style>
                                         </TextBlock.Style>
@@ -172,10 +196,16 @@
                                                 <Setter Property="FontWeight" Value="Normal"/>
 
                                                 <Style.Triggers>
-                                                    <DataTrigger Binding="{Binding SelectedNote}" Value="G">
+                                                    <MultiDataTrigger>
+                                                        <MultiDataTrigger.Conditions>
+                                                            <!-- Срабатывает только если выбранная нота G -->
+                                                            <Condition Binding="{Binding SelectedNote}" Value="G"/>
+                                                            <!-- И текущий режим — теория -->
+                                                            <Condition Binding="{Binding IsTheory}" Value="True"/>
+                                                        </MultiDataTrigger.Conditions>
                                                         <Setter Property="Foreground" Value="#f9f9f9"/>
                                                         <Setter Property="FontWeight" Value="Medium"/>
-                                                    </DataTrigger>
+                                                    </MultiDataTrigger>
                                                 </Style.Triggers>
                                             </Style>
                                         </TextBlock.Style>
@@ -187,10 +217,16 @@
                                                 <Setter Property="FontWeight" Value="Normal"/>
 
                                                 <Style.Triggers>
-                                                    <DataTrigger Binding="{Binding SelectedNote}" Value="A">
+                                                    <MultiDataTrigger>
+                                                        <MultiDataTrigger.Conditions>
+                                                            <!-- Срабатывает только если выбранная нота A -->
+                                                            <Condition Binding="{Binding SelectedNote}" Value="A"/>
+                                                            <!-- И текущий режим — теория -->
+                                                            <Condition Binding="{Binding IsTheory}" Value="True"/>
+                                                        </MultiDataTrigger.Conditions>
                                                         <Setter Property="Foreground" Value="#f9f9f9"/>
                                                         <Setter Property="FontWeight" Value="Medium"/>
-                                                    </DataTrigger>
+                                                    </MultiDataTrigger>
                                                 </Style.Triggers>
                                             </Style>
                                         </TextBlock.Style>
@@ -202,10 +238,16 @@
                                                 <Setter Property="FontWeight" Value="Normal"/>
 
                                                 <Style.Triggers>
-                                                    <DataTrigger Binding="{Binding SelectedNote}" Value="B">
+                                                    <MultiDataTrigger>
+                                                        <MultiDataTrigger.Conditions>
+                                                            <!-- Срабатывает только если выбранная нота B -->
+                                                            <Condition Binding="{Binding SelectedNote}" Value="B"/>
+                                                            <!-- И текущий режим — теория -->
+                                                            <Condition Binding="{Binding IsTheory}" Value="True"/>
+                                                        </MultiDataTrigger.Conditions>
                                                         <Setter Property="Foreground" Value="#f9f9f9"/>
                                                         <Setter Property="FontWeight" Value="Medium"/>
-                                                    </DataTrigger>
+                                                    </MultiDataTrigger>
                                                 </Style.Triggers>
                                             </Style>
                                         </TextBlock.Style>
@@ -240,10 +282,16 @@
                                                 <Setter Property="FontWeight" Value="Normal"/>
 
                                                 <Style.Triggers>
-                                                    <DataTrigger Binding="{Binding SelectedNote}" Value="C#">
+                                                    <MultiDataTrigger>
+                                                        <MultiDataTrigger.Conditions>
+                                                            <!-- Срабатывает только если выбранная нота C# -->
+                                                            <Condition Binding="{Binding SelectedNote}" Value="C#"/>
+                                                            <!-- И текущий режим — теория -->
+                                                            <Condition Binding="{Binding IsTheory}" Value="True"/>
+                                                        </MultiDataTrigger.Conditions>
                                                         <Setter Property="Foreground" Value="#f9f9f9"/>
                                                         <Setter Property="FontWeight" Value="Medium"/>
-                                                    </DataTrigger>
+                                                    </MultiDataTrigger>
                                                 </Style.Triggers>
                                             </Style>
                                         </TextBlock.Style>
@@ -255,10 +303,16 @@
                                                 <Setter Property="FontWeight" Value="Normal"/>
 
                                                 <Style.Triggers>
-                                                    <DataTrigger Binding="{Binding SelectedNote}" Value="D#">
+                                                    <MultiDataTrigger>
+                                                        <MultiDataTrigger.Conditions>
+                                                            <!-- Срабатывает только если выбранная нота D# -->
+                                                            <Condition Binding="{Binding SelectedNote}" Value="D#"/>
+                                                            <!-- И текущий режим — теория -->
+                                                            <Condition Binding="{Binding IsTheory}" Value="True"/>
+                                                        </MultiDataTrigger.Conditions>
                                                         <Setter Property="Foreground" Value="#f9f9f9"/>
                                                         <Setter Property="FontWeight" Value="Medium"/>
-                                                    </DataTrigger>
+                                                    </MultiDataTrigger>
                                                 </Style.Triggers>
                                             </Style>
                                         </TextBlock.Style>
@@ -270,10 +324,16 @@
                                                 <Setter Property="FontWeight" Value="Normal"/>
 
                                                 <Style.Triggers>
-                                                    <DataTrigger Binding="{Binding SelectedNote}" Value="F#">
+                                                    <MultiDataTrigger>
+                                                        <MultiDataTrigger.Conditions>
+                                                            <!-- Срабатывает только если выбранная нота F# -->
+                                                            <Condition Binding="{Binding SelectedNote}" Value="F#"/>
+                                                            <!-- И текущий режим — теория -->
+                                                            <Condition Binding="{Binding IsTheory}" Value="True"/>
+                                                        </MultiDataTrigger.Conditions>
                                                         <Setter Property="Foreground" Value="#f9f9f9"/>
                                                         <Setter Property="FontWeight" Value="Medium"/>
-                                                    </DataTrigger>
+                                                    </MultiDataTrigger>
                                                 </Style.Triggers>
                                             </Style>
                                         </TextBlock.Style>
@@ -287,10 +347,16 @@
                                                 <Setter Property="FontWeight" Value="Normal"/>
 
                                                 <Style.Triggers>
-                                                    <DataTrigger Binding="{Binding SelectedNote}" Value="G#">
+                                                    <MultiDataTrigger>
+                                                        <MultiDataTrigger.Conditions>
+                                                            <!-- Срабатывает только если выбранная нота G# -->
+                                                            <Condition Binding="{Binding SelectedNote}" Value="G#"/>
+                                                            <!-- И текущий режим — теория -->
+                                                            <Condition Binding="{Binding IsTheory}" Value="True"/>
+                                                        </MultiDataTrigger.Conditions>
                                                         <Setter Property="Foreground" Value="#f9f9f9"/>
                                                         <Setter Property="FontWeight" Value="Medium"/>
-                                                    </DataTrigger>
+                                                    </MultiDataTrigger>
                                                 </Style.Triggers>
                                             </Style>
                                         </TextBlock.Style>
@@ -302,10 +368,16 @@
                                                 <Setter Property="FontWeight" Value="Normal"/>
 
                                                 <Style.Triggers>
-                                                    <DataTrigger Binding="{Binding SelectedNote}" Value="A#">
+                                                    <MultiDataTrigger>
+                                                        <MultiDataTrigger.Conditions>
+                                                            <!-- Срабатывает только если выбранная нота A# -->
+                                                            <Condition Binding="{Binding SelectedNote}" Value="A#"/>
+                                                            <!-- И текущий режим — теория -->
+                                                            <Condition Binding="{Binding IsTheory}" Value="True"/>
+                                                        </MultiDataTrigger.Conditions>
                                                         <Setter Property="Foreground" Value="#f9f9f9"/>
                                                         <Setter Property="FontWeight" Value="Medium"/>
-                                                    </DataTrigger>
+                                                    </MultiDataTrigger>
                                                 </Style.Triggers>
                                             </Style>
                                         </TextBlock.Style>
@@ -323,16 +395,37 @@
                                FontWeight="SemiBold"
                                FontSize="18" Margin="0,0,0,16"/>
                         <StackPanel>
-                            <TextBlock Text="Тренировка на слух"
-                                   Cursor="Hand" Margin="0,0,0,5"
-                                   Foreground="#9f9f9f"
-                                   FontSize="13"
-                                   FontWeight="Normal"/>
-                            <TextBlock Text="Тренировка на чтение"
-                                   Cursor="Hand"
-                                   Foreground="#9f9f9f"
-                                   FontSize="13"
-                                   FontWeight="Normal"/>
+                            <TextBlock Text="Тренировка на слух" Cursor="Hand" Margin="0,0,0,5" FontSize="13" MouseLeftButtonDown="Challenge_Click">
+                                <TextBlock.Style>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="Foreground" Value="#9f9f9f"/>
+                                        <Setter Property="FontWeight" Value="Normal"/>
+
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding SelectedChallenge}" Value="Hearing">
+                                                <Setter Property="Foreground" Value="#f9f9f9"/>
+                                                <Setter Property="FontWeight" Value="Medium"/>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </TextBlock.Style>
+                            </TextBlock>
+
+                            <TextBlock Text="Тренировка на чтение" Cursor="Hand" Margin="0,0,0,5" FontSize="13" MouseLeftButtonDown="Challenge_Click">
+                                <TextBlock.Style>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="Foreground" Value="#9f9f9f"/>
+                                        <Setter Property="FontWeight" Value="Normal"/>
+
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding SelectedChallenge}" Value="Reading">
+                                                <Setter Property="Foreground" Value="#f9f9f9"/>
+                                                <Setter Property="FontWeight" Value="Medium"/>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </TextBlock.Style>
+                            </TextBlock>
                         </StackPanel>
 
                     </StackPanel>
@@ -342,7 +435,7 @@
             <Grid Grid.Column="1" Margin="50,25,50,50">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="auto"/>
-                    <!-- 1 row: название ноты -->
+                    <!-- 1 row: заголовок -->
                     <RowDefinition Height="2*"/>
                     <!-- 2 row: нотный стан -->
                     <RowDefinition Height="2*"/>
@@ -351,12 +444,52 @@
                     <!-- 4 row: подпись -->
                 </Grid.RowDefinitions>
 
-                <!-- 1 row: Название ноты -->
+                <!-- 1 row: Заголовок -->
                 <TextBlock Grid.Row="0"
-                           Text="{Binding NoteHeader}"
+                           Text="{Binding Header}"
                            FontSize="20"
                            FontWeight="SemiBold"
                            Foreground="#2e2e2e"/>
+
+                <Button Grid.Row="0"
+                        Width="55" Height="30"
+                        HorizontalAlignment="Right"
+                        Click="ButtonNext_Click"
+                        Cursor="Hand"
+                        Background="Transparent"
+                        BorderBrush="#4D3D3D"
+                        BorderThickness="1"
+                         Visibility="{Binding ShowNextButton, Converter={StaticResource BooleanToVisibilityConverter}}">
+                    <Button.Template>
+                        <ControlTemplate TargetType="Button">
+                            <Border x:Name="border"
+                                    Background="{TemplateBinding Background}"
+                                    BorderBrush="{TemplateBinding BorderBrush}"
+                                    BorderThickness="{TemplateBinding BorderThickness}"
+                                    CornerRadius="15">
+                                <TextBlock HorizontalAlignment="Center"
+                                           VerticalAlignment="Center"
+                                           Text="➡️"
+                                           Margin="0 -3 0 0"
+                                           FontSize="20"
+                                           FontFamily="Segoe UI Symbol"
+                                           FontWeight="SemiBold"
+                                           Foreground="#4D3D3D"/>
+                            </Border>
+                            <ControlTemplate.Triggers>
+                                <!-- Наведение -->
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter TargetName="border" Property="Background" Value="#AFAEAE"/>
+                                </Trigger>
+                                <!-- Нажатие -->
+                                <Trigger Property="IsPressed" Value="True">
+                                    <Setter TargetName="border" Property="Background" Value="#9D9B9B"/>
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Button.Template>
+                </Button>
+
 
                 <Line Grid.Row="0" X1="0" Y1="-0.5" X2="36" Y2="60"
                       Stroke="#2e2e2e" StrokeThickness="1"
@@ -401,18 +534,20 @@
                                      StrokeThickness="1"
                                      Stroke="#1e1e1e"
                                      Canvas.Left="40"
-                                     Canvas.Top="{Binding NoteY}"/>
+                                     Canvas.Top="{Binding NoteY}"
+                                     Visibility="{Binding ShowNote, Converter={StaticResource BooleanToVisibilityConverter}}"/>
                             <!-- Горизонтальная линия для До и До# -->
                             <Rectangle Width="16" Height="1"
                                        Fill="#1e1e1e"
                                        Canvas.Left="38"    
                                        Canvas.Top="{Binding LineY}" 
                                        Visibility="{Binding ShowLine, Converter={StaticResource BooleanToVisibilityConverter}}"/>
-                                
-                                <TextBlock Text="{Binding NotePrefixSharp}"
+
+                            <TextBlock Text="{Binding NotePrefixSharp}"
                                        FontSize="20"
                                        Canvas.Left="30"
-                                       Canvas.Top="{Binding NoteTextY}"/>
+                                       Canvas.Top="{Binding NoteTextY}"
+                                       Visibility="{Binding ShowNote, Converter={StaticResource BooleanToVisibilityConverter}}"/>
                             <!-- Бемоль для энгармонических нот -->
                             <Ellipse Width="12" Height="12"
                                      StrokeThickness="1"
@@ -426,18 +561,26 @@
                                        Canvas.Left="90"
                                        Canvas.Top="{Binding FlatNoteTextY}"
                                        Visibility="{Binding ShowFlatNote, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+
+                            <!-- Знак вопроса для слуха -->
+                            <TextBlock Text="?" FontSize="32" FontWeight="Bold"
+                                       Canvas.Left="69" Canvas.Top="3"
+                                       Foreground="#1e1e1e" Opacity="0.8"
+                                       Visibility="{Binding ShowQuestionMark, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+
                         </Canvas>
 
                         <!-- Кнопка звука и текст -->
                         <Button Width="32" Height="32" Margin="24,0,0,13"
                                 Style="{StaticResource IconButtonStyle}"
-                                Click="PlayNote_Click">
+                                Click="PlayNote_Click"
+                                Visibility="{Binding ShowSoundButton, Converter={StaticResource BooleanToVisibilityConverter}}">
                             <svgc:SvgViewbox Source="/Images/playback.svg"/>
                         </Button>
                     </StackPanel>
 
                     <TextBlock Grid.Column="1"
-                               Text="{Binding NoteInstruction}"
+                               Text="{Binding Instruction}"
                                TextWrapping="Wrap"
                                FontSize="15"
                                Foreground="#2e2e2e"

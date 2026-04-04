@@ -203,6 +203,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Models\LearningMode.cs" />
     <Compile Include="Models\CustomMessageBoxButton.cs" />
     <Compile Include="Models\CustomMessageBoxResult.cs" />
     <Compile Include="Models\CustomMessageBoxImage.cs" />

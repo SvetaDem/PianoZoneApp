@@ -53,32 +53,33 @@ namespace PianoTrainerApp.Views
             if (tb == null) return;
 
             string note = "C";
-            string noteHeader = "До 1 октавы"; // заголовок по умолчанию
+            string header = "До 1 октавы"; // заголовок по умолчанию
 
             switch (tb.Text)
             {
                 // Белые клавиши
-                case "До": note = "C"; noteHeader = "До 1 октавы"; break;
-                case "Ре": note = "D"; noteHeader = "Ре 1 октавы"; break;
-                case "Ми": note = "E"; noteHeader = "Ми 1 октавы"; break;
-                case "Фа": note = "F"; noteHeader = "Фа 1 октавы"; break;
-                case "Соль": note = "G"; noteHeader = "Соль 1 октавы"; break;
-                case "Ля": note = "A"; noteHeader = "Ля 1 октавы"; break;
-                case "Си": note = "B"; noteHeader = "Си 1 октавы"; break;
+                case "До": note = "C"; header = "До 1 октавы"; break;
+                case "Ре": note = "D"; header = "Ре 1 октавы"; break;
+                case "Ми": note = "E"; header = "Ми 1 октавы"; break;
+                case "Фа": note = "F"; header = "Фа 1 октавы"; break;
+                case "Соль": note = "G"; header = "Соль 1 октавы"; break;
+                case "Ля": note = "A"; header = "Ля 1 октавы"; break;
+                case "Си": note = "B"; header = "Си 1 октавы"; break;
 
                 // Чёрные клавиши (диезы)
-                case "До#": note = "C#"; noteHeader = "До-диез / Ре-бемоль 1 октавы"; break;
-                case "Ре#": note = "D#"; noteHeader = "Ре-диез / Ми-бемоль 1 октавы"; break;
-                case "Фа#": note = "F#"; noteHeader = "Фа-диез / Соль-бемоль 1 октавы"; break;
-                case "Соль#": note = "G#"; noteHeader = "Соль-диез / Ля-бемоль 1 октавы"; break;
-                case "Ля#": note = "A#"; noteHeader = "Ля-диез / Си-бемоль 1 октавы"; break;
+                case "До#": note = "C#"; header = "До-диез / Ре-бемоль 1 октавы"; break;
+                case "Ре#": note = "D#"; header = "Ре-диез / Ми-бемоль 1 октавы"; break;
+                case "Фа#": note = "F#"; header = "Фа-диез / Соль-бемоль 1 октавы"; break;
+                case "Соль#": note = "G#"; header = "Соль-диез / Ля-бемоль 1 октавы"; break;
+                case "Ля#": note = "A#"; header = "Ля-диез / Си-бемоль 1 октавы"; break;
             }
 
             var vm = DataContext as LessonsViewModel;
             if (vm != null)
             {
                 vm.SelectedNote = note;
-                vm.NoteHeader = noteHeader; // сразу обновляем заголовок
+                vm.Header = header; // сразу обновляем заголовок
+                vm.SetMode(LearningMode.Theory);
             }
         }
 
@@ -161,6 +162,38 @@ namespace PianoTrainerApp.Views
             double freq = GetFrequency(vm.SelectedNote);
             if (freq > 0)
                 PlayPianoTone(freq);
+        }
+
+        private void Challenge_Click(object sender, MouseButtonEventArgs e)
+        {
+            var tb = sender as TextBlock;
+            if (tb == null) return;
+
+            var vm = DataContext as LessonsViewModel;
+            if (vm == null) return;
+
+            switch (tb.Text)
+            {
+                case "Тренировка на слух":
+                    vm.SetMode(LearningMode.Hearing);
+                    break;
+
+                case "Тренировка на чтение":
+                    vm.SetMode(LearningMode.Reading);
+                    break;
+            }
+        }
+
+        private void ButtonNext_Click(object sender, RoutedEventArgs e)
+        {
+            var vm = DataContext as LessonsViewModel;
+            if (vm == null) return;
+
+            // Генерируем новую ноту только если сейчас челлендж (Reading или Hearing)
+            if (vm.CurrentMode == LearningMode.Reading || vm.CurrentMode == LearningMode.Hearing)
+            {
+                vm.GenerateRandomNoteForChallenge();
+            }
         }
     }
 }
