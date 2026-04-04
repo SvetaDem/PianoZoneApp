@@ -67,6 +67,13 @@ namespace PianoTrainerApp.Views
         // Событие завершения мелодии
         public event Action SongCompleted;
 
+        // поля для хранения исходного размера и позиции окна
+        private double previousWidth;
+        private double previousHeight;
+        private double previousTop;
+        private double previousLeft;
+        private WindowState previousWindowState;
+
         public PianoWindow(Song song, double speedMultiplier = 1.0, PlayMode mode = PlayMode.Practice)
         {
             InitializeComponent();
@@ -102,7 +109,8 @@ namespace PianoTrainerApp.Views
                         n.StartTime -= minStart;
                 }
 
-                pianoVM.StartAnimation(notes);
+                pianoVM.StartAnimation(notes);  // запускаем анимацию нот
+                AutoScrollToCenter();           // скроллим на центр один раз
 
                 CompositionTarget.Rendering += UpdateNotes;
 
@@ -332,6 +340,14 @@ namespace PianoTrainerApp.Views
                     NotesCanvas.Children.Add(text);
 
                 }
+
+                // вот тут добавляем автоскролл
+                //if (NotesScrollViewer != null)
+                //{
+                    //AutoScrollNotes();  // очень зависает с автоскроллом
+                //}
+                //AutoScroll();
+
                 // Проверка заверешния нот
                 if (!finishHandled && pianoVM.IsSongFinished)
                 {
@@ -631,6 +647,29 @@ namespace PianoTrainerApp.Views
             correctNotes = 0;
         }
 
+        private void Window_Loaded(object sender, RoutedEventArgs e)
+        {
+            // Сохраняем текущие размеры и положение
+            previousWidth = this.Width;
+            previousHeight = this.Height;
+            previousTop = this.Top;
+            previousLeft = this.Left;
+            previousWindowState = this.WindowState;
+
+            // Разворачиваем на максимум
+            this.WindowState = WindowState.Maximized;
+        }
+
+        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            // Восстанавливаем состояние окна (например, для будущих запусков)
+            this.WindowState = previousWindowState;
+            this.Width = previousWidth;
+            this.Height = previousHeight;
+            this.Top = previousTop;
+            this.Left = previousLeft;
+        }
+
         private void UpdateProgress(double progress) // progress от 0 до 1
         {
             double maxWidth = ProgressSlider.Width; // как в XAML
@@ -703,6 +742,129 @@ namespace PianoTrainerApp.Views
                 AccuracyPanel.Visibility = Visibility.Visible;
                 AccuracyPanel.BeginAnimation(UIElement.OpacityProperty, fadeIn);
             }
+        }
+
+        // ------------------------------
+        // Автоскролл горизонтальный
+        // ------------------------------
+        // очень зависает (смотрит положение всех нот)
+        private void AutoScrollNotes()
+        {
+            if (pianoVM.FallingNotes == null || pianoVM.FallingNotes.Count == 0)
+                return;
+
+            double canvasHeight = NotesCanvas.RenderSize.Height;
+            double viewportWidth = NotesScrollViewer.ViewportWidth;
+
+            // Пиксели в секунду для падения нот
+            double pixelsPerSecond = 100; // замени на реальную переменную, если она у тебя есть
+
+            // Берём только видимые ноты
+            var visibleNotes = pianoVM.FallingNotes
+                .Where(n =>
+                {
+                    double y = (pianoVM.CurrentTime - n.StartTime) * pixelsPerSecond - n.Duration * pixelsPerSecond - 100; // формула падения
+                    double noteHeight = n.Duration * pixelsPerSecond;
+                    return (y + noteHeight > 0) && (y < canvasHeight);
+                })
+                .ToList();
+
+            if (!visibleNotes.Any())
+                return; // нет заметных нот — не скроллим
+
+            double leftMost = visibleNotes.Min(n => n.X);
+            double rightMost = visibleNotes.Max(n => n.X + (n.NoteName.Contains("#") ? 25 : 40));
+
+            double visibleLeft = NotesScrollViewer.HorizontalOffset;
+            double visibleRight = visibleLeft + viewportWidth;
+
+            double newOffset = NotesScrollViewer.HorizontalOffset;
+
+            if (leftMost < visibleLeft)
+                newOffset = leftMost;
+            else if (rightMost > visibleRight)
+                newOffset = rightMost - viewportWidth;
+
+            // ограничиваем скролл по краям
+            newOffset = Math.Max(0, Math.Min(newOffset, NotesScrollViewer.ExtentWidth - viewportWidth));
+
+            NotesScrollViewer.ScrollToHorizontalOffset(newOffset);
+        }
+        // виснет в разы меньеш, но все же (смотрит положение крайних нот)
+        private void AutoScroll()
+        {
+            if (NotesScrollViewer == null || pianoVM.FallingNotes.Count == 0)
+                return;
+
+            double viewportWidth = NotesScrollViewer.ViewportWidth;
+            double currentOffset = NotesScrollViewer.HorizontalOffset;
+
+            // Находим крайние заметные ноты
+            double leftMostX = double.MaxValue;
+            double rightMostX = double.MinValue;
+
+            foreach (var note in pianoVM.FallingNotes)
+            {
+                // Вычисляем текущую Y позиции ноты на Canvas
+                double noteHeight = note.Duration * pixelsPerSecond;
+                double startOffset = 100; // как в UpdateNotes
+                double delta = pianoVM.CurrentTime - note.StartTime;
+                double y = delta * pixelsPerSecond - noteHeight - startOffset;
+
+                if (y + noteHeight < 0) // нота еще выше видимой области
+                    continue;
+                if (y > NotesCanvas.ActualHeight) // нота уже ушла ниже Canvas
+                    continue;
+
+                double noteWidth = note.NoteName.Contains("#") ? 25 : 40;
+
+                leftMostX = Math.Min(leftMostX, note.X);
+                rightMostX = Math.Max(rightMostX, note.X + noteWidth);
+            }
+
+            if (leftMostX == double.MaxValue || rightMostX == double.MinValue)
+                return; // нет видимых нот
+
+            double leftEdge = currentOffset;
+            double rightEdge = currentOffset + viewportWidth;
+            double newOffset = currentOffset;
+
+            if (leftMostX < leftEdge)
+                newOffset = leftMostX - 20;
+            else if (rightMostX > rightEdge)
+                newOffset = rightMostX - viewportWidth + 20;
+
+            // Ограничиваем диапазон
+            newOffset = Math.Max(0, newOffset);
+            newOffset = Math.Min(NotesScrollViewer.ExtentWidth - viewportWidth, newOffset);
+
+            if (Math.Abs(newOffset - currentOffset) > 0.5)
+                NotesScrollViewer.ScrollToHorizontalOffset(newOffset);
+        }
+
+        private bool initialScrollDone = false;
+
+        private void AutoScrollToCenter()
+        {
+            if (initialScrollDone || NotesScrollViewer == null || pianoVM.FallingNotes.Count == 0)
+                return;
+
+            // Находим левую и правую границы всех нот
+            double leftMostX = pianoVM.FallingNotes.Min(n => n.X);
+            double rightMostX = pianoVM.FallingNotes.Max(n => n.X + (n.NoteName.Contains("#") ? 25 : 40));
+
+            double notesCenter = (leftMostX + rightMostX) / 2;
+
+            // Скролим так, чтобы центр нот оказался в центре видимой области
+            double targetOffset = notesCenter - NotesScrollViewer.ViewportWidth / 2;
+
+            // Ограничиваем по границам
+            targetOffset = Math.Max(0, targetOffset);
+            targetOffset = Math.Min(NotesScrollViewer.ExtentWidth - NotesScrollViewer.ViewportWidth, targetOffset);
+
+            NotesScrollViewer.ScrollToHorizontalOffset(targetOffset);
+
+            initialScrollDone = true; // больше не скроллим
         }
     }
 }

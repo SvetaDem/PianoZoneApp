@@ -46,7 +46,7 @@
 
             <!-- Панель для Advanced -->
             <Grid x:Name="AdvancedPanel"
-                  Visibility="Collapsed" Margin="15 25 15 38">
+                  Visibility="Collapsed" Margin="15 25 15 32">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="auto"/>
                     <RowDefinition Height="auto"/>
@@ -72,8 +72,7 @@
 
                 <!-- Прогресс-бар точности -->
                 <Grid x:Name="AccuracyBlock"
-                      Margin="0 20 0 25"
-                      Visibility="Visible"
+                      Margin="0 20 0 35"
                       Grid.Row="1">
 
                     <!-- Фон -->
@@ -108,7 +107,13 @@
                               StrokeThickness="1"
                               Canvas.Left="0"/>
 
-                        <!-- ⭐ 75% -->
+                        <TextBlock Text="50%" FontSize="10"
+                                   Foreground="#1e1e1e"
+                                   Canvas.Left="0"
+                                   Canvas.Top="23" Width="21"
+                                   TextAlignment="Center"/>
+
+                        <!-- ⭐ 70% -->
                         <Path x:Name="Star70"
                               Width="21" Height="21"
                               Data="M12 17.27L18.18 21 16.54 13.97 22 9.24 
@@ -121,6 +126,12 @@
                               Canvas.Left="57"
                               VerticalAlignment="Center"/>
 
+                        <TextBlock Text="70%" FontSize="10"
+                                   Foreground="#1e1e1e"
+                                   Canvas.Left="57"
+                                   Canvas.Top="23" Width="21"
+                                   TextAlignment="Center"/>
+
                         <!-- ⭐ 90% -->
                         <Path x:Name="Star90"
                               Width="21" Height="21"
@@ -132,6 +143,12 @@
                               Stroke="#3f649a"
                               StrokeThickness="1"
                               Canvas.Right="0"/>
+
+                        <TextBlock Text="90%" FontSize="10"
+                                   Foreground="#1e1e1e"
+                                   Canvas.Left="114"
+                                   Canvas.Top="23" Width="21"
+                                   TextAlignment="Center"/>
 
                     </Canvas>
                 </Grid>
