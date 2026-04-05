@@ -17,7 +17,8 @@ using System.Windows.Shapes;
 namespace PianoTrainerApp.Views
 {
     /// <summary>
-    /// Логика взаимодействия для HomeView.xaml
+    /// Представление домашней страницы приложения PianoTrainerApp.
+    /// Содержит кнопки для перехода к библиотеке песен и обучающим урокам.
     /// </summary>
     public partial class HomeView : UserControl
     {

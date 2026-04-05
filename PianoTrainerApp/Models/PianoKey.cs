@@ -7,11 +7,16 @@ using System.Threading.Tasks;
 
 namespace PianoTrainerApp.Models
 {
+    /// <summary>
+    /// Модель клавиши пианино.
+    /// Представляет отдельную клавишу (белую или черную) с информацией о ноте,
+    /// позиции на клавиатуре и состоянии нажатия.
+    /// </summary>
     public class PianoKey : INotifyPropertyChanged
     {
         public string Note { get; set; }
         public bool IsBlack { get; set; }  // Черная/Белая клавиша
-        public double PositionX { get; set; } // Для чёрных клавиш
+        public double PositionX { get; set; } // Позиция клавиши по оси X (используется для размещения черных клавиш над белыми)
         private bool isPressed;
         public bool IsPressed
         {

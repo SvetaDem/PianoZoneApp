@@ -20,11 +20,16 @@ using System.Windows.Shapes;
 namespace PianoTrainerApp.Views
 {
     /// <summary>
-    /// Логика взаимодействия для LibraryView.xaml
+    /// Представление библиотеки песен. 
+    /// Содержит список песен, управление избранным, импорт MIDI-файлов и переход к игре на пианино.
     /// </summary>
     public partial class LibraryView : UserControl
     {
         public event Action SongFinishedInPiano;
+
+        /// Конструктор LibraryView.
+        /// Инициализирует компоненты UI, задаёт DataContext и загружает список песен.
+        /// </summary>
         public LibraryView()
         {
             InitializeComponent();

@@ -11,9 +11,18 @@ using System.Windows.Threading;
 
 namespace PianoTrainerApp.ViewModels
 {
+    /// <summary>
+    /// ViewModel для страницы уроков PianoTrainerApp.
+    /// Управляет текущим режимом обучения, состоянием клавиатуры,
+    /// выбранной нотой и текстовыми подсказками.
+    /// </summary>
     public class LessonsViewModel : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
+
+        // ---------------------------
+        // Текущий режим обучения
+        // ---------------------------
         private LearningMode _currentMode;
         public LearningMode CurrentMode
         {
@@ -51,16 +60,20 @@ namespace PianoTrainerApp.ViewModels
         // ---------------------------
         // Visibility для элементов
         // ---------------------------
-        public bool ShowNote => IsTheory || IsReading;               // ноты на нотном стане
-        public bool ShowQuestionMark => IsHearing;                  // знак вопроса при слухе
+        public bool ShowNote => IsTheory || IsReading;  // ноты на нотном стане
+        public bool ShowQuestionMark => IsHearing;   // знак вопроса при слухе
         public bool ShowSoundButton => !IsReading;  // кнопка звука: теория + слух
         public bool ShowNextButton => !IsTheory;  // кнопка далее в челленджах
 
-
+        // ---------------------------
+        // Клавиши пианино
+        // ---------------------------
         public ObservableCollection<PianoKey> WhiteKeys { get; set; }
         public ObservableCollection<PianoKey> BlackKeys { get; set; }
 
-        // Выбранная нота
+        // ---------------------------
+        // Выбранная нота и её отображение
+        // ---------------------------
         private string _selectedNote;
         public string SelectedNote
         {
@@ -153,8 +166,9 @@ namespace PianoTrainerApp.ViewModels
         // Y позиция линии на ноте
         public double LineY => NoteY + 6;
 
-        // Выбранный челлендж
-
+        // ---------------------------
+        // Челленджи
+        // ---------------------------
         private LearningMode _selectedChallenge;
         public LearningMode SelectedChallenge
         {
@@ -194,6 +208,9 @@ namespace PianoTrainerApp.ViewModels
             }
         }
 
+        /// <summary>
+        /// Инициализирует клавиши, режим и текстовые подсказки по умолчанию.
+        /// </summary>
         public LessonsViewModel()
         {
             WhiteKeys = new ObservableCollection<PianoKey>();
@@ -208,6 +225,9 @@ namespace PianoTrainerApp.ViewModels
             Header = "До 1 октавы";
         }
 
+        /// <summary>
+        /// Генерирует клавиши пианино (белые и черные).
+        /// </summary>
         private void GenerateKeys()
         {
             WhiteKeys.Clear();
@@ -241,7 +261,7 @@ namespace PianoTrainerApp.ViewModels
             }
         }
 
-        // Метод обновления пианино
+        // Подсветка выбранной клавиши
         private void UpdatePiano()
         {
             if (IsTheory) // подсветка только в теории
@@ -261,7 +281,7 @@ namespace PianoTrainerApp.ViewModels
             }
         }
 
-        // Метод обновления позиции ноты
+        // Метод обновления позиции нот на нотном стане
         private void UpdateNotePosition()
         {
             // Сбрасываем по умолчанию
@@ -331,6 +351,7 @@ namespace PianoTrainerApp.ViewModels
                     ? "Запоминай названия нот, их звучание, а также расположение\nна нотном стане и на клавиатуре инструмента"
                     : "Смелее, проверь себя"; // пока пусто, ждем ответ
         }
+
         // Метод для смены режима
         public void SetMode(LearningMode mode)
         {
@@ -345,6 +366,7 @@ namespace PianoTrainerApp.ViewModels
                 SelectedChallenge = LearningMode.Theory;
         }
 
+        // Генерация новой ноты для челленджа
         private void UpdateChallenge()
         {
             if (SelectedChallenge == LearningMode.Reading || SelectedChallenge == LearningMode.Hearing)
@@ -355,6 +377,7 @@ namespace PianoTrainerApp.ViewModels
 
         private Random _random = new Random();
 
+        // Генерирует случайную ноту для челленджа
         public void GenerateRandomNoteForChallenge()
         {
             string[] notes = { "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B" };

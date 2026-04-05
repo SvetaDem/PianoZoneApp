@@ -11,17 +11,34 @@ using System.Windows.Threading;
 
 namespace PianoTrainerApp.ViewModels
 {
+    /// <summary>
+    /// ViewModel пианино.
+    /// Отвечает за генерацию клавиатуры, анимацию падающих нот,
+    /// обработку нажатий и логику воспроизведения (Practice / Advanced).
+    /// </summary>
     public class PianoViewModel
     {
+        // ---------------------------
+        // Клавиатура пианино
+        // ---------------------------
         public ObservableCollection<PianoKey> WhiteKeys { get; set; }
         public ObservableCollection<PianoKey> BlackKeys { get; set; }
+        
+        // ---------------------------
+        // Ноты
+        // ---------------------------
         public ObservableCollection<MidiNote> FallingNotes { get; set; }
-
         public List<MidiNote> OriginalNotes { get; private set; }
 
+        // ---------------------------
+        // Настройки воспроизведения
+        // ---------------------------
         public double SpeedMultiplier { get; set; } = 1.0; // 1x по умолчанию
         public PlayMode Mode { get; set; } = PlayMode.Practice;
 
+        // ---------------------------
+        // Аккорды и состояние
+        // ---------------------------
         public List<MidiNote> WaitingChord { get; set; } = new List<MidiNote>();
 
         private DispatcherTimer animationTimer;
@@ -45,6 +62,10 @@ namespace PianoTrainerApp.ViewModels
                 }
             }
         }
+
+        /// <summary>
+        /// Инициализирует клавиатуру и таймер анимации.
+        /// </summary>
         public PianoViewModel()
         {
             WhiteKeys = new ObservableCollection<PianoKey>();
@@ -57,6 +78,12 @@ namespace PianoTrainerApp.ViewModels
             animationTimer.Interval = TimeSpan.FromMilliseconds(20);
         }
 
+        // ---------------------------
+        // Анимация
+        // ---------------------------
+        /// <summary>
+        /// Запускает анимацию падающих нот.
+        /// </summary>
         public void StartAnimation(List<MidiNote> notes)
         {
             // Сохраняем оригинальные ноты для перезапуска
@@ -91,6 +118,7 @@ namespace PianoTrainerApp.ViewModels
             animationTimer.Start();
         }
 
+        // Получение X позиции клавиши
         private double GetKeyX(string noteName)
         {
             var whiteKey = WhiteKeys.FirstOrDefault(k => k.Note == noteName);
@@ -101,6 +129,8 @@ namespace PianoTrainerApp.ViewModels
                 return blackKey.PositionX;
             return 0;
         }
+
+        // Генерация клавиш пианино
         private void GenerateKeys()
         {
             string[] whiteNotes = { "C", "D", "E", "F", "G", "A", "B" };
@@ -131,7 +161,7 @@ namespace PianoTrainerApp.ViewModels
         }
 
         // ------------------------------
-        //  Подсветка по падению нот
+        //  Подсветка клавиш по падению нот
         // ------------------------------
         public void PressKey(string noteName)
         {
@@ -145,7 +175,9 @@ namespace PianoTrainerApp.ViewModels
             if (key != null) key.IsPressed = false;
         }
 
-        // Подсветка по микрофону (зелёный/красный)
+        /// <summary>
+        /// Подсвечивает аккорд на основе распознанных нот (например, с микрофона).
+        /// </summary>
         public void HighlightChord(List<string> detectedNotes)
         {
             foreach (var key in WhiteKeys.Concat(BlackKeys))
@@ -157,21 +189,27 @@ namespace PianoTrainerApp.ViewModels
             }
         }
 
-
         // ------------------------------
-        //  Найти клавишу по названию ноты
+        // Вспомогательные методы
         // ------------------------------
+        // Поиск клавиши по названию ноты
         private PianoKey FindKey(string note)
         {
             return WhiteKeys.Concat(BlackKeys)
                             .FirstOrDefault(k => k.Note == note);
         }
 
+        /// <summary>
+        /// Корректирует время старта после паузы.
+        /// </summary>
         public void AdjustStartTimeForPause(TimeSpan pauseDuration)
         {
             startTime = startTime.Add(pauseDuration);
         }
 
+        /// <summary>
+        /// Сбрасывает состояние воспроизведения и нот.
+        /// </summary>
         public void Reset()
         {
             startTime = DateTime.Now;  // сброс времени
@@ -183,6 +221,5 @@ namespace PianoTrainerApp.ViewModels
                 note.HasPressed = false;
             }
         }
-
     }
 }

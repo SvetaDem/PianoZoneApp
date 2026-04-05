@@ -16,7 +16,7 @@ using System.Windows.Shapes;
 namespace PianoTrainerApp.Views
 {
     /// <summary>
-    /// Логика взаимодействия для TempoWindow.xaml
+    /// Окно выбора режима прохождения песни: Practice / Advanced и выбор темпа для практики.
     /// </summary>
     public partial class TempoWindow : Window
     {
@@ -29,6 +29,7 @@ namespace PianoTrainerApp.Views
             SetAdvancedMode();
         }
 
+        // Обработка нажатия на кнопку начала игры
         private void ButtonOk_Click(object sender, RoutedEventArgs e)
         {
             if (PracticePanel.Visibility == Visibility.Visible)
@@ -59,12 +60,14 @@ namespace PianoTrainerApp.Views
             Close();
         }
 
+        // Обработка нажатия на кнопку отмены
         private void ButtonCancel_Click(object sender, RoutedEventArgs e)
         {
             DialogResult = false;
             Close();
         }
 
+        // Установка режима прохождения Advanced
         private void SetAdvancedMode()
         {
             AdvancedTab.Background = (Brush)new BrushConverter().ConvertFrom("#3F64A9");
@@ -80,6 +83,7 @@ namespace PianoTrainerApp.Views
             ModeText.Text = "Играй на точность попаданий и получай звёзды!";
         }
 
+        // Установка режима прохождения Practice
         private void SetPracticeMode()
         {
             PracticeTab.Background = (Brush)new BrushConverter().ConvertFrom("#3F64A9");
@@ -95,18 +99,19 @@ namespace PianoTrainerApp.Views
             ModeText.Text = "Практикуйся в игре на своём инструменте в любом темпе, без оценки!";
         }
 
-        // клики
+        // Обработка клика по табу режима Advanced
         private void AdvancedTab_Click(object sender, MouseButtonEventArgs e)
         {
             SetAdvancedMode();
         }
 
+        // Обработка клика по табу режима Practice
         private void PracticeTab_Click(object sender, MouseButtonEventArgs e)
         {
             SetPracticeMode();
         }
 
-        // перетаскивание
+        // Перетаскивание окна
         private void Window_MouseDown(object sender, MouseButtonEventArgs e)
         {
             if (e.LeftButton == MouseButtonState.Pressed)

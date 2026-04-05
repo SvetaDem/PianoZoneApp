@@ -21,7 +21,8 @@ using System.Windows.Shapes;
 namespace PianoTrainerApp.Views
 {
     /// <summary>
-    /// Логика взаимодействия для LessonsView.xaml
+    /// Представление страницы уроков и тренировки слуха/чтения нот.
+    /// Содержит визуальную клавиатуру, кнопки для выбора режимов обучения и воспроизведения нот.
     /// </summary>
     public partial class LessonsView : UserControl
     {
@@ -32,6 +33,10 @@ namespace PianoTrainerApp.Views
             DataContext = new LessonsViewModel();
         }
 
+        /// <summary>
+        /// Обработчик события Loaded для Grid с клавиатурой.
+        /// Применяет скруглённые края к границам Grid.
+        /// </summary>
         private void PianoGrid_Loaded(object sender, RoutedEventArgs e)
         {
             var grid = sender as Grid;
@@ -47,6 +52,10 @@ namespace PianoTrainerApp.Views
             }
         }
 
+        /// <summary>
+        /// Обработчик клика по ноте на клавиатуре.
+        /// Устанавливает выбранную ноту, обновляет заголовок и переключает режим обучения на Theory.
+        /// </summary>
         private void Note_Click(object sender, MouseButtonEventArgs e)
         {
             var tb = sender as TextBlock;
@@ -85,7 +94,12 @@ namespace PianoTrainerApp.Views
             }
         }
 
-        // Метод для воспроизведения звука (почти как звук пианино)
+        /// <summary>
+        /// Воспроизводит звук пианино заданной частоты.
+        /// Генерирует основной тон и обертоны, применяет плавное появление и затухание.
+        /// </summary>
+        /// <param name="frequency">Частота ноты в Гц</param>
+        /// <param name="durationMs">Длительность звука в миллисекундах (по умолчанию 520)</param>
         private void PlayPianoTone(double frequency, int durationMs = 520)
         {
             var waveOut = new WaveOutEvent();  // WaveOutEvent — это объект, который умеет воспроизводить звук через колонки.
@@ -134,7 +148,11 @@ namespace PianoTrainerApp.Views
             waveOut.Play();      // воспроизводим звук
         }
 
-        // Метод получения частоты ноты
+        /// <summary>
+        /// Возвращает частоту ноты по её названию.
+        /// </summary>
+        /// <param name="note">Название ноты (C, C#, D и т.д.)</param>
+        /// <returns>Частота ноты в Гц или 0, если нота неизвестна</returns>
         private double GetFrequency(string note)
         {
             switch (note)
@@ -166,6 +184,10 @@ namespace PianoTrainerApp.Views
                 PlayPianoTone(freq);
         }
 
+        /// <summary>
+        /// Обработчик клика по челленджу.
+        /// Переключает режим обучения на слух или чтение.
+        /// </summary>
         private void Challenge_Click(object sender, MouseButtonEventArgs e)
         {
             var tb = sender as TextBlock;
@@ -186,6 +208,9 @@ namespace PianoTrainerApp.Views
             }
         }
 
+        /// <summary>
+        /// Генерация следующей ноты для челленджа при нажатии кнопки "Next".
+        /// </summary>
         private void ButtonNext_Click(object sender, RoutedEventArgs e)
         {
             var vm = DataContext as LessonsViewModel;
@@ -195,7 +220,10 @@ namespace PianoTrainerApp.Views
             vm.GenerateRandomNoteForChallenge();
         }
 
-        // Наведение мыши
+        /// <summary>
+        /// Наведение мыши на клавишу пианино.
+        /// Подсвечивает клавишу при активном режиме Hearing или Reading.
+        /// </summary>
         private void PianoKey_MouseEnter(object sender, MouseEventArgs e)
         {
             if (DataContext is LessonsViewModel vm && vm.CurrentMode != LearningMode.Theory)
@@ -205,6 +233,10 @@ namespace PianoTrainerApp.Views
             }
         }
 
+        /// <summary>
+        /// Снятие наведения мыши с клавиши пианино.
+        /// Убирает подсветку клавиши.
+        /// </summary>
         private void PianoKey_MouseLeave(object sender, MouseEventArgs e)
         {
             if (DataContext is LessonsViewModel vm && vm.CurrentMode != LearningMode.Theory)
@@ -214,7 +246,10 @@ namespace PianoTrainerApp.Views
             }
         }
 
-        // Клик по клавише
+        /// <summary>
+        /// Клик по клавише пианино в режиме челленджа.
+        /// Проверяет правильность нажатой ноты, отображает результат и блокирует последующие ответы.
+        /// </summary>
         private void PianoKey_Click(object sender, MouseButtonEventArgs e)
         {
             if (!(DataContext is LessonsViewModel vm)

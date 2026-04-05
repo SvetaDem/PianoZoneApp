@@ -369,8 +369,7 @@
                                Foreground="#9b9b9b"
                                TextAlignment="Center"
                                FontSize="13"
-                               Margin="0,15,0,0"
-                               Cursor="Hand"/>
+                               Margin="0,15,0,0" Cursor=""/>
 
                     <TextBlock Text="Зарегистрируйся"
                                Foreground="#e0e0e0"

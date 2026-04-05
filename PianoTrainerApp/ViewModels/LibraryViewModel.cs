@@ -11,20 +11,24 @@ using System.Windows;
 
 namespace PianoTrainerApp.ViewModels
 {
+    /// <summary>
+    /// ViewModel для страницы библиотеки песен.
+    /// Управляет загрузкой, фильтрацией и отображением песен,
+    /// избранными песнями пользователя и поиском.
+    /// </summary>
     public class LibraryViewModel : INotifyPropertyChanged
     {
+        // ---------------------------
+        // Песни
+        // ---------------------------
         public ObservableCollection<Song> Songs { get; set; } = new ObservableCollection<Song>();
         public ObservableCollection<Song> FilteredSongs { get; set; } = new ObservableCollection<Song>();
 
+        // ---------------------------
+        // Жанры
+        // ---------------------------
         // Список всех жанров + специальный "ничего не выбрано"
         public ObservableCollection<string> Genres { get; set; } = new ObservableCollection<string>();
-        public bool IsUserAuthorized => CurrentUserId != 0;
-        public int FavoritesCount =>
-    Songs.Count(s => s.IsFavorite);
-
-        public event Action FavoritesChanged;
-
-        public int CurrentUserId { get; set; }
 
         private string selectedGenre;
         public string SelectedGenre
@@ -38,6 +42,9 @@ namespace PianoTrainerApp.ViewModels
             }
         }
 
+        // ---------------------------
+        // Поиск
+        // ---------------------------
         private string searchText;
         public string SearchText
         {
@@ -50,6 +57,21 @@ namespace PianoTrainerApp.ViewModels
             }
         }
 
+        // ---------------------------
+        // Пользователь и избранное
+        // ---------------------------
+        public bool IsUserAuthorized => CurrentUserId != 0;
+        public int FavoritesCount => Songs.Count(s => s.IsFavorite);
+
+        // Для отображения списка понравившихся песен
+        private bool showingFavorites = false;
+
+        public int CurrentUserId { get; set; }
+        public event Action FavoritesChanged;
+
+        // ---------------------------
+        // Выбранная песня
+        // ---------------------------
         private Song selectedSong;
         public Song SelectedSong
         {
@@ -57,14 +79,21 @@ namespace PianoTrainerApp.ViewModels
             set { selectedSong = value; OnPropertyChanged(); }
         }
 
+        /// <summary>
+        /// Инициализирует ViewModel и загружает песни.
+        /// </summary>
         public LibraryViewModel()
         {
             CurrentUserId = Properties.Settings.Default.CurrentUserId;
             LoadSongs();
-
         }
 
-        // Загрузка песен
+        // ---------------------------
+        // Методы для загрузки и сброса песен
+        // ---------------------------
+        /// <summary>
+        /// Загружает песни и жанры из базы данных, обновляет информацию об избранном пользователя.
+        /// </summary>
         public void LoadSongs()
         {
             try
@@ -128,7 +157,9 @@ namespace PianoTrainerApp.ViewModels
             OnPropertyChanged(nameof(Genres));
         }
 
-        // Сброс любимых песен (вызывается при logout)
+        /// <summary>
+        /// Сбрасывает избранные песни и текущего пользователя (например, при logout).
+        /// </summary>
         public void ResetSongs()
         {
             CurrentUserId = 0;
@@ -149,14 +180,21 @@ namespace PianoTrainerApp.ViewModels
             OnPropertyChanged(nameof(Genres));
         }
 
-        // Обновление значения CurrentUser
+        /// <summary>
+        /// Обновляет идентификатор текущего пользователя и загружает песни.
+        /// </summary>
         public void SetCurrentUser(int userId)
         {
             CurrentUserId = userId;
             LoadSongs();
         }
 
-        // Для чтения/записи в таблицу понравившихся песен
+        // ---------------------------
+        // Методы для работы с избранным
+        // ---------------------------
+        /// <summary>
+        /// Переключает состояние "избранная песня" для заданной песни.
+        /// </summary>
         public void ToggleFavorite(Song song)
         {
             if (song == null) return;
@@ -215,20 +253,23 @@ namespace PianoTrainerApp.ViewModels
                 FilterSongs();
 
             OnPropertyChanged(nameof(FilteredSongs));
-
-            
         }
 
-        // Для отображения списка понравившихся песен
-        private bool showingFavorites = false;
-
+        /// <summary>
+        /// Включает или выключает фильтр отображения только избранных песен.
+        /// </summary>
         public void ToggleFavoritesFilter()
         {
             showingFavorites = !showingFavorites;
             FilterSongs();
         }
 
-        // Фильтрация списка песен
+        // ---------------------------
+        // Внутренние методы
+        // ---------------------------
+        /// <summary>
+        /// Применяет фильтры поиска, жанра и избранного к списку песен.
+        /// </summary>
         private void FilterSongs()
         {
             FilteredSongs.Clear();

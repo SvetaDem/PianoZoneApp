@@ -6,6 +6,10 @@ using System.Threading.Tasks;
 
 namespace PianoTrainerApp.Models
 {
+    /// <summary>
+    /// Модель ноты MIDI.
+    /// Представляет отдельную ноту с информацией о её названии, времени появления, длительности и состоянии.
+    /// </summary>
     public class MidiNote
     {
         public string NoteName { get; set; }   // Например "C4"

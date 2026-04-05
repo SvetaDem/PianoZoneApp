@@ -17,7 +17,8 @@ using System.Windows.Shapes;
 namespace PianoTrainerApp.Views
 {
     /// <summary>
-    /// Логика взаимодействия для SongFinishedWindow.xaml
+    /// Окно завершения песни.
+    /// Выводит результат при прохождении на точность.
     /// </summary>
     public partial class SongFinishedWindow : Window
     {
@@ -25,31 +26,36 @@ namespace PianoTrainerApp.Views
         {
             InitializeComponent();
         }
+
+        // Обработка нажатия на кнопку рестарта игры
         private void Repeat_Click(object sender, RoutedEventArgs e)
         {
             DialogResult = true;
             Close();
         }
 
+        // Обработка нажатия на кнопку перехода в библиотеку
         private void Library_Click(object sender, RoutedEventArgs e)
         {
             DialogResult = false;
             Close();
         }
 
-        // --- ПЕРЕТАСКИВАНИЕ ---
+        // Перетаскивание окна
         private void Window_MouseDown(object sender, MouseButtonEventArgs e)
         {
             if (e.LeftButton == MouseButtonState.Pressed)
                 this.DragMove();
         }
 
+        // Установка режима прохождения Pracrice
         public void SetPracticeMode()
         {
             PracticeText.Visibility = Visibility.Visible;
             AdvancedPanel.Visibility = Visibility.Collapsed;
         }
 
+        // Установка режима прохождения Advanced
         public void SetAdvancedMode(double accuracy, double bestAccuracy = 0)
         {
             AdvancedPanel.Visibility = Visibility.Visible;
@@ -80,6 +86,7 @@ namespace PianoTrainerApp.Views
             if (accuracy >= 90) FillStar(Star90);
         }
 
+        // Анимация заполнения звезды
         private void FillStar(Path star)
         {
             var anim = new ColorAnimation

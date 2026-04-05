@@ -21,18 +21,21 @@ using System.Windows.Shapes;
 namespace PianoTrainerApp.Views
 {
     /// <summary>
-    /// Логика взаимодействия для MainWindow.xaml
+    /// Главное окно приложения. Отвечает за навигацию между страницами,
+    /// авторизацию/регистрацию пользователя, управление профилем,
+    /// отображение статистики и обработку пользовательского ввода.
     /// </summary>
     public partial class MainWindow : Window
     {
         private User currentUser;
 
-        private Dictionary<string, string> passwords = new Dictionary<string, string>();
+        private Dictionary<string, string> passwords = new Dictionary<string, string>();  // для хранения настоящих паролей textbox
+        bool profileOpened = false;  // Открыта ли панель профиля
+        private bool showPassword = false;
 
         public MainWindow()
         {
             InitializeComponent();
-            //ShowHome();
             ShowPage(PageType.Home);
             AutoLogin();
         }
@@ -77,26 +80,15 @@ namespace PianoTrainerApp.Views
             }
         }
 
-        private void ResetMenuItems()
+        // Обработчик клика по пунктам меню
+        private void MenuTextBlock_Click(object sender, MouseButtonEventArgs e)
         {
-            ResetItem(HomeTextBlock);
-            ResetItem(LessonsTextBlock);
-            ResetItem(LibraryTextBlock);
+            if (sender == HomeTextBlock) ShowPage(PageType.Home);
+            else if (sender == LibraryTextBlock) ShowPage(PageType.Library);
+            else if (sender == LessonsTextBlock) ShowPage(PageType.Lessons);
         }
-
-        private void ResetItem(TextBlock tb)
-        {
-            tb.Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#202020"));
-
-            var scale = tb.RenderTransform as ScaleTransform;
-            if (scale != null)
-            {
-                scale.ScaleX = 1;
-                scale.ScaleY = 1;
-            }
-        }
-
-        // Подсветка выбранного пункта
+        
+        // Подсветка выбранного пункта меню
         private void HighlightMenuItem(TextBlock tb)
         {
             if (tb == null) return;
@@ -111,14 +103,28 @@ namespace PianoTrainerApp.Views
             }
         }
 
-        private void MenuTextBlock_Click(object sender, MouseButtonEventArgs e)
+        // Сброс подсветки всех пунктов меню
+        private void ResetMenuItems()
         {
-            if (sender == HomeTextBlock) ShowPage(PageType.Home);
-            else if (sender == LibraryTextBlock) ShowPage(PageType.Library);
-            else if (sender == LessonsTextBlock) ShowPage(PageType.Lessons);
+            ResetItem(HomeTextBlock);
+            ResetItem(LessonsTextBlock);
+            ResetItem(LibraryTextBlock);
         }
 
-        // Обновление статистики профиля
+        // Сброс конкретного пункта меню
+        private void ResetItem(TextBlock tb)
+        {
+            tb.Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#202020"));
+
+            var scale = tb.RenderTransform as ScaleTransform;
+            if (scale != null)
+            {
+                scale.ScaleX = 1;
+                scale.ScaleY = 1;
+            }
+        }
+
+        // Обновление статистики пользователя
         private void RefreshUserStats(bool includeStreak = false)
         {
             if (currentUser == null) return;
@@ -174,6 +180,7 @@ namespace PianoTrainerApp.Views
             }
         }
 
+        // Кнопка выхода из приложения
         private void ButtonExit_Click(object sender, RoutedEventArgs e)
         {
             var result = CustomMessageBox.Show(
@@ -189,7 +196,7 @@ namespace PianoTrainerApp.Views
             }
         }
 
-        bool profileOpened = false;
+        // Открытие/закрытие панели профиля
         private void ProfileButton_Click(object sender, RoutedEventArgs e)
         {
             double to = profileOpened ? 350 : 0;
@@ -208,6 +215,7 @@ namespace PianoTrainerApp.Views
             Overlay.Visibility = profileOpened ? Visibility.Visible : Visibility.Collapsed;
         }
 
+        // Закрытие панели профиля по клику вне её
         private void Overlay_MouseDown(object sender, MouseButtonEventArgs e)
         {
             if (!profileOpened) return;
@@ -225,6 +233,7 @@ namespace PianoTrainerApp.Views
             Overlay.Visibility = Visibility.Collapsed;
         }
 
+        // Переключение на форму регистрации
         private void RegisterTextBlock_Click(object sender, MouseButtonEventArgs e)
         {
             // Скрываем панель авторизации
@@ -234,6 +243,7 @@ namespace PianoTrainerApp.Views
             RegisterPanel.Visibility = Visibility.Visible;
         }
 
+        // Возврат к форме авторизации
         private void ButtonBack_Click(object sender, RoutedEventArgs e)
         {
             // Скрываем панель регистрации
@@ -243,6 +253,7 @@ namespace PianoTrainerApp.Views
             AuthPanel.Visibility = Visibility.Visible;
         }
 
+        // Автоматический вход пользователя по сохранённому ID
         private void AutoLogin()
         {
             int savedUserId = Properties.Settings.Default.CurrentUserId;
@@ -281,7 +292,7 @@ namespace PianoTrainerApp.Views
             }
         }
 
-        // Отображение профиля
+        // Отображение профиля пользователя
         private void ShowUserProfile(User user)
         {
             if (user == null) return;
@@ -306,6 +317,7 @@ namespace PianoTrainerApp.Views
             RefreshUserStats(includeStreak: true);
         }
 
+        // Выход из аккаунта
         private void ButtonLogout_Click(object sender, RoutedEventArgs e)
         {
             var result = CustomMessageBox.Show(
@@ -334,8 +346,6 @@ namespace PianoTrainerApp.Views
             }
         }
 
-        private bool showPassword = false;
-
         // ---------- Универсальный TextChanged для логина/почты ----------
         private void TextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
@@ -355,7 +365,7 @@ namespace PianoTrainerApp.Views
             placeholder.Visibility = string.IsNullOrEmpty(tb.Text) ? Visibility.Visible : Visibility.Collapsed;
         }
 
-        // ---------- Универсальный Loaded для пароля ----------
+        // ---------- Инициализация placeholder для пароля ----------
         private void PasswordBox_Loaded(object sender, RoutedEventArgs e)
         {
             var tb = sender as TextBox;
@@ -367,6 +377,7 @@ namespace PianoTrainerApp.Views
                 placeholder.Visibility = Visibility.Visible;
         }
 
+        // ---------- Обработка потери фокуса у поля пароля ----------
         private void PasswordBox_LostFocus(object sender, RoutedEventArgs e)
         {
             var tb = sender as TextBox;
@@ -383,7 +394,7 @@ namespace PianoTrainerApp.Views
                 : Visibility.Collapsed;
         }
 
-        // ---------- Универсальный TextChanged для пароля ----------
+        // ---------- Обработка ввода пароля (кастомное скрытие символов) ----------
         private void PasswordBox_TextChanged(object sender, TextChangedEventArgs e)
         {
             var tb = sender as TextBox;
@@ -442,7 +453,7 @@ namespace PianoTrainerApp.Views
             tb.SelectionStart = selStart;
         }
 
-        // Обработчик вставки
+        // ---------- Обработка вставки в поле пароля ----------
         private void PasswordBox_Pasting(object sender, DataObjectPastingEventArgs e)
         {
             var tb = sender as TextBox;
@@ -483,7 +494,7 @@ namespace PianoTrainerApp.Views
                 : Visibility.Collapsed;
         }
 
-        // ---------- Универсальный глазик ----------
+        // ---------- Показ пароля при зажатии глазика ----------
         private void ShowPasswordButton_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             showPassword = true;
@@ -501,6 +512,7 @@ namespace PianoTrainerApp.Views
             tb.SelectionStart = tb.Text.Length;
         }
 
+        // ---------- Скрытие пароля при отпускании глазика ----------
         private void ShowPasswordButton_PreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
             showPassword = false;
@@ -518,7 +530,7 @@ namespace PianoTrainerApp.Views
             tb.SelectionStart = tb.Text.Length;
         }
 
-        // Поиск placeholder в textbox
+        // Поиск placeholder внутри TextBox
         private TextBlock FindPlaceholder(TextBox tb)
         {
             var grid = tb.Parent as Grid;
@@ -528,7 +540,7 @@ namespace PianoTrainerApp.Views
                 .FirstOrDefault(t => t.Name.Contains("Placeholder"));
         }
 
-        // ---------- Проверка логина ----------
+        // Проверка логина
         private bool IsValidUsername(string username, out string error)
         {
             error = "";
@@ -576,14 +588,15 @@ namespace PianoTrainerApp.Views
 
             return true;
         }
-        // ---------- Проверка email ----------
+        
+        // Проверка email
         bool IsValidEmail(string email)
         {
             string pattern = @"^(?=.{1,254}$)(?=.{1,64}@)([a-zA-Z0-9_-]+(?:\.[a-zA-Z0-9_-]+)*)@([a-zA-Z]{2,64}(?:\.[a-zA-Z]{2,64})+)$";
             return Regex.IsMatch(email, pattern, RegexOptions.IgnoreCase);
         }
 
-        // ---------- Проверка пароля ----------
+        // Проверка пароля
         private bool IsValidPassword(string password)
         {
             if (string.IsNullOrWhiteSpace(password)) return false;

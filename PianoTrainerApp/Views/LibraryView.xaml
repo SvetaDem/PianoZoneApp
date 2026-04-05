@@ -47,7 +47,6 @@
             </Setter>
         </Style>
 
-
         <!-- Основной стиль ComboBox -->
         <Style x:Key="RoundedComboBox" TargetType="ComboBox">
             <Setter Property="Foreground" Value="Black"/>
@@ -139,7 +138,7 @@
                 </Setter.Value>
             </Setter>
         </Style>
-
+        
         <!-- Стиль элемента списка ListBox -->
         <Style TargetType="ListBoxItem">
             <Setter Property="Padding" Value="0"/>

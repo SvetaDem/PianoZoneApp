@@ -5,20 +5,36 @@ using System.Linq;
 
 namespace PianoTrainerApp.Services
 {
+    /// <summary>
+    /// Сервис для определения высоты звука (нот) с микрофона.
+    /// Использует автокорреляцию для анализа аудиосигнала
+    /// и преобразует частоты в музыкальные ноты.
+    /// </summary>
     public class PitchDetector
     {
+        // ---------------------------
+        // Настройки аудио
+        // ---------------------------
         private WaveInEvent waveIn;
         private const int sampleRate = 44100;
         private const int bufferSize = 4096;
 
+        // Событие
         public event Action<List<string>> OnNotesDetected;
 
+        // Названия нот
         private static readonly string[] NoteNames =
         {
             "C", "C#", "D", "D#", "E", "F",
             "F#", "G", "G#", "A", "A#", "B"
         };
 
+        // ---------------------------
+        // Управление записью
+        // ---------------------------
+        /// <summary>
+        /// Запускает захват аудио с микрофона.
+        /// </summary>
         public void Start()
         {
             waveIn = new WaveInEvent
@@ -30,6 +46,9 @@ namespace PianoTrainerApp.Services
             waveIn.StartRecording();
         }
 
+        /// <summary>
+        /// Останавливает запись и освобождает ресурсы.
+        /// </summary>
         public void Stop()
         {
             waveIn?.StopRecording();
@@ -37,6 +56,10 @@ namespace PianoTrainerApp.Services
             waveIn = null;
         }
 
+        // ---------------------------
+        // Обработка аудио
+        // ---------------------------
+        // Обрабатывает входящий аудиобуфер
         private void OnDataAvailable(object sender, WaveInEventArgs e)
         {
             double[] samples = new double[e.BytesRecorded / 2];
@@ -57,6 +80,7 @@ namespace PianoTrainerApp.Services
                 OnNotesDetected?.Invoke(notes);
         }
 
+        // Поиск частот с помощью автокорреляции
         private List<double> FindFrequencies(double[] buffer)
         {
             List<double> detected = new List<double>();
@@ -86,6 +110,7 @@ namespace PianoTrainerApp.Services
             return detected;
         }
 
+        // Преобразование частоты в музыкальную ноту
         private string FrequencyToNote(double freq)
         {
             if (freq <= 0) return "";

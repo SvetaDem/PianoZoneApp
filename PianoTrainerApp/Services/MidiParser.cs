@@ -10,8 +10,16 @@ using Melanchall.DryWetMidi.Interaction;
 
 namespace PianoTrainerApp.Services
 {
+    /// <summary>
+    /// Сервис для парсинга MIDI-файлов.
+    /// Преобразует MIDI-ноты в список объектов MidiNote,
+    /// пригодных для использования в приложении (например, для анимации).
+    /// </summary>
     internal class MidiParser
     {
+        // ---------------------------
+        // Сопоставление названий нот
+        // ---------------------------
         private static readonly Dictionary<string, string> NoteMap = new Dictionary<string, string>
         {
             {"CSharp", "C#"},
@@ -27,6 +35,10 @@ namespace PianoTrainerApp.Services
             {"A", "A"},
             {"B", "B"}
         };
+
+        /// <summary>
+        /// Читает MIDI-файл и преобразует его в список нот.
+        /// </summary>
         public static List<MidiNote> ParseMidi(string path)
         {
             var midiFile = MidiFile.Read(path);
@@ -37,7 +49,11 @@ namespace PianoTrainerApp.Services
             {
                 // Формируем строку вроде "C4", "D#5" и т.п.
                 NoteName = $"{NoteMap[n.NoteName.ToString()]}{n.Octave}",
+
+                // Время начала ноты (в секундах)
                 StartTime = n.TimeAs<MetricTimeSpan>(tempoMap).TotalSeconds,
+
+                // Длительность ноты (в секундах)
                 Duration = n.LengthAs<MetricTimeSpan>(tempoMap).TotalSeconds
             }).ToList();
         }
