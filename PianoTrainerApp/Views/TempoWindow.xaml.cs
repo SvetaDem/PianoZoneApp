@@ -23,10 +23,23 @@ namespace PianoTrainerApp.Views
         public double SelectedMultiplier { get; private set; } = 1.0;
         public PlayMode SelectedMode { get; private set; } = PlayMode.Advanced;
 
-        public TempoWindow()
+        public TempoWindow(bool isImportMode = false)
         {
             InitializeComponent();
-            SetAdvancedMode();
+
+            if (isImportMode)
+            {
+                AdvancedTab.Visibility = Visibility.Collapsed;
+                PracticeTab.Visibility = Visibility.Visible;
+                PracticeText.Visibility = Visibility.Visible;
+                SwitchGrid.Visibility = Visibility.Collapsed;
+                SetPracticeMode();
+            }
+            else
+            {
+               
+                SetAdvancedMode();
+            }
         }
 
         // Обработка нажатия на кнопку начала игры

@@ -173,7 +173,7 @@ namespace PianoTrainerApp.Views
                 };
 
                 // Открываем окно с плывущими нотами
-                var tempoDialog = new TempoWindow();
+                var tempoDialog = new TempoWindow(true);
                 if (tempoDialog.ShowDialog() == true)
                 {
                     var pianoWindow = new PianoWindow(song, tempoDialog.SelectedMultiplier);
